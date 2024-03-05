@@ -1,0 +1,5 @@
+#cmakedefine USE_MYMATH
+#cmakedefine HAVE_POW
+
+#define main_VERSION_MAJOR_TEST @main_VERSION_MAJOR @
+#define main_VERSION_MINOR_TEST @main_VERSION_MINOR @

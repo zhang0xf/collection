@@ -1,0 +1,28 @@
+# 指定编译器选项
+CC = gcc
+WORKDIR = .
+CFLAGS = -Wall -g
+INCFLAGS = -I$(WORKDIR)
+
+OBJS = iniparser.o dictionary.o
+LIB = libiniparser.so
+TEST = functest.o
+
+default: all
+
+all: test $(LIB)
+
+test:$(OBJS) $(TEST)
+	$(CC) $^ -o $@
+
+$(LIB):$(OBJS)
+	$(CC) -shared -fPIC $^ -o $@
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
+
+.PHONY:clean
+
+clean:
+	rm ./iniparser.o ./dictionary.o ./functest.o ./libiniparser.so ./test
+

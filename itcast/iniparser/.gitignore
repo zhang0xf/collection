@@ -1,0 +1,8 @@
+#.o
+*.o
+
+#.so
+*.so
+
+#bin
+test

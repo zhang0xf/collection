@@ -1,0 +1,6 @@
+
+[browser]
+chrome                         = google
+firefox                        = mozilla
+ie                             = microsoft
+

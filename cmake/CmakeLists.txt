@@ -1,0 +1,107 @@
+#指定cmake版本号
+cmake_minimum_required(VERSION 2.8)
+ 
+#指定工程名称
+project(cmake_demo)
+
+#加入一个配置头文件，用于处理cmake对源码的设置
+configure_file(
+   "${PROJECT_SOURCE_DIR}/config.h.in"
+   "${PROJECT_BINARY_DIR}/config.h"
+   )
+ 
+#分别指定项目的主版本号和副版本号
+set(main_VERSION_MAJOR "1")
+set(main_VERSION_MINOR "0")
+
+# message("-- ${PROJECT_SOURCE_DIR}")
+# message("-- ${PROJECT_BINARY_DIR}")
+
+#是否使用自己的mymath库
+option(USE_MYMATH "use provided math implementation" ON)
+ 
+#检查系统是否支持pow函数
+include(${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
+check_function_exists(pow HAVE_POW)
+
+message("${HAVE_POW}")
+if(HAVE_POW)
+    message("-- macro HAVE_POW is ${HAVE_POW}")
+endif(HAVE_POW)
+
+#加入一个配置头文件，用于处理cmake对源码的设置
+configure_file(
+    "${PROJECT_SOURCE_DIR}/config.h.in"
+    "${PROJECT_BINARY_DIR}/config.h"
+    )
+
+if(USE_MYMATH)
+    message("-- option USE_MYMATH is ${USE_MYMATH}")
+endif(USE_MYMATH)
+
+#是否加入mymath库
+if(USE_MYMATH)
+    include_directories("${PROJECT_SOURCE_DIR}/mymath")
+    add_subdirectory(mymath)
+    set(EXTRA_LIBS ${EXTRA_LIBS} mymath)
+endif(USE_MYMATH)
+ 
+#获得当前目录下的所有源文件，并将名称保存到变量中
+aux_source_directory(. DIR_SRCS)
+
+#指定生成目标
+add_executable(main ${DIR_SRCS})
+
+#将mymath下的作为链接库提供给可执行程序
+target_link_libraries(main ${EXTRA_LIBS})
+
+#指定安装路径
+install (TARGETS main DESTINATION bin)
+install (FILES "${PROJECT_BINARY_DIR}/config.h"
+         DESTINATION include)
+
+#启用测试
+enable_testing()
+
+#测试程序是否成功运行
+add_test(test_run main 2 3)
+
+#测试帮助信息是否可以正常显示
+add_test(test_usage main)
+set_tests_properties(test_usage
+    PROPERTIES PASS_REGULAR_EXPRESSION "Usage:.* a b")
+
+#测试5和7的和
+add_test(test_5_7 main 5 7)
+set_tests_properties(test_5_7 
+    PROPERTIES PASS_REGULAR_EXPRESSION "is 12")
+
+#测试6和8的和
+add_test(test_6_8 main 6 8)
+set_tests_properties(test_6_8
+    PROPERTIES PASS_REGULAR_EXPRESSION "is 14")
+
+#编写宏，用来简化测试工作
+macro(do_test arg1 arg2 result)
+    add_test(test_${arg1}_${arg2} main ${arg1} ${arg2})
+    set_tests_properties(test_${arg1}_${arg2}
+        PROPERTIES PASS_REGULAR_EXPRESSION ${result})
+endmacro(do_test)
+
+do_test(1 2 "is 3")
+do_test(3 5 "is 8")
+do_test(10 20 "is 30")
+ 
+#加入gdb调试，只需在debug模式下开启-g选项
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
+#创建一个CPack安装包
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE
+    "${CMAKE_CURRENT_SOURCE_DIR}/License")
+message("-- ${CPACK_RESOURCE_FILE_LICENSE}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${main_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${main_VERSION_MINOR}")
+include(CPack)

@@ -1,0 +1,11 @@
+# folder
+build/CMakeFiles
+build/mymath
+
+#file
+build/cmake_install.cmake
+build/CMakeCache.txt
+build/CPackConfig.cmake
+build/CPackSourceConfig.cmake
+build/CTestTestfile.cmake
+build/Makefile
