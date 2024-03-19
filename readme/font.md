@@ -4,6 +4,9 @@
 # 关于字符集
 [https://github.com/wy-luke/Unity-TextMeshPro-Chinese-Characters-Set/tree/main](https://github.com/wy-luke/Unity-TextMeshPro-Chinese-Characters-Set/tree/main)
 
+# 关于TextMeshsPro使用字体
+[https://xinzhuzi.github.io/2020/05/11/UnityUI/UGUI&TMP%20系列第十一章/](https://xinzhuzi.github.io/2020/05/11/UnityUI/UGUI&TMP%20系列第十一章/)
+
 # 文本设置(以下从gitee拷贝以防原链接丢失)
 
 ## 1. 文本设计
