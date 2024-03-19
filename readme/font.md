@@ -1,6 +1,9 @@
 # 关于字体
 [文本设置](https://gitee.com/chutianshu1981/AwesomeUnityTutorial/blob/main/UI系统/UGUI/UGUI-01-文本设置TextMeshPro.md)
 
+# 关于字符集
+[https://github.com/wy-luke/Unity-TextMeshPro-Chinese-Characters-Set/tree/main](https://github.com/wy-luke/Unity-TextMeshPro-Chinese-Characters-Set/tree/main)
+
 # 文本设置(以下从gitee拷贝以防原链接丢失)
 
 ## 1. 文本设计
