@@ -68,7 +68,7 @@
 * `c + 滚轮Up`:刷选并增加刷子直径
 * `c + 滚轮Down`:刷选并减少刷子直径
 * `v`:断离(点/线)
-* `l`:选择所有相邻元素
+* `control + l`:选择所有相邻元素
 * `i`:内插面(面)
 * `k`:小刀(自定义拓扑结构)
 * `Search[空格键] -> 桥接循环边`:桥接两条循环边(需同一个对象)
@@ -82,6 +82,7 @@
 * `cmd + f -> 栅格填充`:网格填充(边需是偶数)
 * `f`:快速网格填充
 * `shift + n`:重新计算法线方向
+* `option + n -> 翻转`:翻转法线方向
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
