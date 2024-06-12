@@ -82,3 +82,7 @@
 * `cmd + f -> 栅格填充`:网格填充(边需是偶数)
 * `f`:快速网格填充
 * `shift + n`:重新计算法线方向
+
+# Unity优化建议
+* Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
+* Use the Level Of Detail system.
