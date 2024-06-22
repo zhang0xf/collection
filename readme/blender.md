@@ -20,12 +20,13 @@
 * `g + y + y`:y轴(local)移动
 * `g + z`:z轴移动
 * `g + shift + y`:沿着xz平面移动
-* `option + g`:重置位置
+* `option + g`:重置位置(物体模式)
 * `s`:缩放
 * `s + x`:x轴缩放
 * `s + y`:y轴缩放
 * `s + z`:z轴缩放
 * `option + s`:重置缩放
+* `option + s`:沿法线方向缩放(编辑模式)
 * `r`:旋转
 * `r + x`:x轴旋转
 * `r + y`:y轴旋转
@@ -83,6 +84,8 @@
 * `f`:快速网格填充
 * `shift + n`:重新计算法线方向
 * `option + n -> 翻转`:翻转法线方向
+* `h`:隐藏(物体/点/线/面)
+* `option + h`:恢复所有隐藏(物体/点/线/面)
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
