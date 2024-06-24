@@ -86,6 +86,9 @@
 * `option + n -> 翻转`:翻转法线方向
 * `h`:隐藏(物体/点/线/面)
 * `option + h`:恢复所有隐藏(物体/点/线/面)
+* `control + l -> material`:连接(复用)材质
+* `[Vertex Paint Mode]cmd + x`:填充选择顶点颜色(右键选择顶点,再使用control + l选择相邻顶点,或切到Edit Mode进行选择)
+* `[Vertex Paint Mode]shift + x`:吸取顶点颜色
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
