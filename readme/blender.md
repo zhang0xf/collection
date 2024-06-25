@@ -89,6 +89,12 @@
 * `control + l -> material`:连接(复用)材质
 * `[Vertex Paint Mode]cmd + x`:填充选择顶点颜色(右键选择顶点,再使用control + l选择相邻顶点,或切到Edit Mode进行选择)
 * `[Vertex Paint Mode]shift + x`:吸取顶点颜色
+* `control + p -> 保持偏移量`:设置父子关系(骨骼)
+* `option + p -> Clear Parent`:清除父子关系(骨骼)
+* `k -> location & rotation`:插入选中骨骼的关键帧
+* `shift + space`:播放动画
+* `shift + <-`:跳转到起始帧
+* `shift + ->`:跳转到结束帧
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
