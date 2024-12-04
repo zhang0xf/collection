@@ -9,6 +9,11 @@
 
 # blender快捷键
 
+* `a`:全选所有对象
+* `control + 鼠标左键`:选择/取消选择(若操作对象非活动对象，则会将操作对象置为活动对象)
+* `shift + 鼠标左键`:文件导航窗口内范围选择
+* `边编辑模式`下，`select -> select loops -> select loop Inner-region`:选择循环边内部
+
 * `鼠标中键`:旋转视角
 * `shift[hold] + 鼠标中键`:平移视角
 
@@ -95,6 +100,12 @@
 * `shift + space`:播放动画
 * `shift + <-`:跳转到起始帧
 * `shift + ->`:跳转到结束帧
+
+# blender实用技巧
+
+* 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项。
+* UV重新自动布局：在`UV Editing`操作界面下，选择`UV -> Pack Island`。
+
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
