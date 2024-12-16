@@ -101,6 +101,11 @@
 * `shift + <-`:跳转到起始帧
 * `shift + ->`:跳转到结束帧
 
+* `e`:挤出新的曲线控制点（control point）
+* `x`:删除曲线控制点（control point）
+* `option + s`:缩放曲线控制点（control point）的半径（radius）
+* `control + t`:缩放曲线控制点（control point）的倾斜角（tilt）
+
 * `Sculpting`时`shift + r`:重构网格(增加细分度)
 
 # blender实用技巧
