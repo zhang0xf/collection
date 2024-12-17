@@ -113,7 +113,6 @@
 * 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项。
 * UV重新自动布局：在`UV Editing`操作界面下，选择`UV -> Pack Island`。
 
-
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
 * Use the Level Of Detail system.
