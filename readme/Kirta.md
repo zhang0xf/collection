@@ -20,4 +20,3 @@
 
 * 参考文档：[https://docs.krita.org/en/reference_manual/dockers/channels_docker.html](https://docs.krita.org/en/reference_manual/dockers/channels_docker.html)
 * 参考视频：[https://www.youtube.com/watch?v=lWuwegJ-mIQ](https://www.youtube.com/watch?v=lWuwegJ-mIQ)
-* 参考示例项目：[/Users/zhangfei/美术/练习/Kirta练习/Kirta软件熟悉.kra](/Users/zhangfei/美术/练习/Kirta练习/Kirta软件熟悉.kra)
