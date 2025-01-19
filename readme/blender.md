@@ -100,7 +100,6 @@
 * `雕刻 shift + r`:重构网格(增加细分度)
 
 # blender实用技巧
-
 * 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项。
 
 # Unity优化建议
