@@ -1,24 +1,20 @@
 # blender偏好设置
-* `Edit -> Preferences -> Key Map`:
+* `[英文]Edit -> Preferences -> Key Map`:
   1. Select with Mouse Button : Right
   2. Spacebar Action : Search
-
-* `编辑 -> 偏好 -> 键位映射`:
+  3. Middle Mouse Action: Orbit
+* `[中文]编辑 -> 偏好 -> 键位映射`:
   1. 鼠标按键选择 : 右
   2. 空格键动作 : 搜索
+  3. 鼠标中键 : 旋转视角
 
 # blender快捷键
-
+* `shift[hold] + 鼠标中键`:平移视角
 * `a`:全选所有对象
 * `control + 鼠标左键`:选择/取消选择(若操作对象非活动对象，则会将操作对象置为活动对象)
 * `shift + 鼠标左键`:文件导航窗口内范围选择
 * `边编辑模式`下，`select -> select loops -> select loop Inner-region`:选择循环边内部
-
-* `鼠标中键`:旋转视角
-* `shift[hold] + 鼠标中键`:平移视角
-
 * `w`:上下文菜单
-
 * `g`:移动
 * `g + x`:x轴移动
 * `g + y`:y轴(world)移动
@@ -38,7 +34,6 @@
 * `r + z`:z轴旋转
 * `option + r`:重置旋转
 * `cmd + a -> 全部变换`:应用所有变换
-
 * `shift + a`:添加对象【菜单】
 * `shift + d`:复制对象
 * `x -> delete`:删除对象
@@ -47,10 +42,8 @@
 * `[hold]shift + cmd + 右键`:取消选择某个对象
 * `cmd + j`:合并多个对象
 * `shift + z`:切换到线框模式
-
 * `shift + s`:游标吸附【菜单】
 * `shift + c`:游标至世界原点
-
 * `TAB`:进入编辑模式
 * `1`:点选择模式(非数字键盘)
 * `2`:边选择模式
@@ -70,9 +63,9 @@
 * `option + 鼠标右键`:选择循环边
 * `右键 + control[hold] + 右键`:起点至终点最佳路径(点/线/面)
 * `control + i`:反选
-* `c`:刷选
-* `c + 滚轮Up`:刷选并增加刷子直径
-* `c + 滚轮Down`:刷选并减少刷子直径
+* `面编辑模式 c`:刷选
+* `面编辑模式 c + 滚轮Up`:刷选并增加刷子直径
+* `面编辑模式 c + 滚轮Down`:刷选并减少刷子直径
 * `v`:断离(点/线)
 * `control + l`:选择所有相邻元素
 * `i`:内插面(面)
@@ -100,13 +93,11 @@
 * `shift + space`:播放动画
 * `shift + <-`:跳转到起始帧
 * `shift + ->`:跳转到结束帧
-
-* `e`:挤出新的曲线控制点（control point）
-* `x`:删除曲线控制点（control point）
-* `option + s`:缩放曲线控制点（control point）的半径（radius）
-* `control + t`:缩放曲线控制点（control point）的倾斜角（tilt）
-
-* `Sculpting`时`shift + r`:重构网格(增加细分度)
+* `曲线编辑模式 e`:挤出新的曲线控制点（control point）
+* `曲线编辑模式 x`:删除曲线控制点（control point）
+* `曲线编辑模式 option + s`:缩放曲线控制点（control point）的半径（radius）
+* `曲线编辑模式 control + t`:缩放曲线控制点（control point）的倾斜角（tilt）
+* `雕刻 shift + r`:重构网格(增加细分度)
 
 # blender实用技巧
 

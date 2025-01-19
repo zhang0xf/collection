@@ -1,13 +1,8 @@
 > ### **前言**
-
-Compute Shader是如今比较流行的一种技术，例如之前的《天刀手游》，还有最近大火的《永劫无间》，在分享技术的时候都有提到它。
-
-Unity官方对Compute Shader的介绍如下：[](https://link.segmentfault.com/?enc=WpAO39OiX0d6kHuRk7rVMQ%3D%3D.lgGA2C2J%2BH4bUIYNOp88bUnEGO2UwZJP1jSdg8Inus5tZXNJWFlMinC%2BsXvO51M0YShJXyVsXG3nNTMwMlI2pg%3D%3D)[https://docs.unity3d.com/Manu...](https://link.segmentfault.com/?enc=2C77HMb7dJIpCadzvSqCbA%3D%3D.aOgtcSs%2B%2FntRYg1%2F8FrSKxfc7OfeSLexGKfeLEsm6lg9KwHE9tfDrkm%2FdB%2FBkdXT5d4NGWsboKmBR1w6N7z2KA%3D%3D)
-
 Compute Shader和其他Shader一样是运行在GPU上的，但是它是**独立于渲染管线之外**的。我们可以利用它实现**大量且并行**的GPGPU算法，用来加速我们的游戏。
 
 在Unity中，我们在Project中右键，即可创建出一个Compute Shader文件：  
-![](https://segmentfault.com/img/remote/1460000040825840)
+![image](../images/compute_shader/Compute_Shader_Create.webp)
 
 生成的文件属于一种Asset文件，并且都是以 **.compute**作为文件后缀的。
 
@@ -92,19 +87,19 @@ numthreads(tX, tY, tZ)
 **每个核函数前面我们都需要定义numthreads**，否则编译会报错。
 
 其中tX，tY，tZ三个值也并不是可以随便乱填的，比如来一刀tX=99999暴击一下，这是不行的。它们在不同的版本里有如下的约束：  
-![](https://segmentfault.com/img/remote/1460000040825841)
+![image](../images/compute_shader/compute_shader_numthreads.webp)
 
 在Direct11中，可以通过**ID3D11DeviceContext::Dispatch(gX,gY,gZ)**方法创建gX*gY*gZ个线程组，一个线程组里又会包含多个线程（数量即numthreads定义）。
 
 注意顺序，**先numthreads定义好每个核函数对应线程组里线程的数量（tX*tY*tZ），再用Dispatch定义用多少线程组（gX*gY*gZ）来处理这个核函数**。其中每个线程组内的线程都是并行的，不同线程组的线程可能同时执行，也可能不同时执行。一般一个GPU同时执行的线程数，在1000-10000之间。
 
 接着我们用一张示意图来看看线程与线程组的结构，如下图：  
-![](https://segmentfault.com/img/remote/1460000040825842)
+![image](../images/compute_shader/compute_shader_threads_structure.webp)
 
 上半部分代表的是线程组结构，下半部分代表的是单个线程组里的线程结构。因为他们都是由（X,Y,Z）来定义数量的，因此就像一个三维数组，下标都是从0开始。我们可以把它们看做是表格一样：**有Z个一样的表格，每个表格有X列和Y行**。例如线程组中的（2,1,0），就是第1个表格的第2行第3列对应的线程组，下半部分的线程也是同理。
 
 搞清楚结构，我们就可以很好的理解下面这些与单个线程有关的参数含义：  
-![](https://segmentfault.com/img/remote/1460000040825843)
+![image](../images/compute_shader/compute_shader_attributes.webp)
 
 这里需要注意的是，不管是Group还是Thread，它们的**顺序都是先X再Y最后Z**，用表格的理解就是先行（X）再列（Y）然后下一个表（Z），例如我们tX=5，tY=6那么第1个thread的SV\_GroupThreadID=(0,0,0)，第2个的SV\_GroupThreadID=(1,0,0)，第6个的SV\_GroupThreadID=(0,1,0)，第30个的SV\_GroupThreadID=(4,5,0)，第31个的SV\_GroupThreadID=(0,0,1)。Group同理，搞清顺序后，SV\_GroupIndex的计算公式就很好理解了。
 
@@ -206,7 +201,7 @@ void Thread(int x, int y)
 首先前面我们使用了\[numthreads(8,8,1)\]，即tX=8，tY=8，tZ=1，且i和j的取值范围为0到7，而k=0。那么我们线程组（0,0,0）中所有线程的SV\_DispatchThreadID.xy也就是id.xy的取值范围即为（0,0）到（7,7），线程组（1,0,0）中它的取值范围为（8,0）到（15, 7），...，线程（0,1,0）中它的取值范围为（0,8）到（7,15），...，线程组（a,b,0）中它的取值范围为（a*8, b*8, 0）到（a*8+7,b*8+7,0）。
 
 我们用示意图来看下，假设下图每个网格里包含了64个像素：  
-![](https://segmentfault.com/img/remote/1460000040825844)
+![image](../images/compute_shader/compute_shader_example.webp)
 
 也就是说我们每个线程组会有64个线程同步处理64个像素，并且不同的线程组里的线程不会重复处理同一个像素，若要处理分辨率为1024\*1024的图，我们只需要dispatch(1024/8, 1024/8, 1)个线程组。
 
@@ -226,14 +221,14 @@ void Thread(int x, int y)
 public ComputeShader computeShader;
 ```
 
-![](https://segmentfault.com/img/remote/1460000040825845)  
+![image](../images/compute_shader/compute_shader_csharp_cs_variable.webp)  
 在Inspector界面关联.compute文件
 
 此外我们再关联一个Material，因为Compute Shader处理后的纹理，依旧要经过Fragment Shader采样后来显示。  
 public Material material;
 
 这个Material我们使用一个Unlit Shader，并且纹理不用设置，如下：  
-![](https://segmentfault.com/img/remote/1460000040825846)
+![image](../images/compute_shader/compute_shader_unlit_material.webp)
 
 然后关联到我们的脚本上，并且随便建个Cube也关联上这Material。
 
@@ -276,308 +271,13 @@ computeShader.Dispatch(kernelIndex, 256 / 8, 256 / 8, 1);
 ```
 
 为什么是256/8，前面已经解释过了。来看看效果：  
-![](https://segmentfault.com/img/remote/1460000040825847)
+![image](../images/compute_shader/compute_shader_result.webp)
 
 上图就是我们Unity默认生成的Compute Shader代码所能带来的效果，我们也可试下用它处理2048\*2048的Texture，也是非常快的。
 
 * * *
 
-接下来我们再来看看粒子效果的例子：
-
-首先一个粒子通常拥有颜色和位置两个属性，并且我们肯定是要在Compute Shader里去处理这两个属性的，那么我们就可以在Compute Shader创建一个struct来存储：
-
-```
-struct ParticleData {
-float3 pos;
-float4 color;
-};
-```
-
-接着，这个粒子肯定是很多很多的，我们就需要一个像List一样的东西来存储它们，在ComputeShader中为我们提供了RWStructuredBuffer类型。
-
-> ### **RWStructuredBuffer**
-
-它是一个可读写的Buffer，并且我们可以指定Buffer中的数据类型为我们自定义的struct类型，不用再局限于int、float这类的基本类型。
-
-因此我们可以这么定义我们的粒子数据：
-
-```
-RWStructuredBuffer<ParticleData> ParticleBuffer;
-```
-
-[RWStructuredBuffer - Win32 apps](https://link.segmentfault.com/?enc=iQ1OtOquOB5ciS1x9UISVw%3D%3D.saDGAtB9qctFrfZSx4WphU54J3z8OoPKpldNUpffE5NX6%2BQOGuZDeWucWBc5wEndsw5p2PaWdZRTseaNM6mjtwW3zVXJcGifdyhBbKIW%2BZgc3E4%2FUDXmgPGAzNImVxrz)
-
-为了有动效，我们可以再添加一个时间相关值，我们可以根据时间来修改粒子的位置和颜色：
-
-```
-float Time;
-```
-
-接着就是怎么在核函数里修改我们的粒子信息了，要修改某个粒子，我们肯定要知道粒子在Buffer中的下标，并且这个下标在不同的线程中不能重复，否则就可能导致多个线程修改同一个粒子了。
-
-根据前面的介绍，我们知道一个线程组中SV\_GroupIndex是唯一的，但是在不同线程组中并不是。例如每个线程组内有1000个线程，那么SV\_GroupID都是0到999。我们可以根据SV\_GroupID把它叠加上去，例如SV\_GroupID=(0,0,0)是0-999，SV\_GroupID=(1,0,0)是1000-1999等等，为了方便我们的线程组都可以是（X,1,1）格式。然后我们就可以根据Time和Index随便的摆布下粒子，Compute Shader完整代码：
-
-```
-#pragma kernel UpdateParticle
-
-struct ParticleData {
-float3 pos;
-float4 color;
-};
-
-RWStructuredBuffer<ParticleData> ParticleBuffer;
-
-float Time;
-
-[numthreads(10, 10, 10)]
-void UpdateParticle(uint3 gid : SV_GroupID, uint index : SV_GroupIndex)
-{
-int pindex = gid.x * 1000 + index;
-
-float x = sin(index);
-float y = sin(index * 1.2f);
-float3 forward = float3(x, y, -sqrt(1 - x * x - y * y));
-ParticleBuffer[pindex].color = float4(forward.x, forward.y, cos(index) * 0.5f + 0.5, 1);
-if (Time > gid.x)
-ParticleBuffer[pindex].pos += forward * 0.005f;
-}
-```
-
-接下来我们要在C#里给粒子初始化并且传递给Compute Shader。我们要传递粒子数据，也就是说要给前面的RWStructuredBuffer<ParticleData>赋值，Unity为我们提供了**ComputeBuffer类来与RWStructuredBuffer或StructuredBuffer相对应。**
-
-> ### **ComputeBuffer**
-
-在Compute Shader中经常需要将我们一些自定义的Struct数据读写到内存缓冲区，ComputeBuffer就是为这种情况而生的。我们可以在C#里创建并填充它，然后传递到Compute Shader或者其他Shader中使用。
-
-通常我们用下面方法来创建它：
-
-```
-ComputeBuffer buffer = new ComputeBuffer(int count, int stride)
-```
-
-其中count代表我们buffer中元素的数量，而stride指的是每个元素占用的空间（字节），例如我们传递10个float的类型，那么count=10，stride=4。需要注意的是**ComputeBuffer中的stride大小必须和RWStructuredBuffer中每个元素的大小一致**。
-
-声明完成后我们可以使用SetData方法来填充，参数为自定义的struct数组：
-
-```
-buffer.SetData(T[]);
-```
-
-最后我们可以使用Compute Shader类中的SetBuffer方法来把它传递到Compute Shader中：
-
-```
-public void SetBuffer(int kernelIndex, string name, ComputeBuffer buffer)
-```
-
-记得用完后把它Release()掉。  
-[](https://link.segmentfault.com/?enc=0PDCJ31LhFL%2B3FZce9o3Uw%3D%3D.ewiv8Dqmo6kRCbSFG0tgD0oWRYMYDO6G%2FveH3nTrzLC%2BX%2FkV4v%2FLXl1HSjdkJUoFWNLHh9IMTMdKSdstuf0Ziw%3D%3D)[https://docs.unity3d.com/Scri...](https://link.segmentfault.com/?enc=PaUoszo%2Fp%2FcXZGzxK5BZUQ%3D%3D.LDnc2DE5iNhJ%2BLAq%2BWYG9WIeSVZMBMeELZiBxzmYHd3LPMAZU%2BWipkC9L0tGfa4HkDBtpATJ5LVyFzYnopvyLw%3D%3D)
-
-在C#中我们定义一个一样的struct，这样才能保证和Compute Shader中的大小一致：
-
-```
-public struct ParticleData
-{
-    public Vector3 pos;//等价于float3
-    public Color color;//等价于float4
-}
-```
-
-然后我们在Start方法中声明我们的ComputeBuffer，并且找到我们的核函数：
-
-```
-void Start()
-{
-    //struct中一共7个float，size=28
-    mParticleDataBuffer = new ComputeBuffer(mParticleCount, 28);
-    ParticleData[] particleDatas = new ParticleData[mParticleCount];
-    mParticleDataBuffer.SetData(particleDatas);
-    kernelId = computeShader.FindKernel("UpdateParticle");
-}
-```
-
-由于我们想要我们的粒子是运动的，即每帧要修改粒子的信息。因此我们在Update方法里去传递Buffer和Dispatch：
-
-```
-void Update()
-{
-    computeShader.SetBuffer(kernelId, "ParticleBuffer", mParticleDataBuffer);
-    computeShader.SetFloat("Time", Time.time);
-    computeShader.Dispatch(kernelId,mParticleCount/1000,1,1);
-}
-```
-
-到这里我们的粒子位置和颜色的操作都已经完成了，但是这些数据并不能在Unity里显示出粒子，我们还需要Vertex&FragmentShader的帮忙，我们新建一个UnlitShader，修改下里面的代码如下：
-
-```
-Shader "Unlit/ParticleShader"
-{
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
-
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-
-            #include "UnityCG.cginc"
-
-            struct v2f
-            {
-                float4 col : COLOR0;
-                float4 vertex : SV_POSITION;
-            };
-
-            struct particleData
-            {
-float3 pos;
-float4 color;
-            };
-
-            StructuredBuffer<particleData> _particleDataBuffer;
-
-            v2f vert (uint id : SV_VertexID)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(float4(_particleDataBuffer[id].pos, 0));
-                o.col = _particleDataBuffer[id].color;
-                return o;
-            }
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-                return i.col;
-            }
-            ENDCG
-        }
-    }
-}
-```
-
-前面我们说了ComputeBuffer也可以传递到普通的Shader中，因此我们在Shader中也创建一个结构一样的Struct，然后利用StructuredBuffer<T>来接收。
-
-**SV\_VertexID：**在VertexShader中用它来作为传递进来的参数，代表顶点的下标。我们有多少个粒子即有多少个顶点。顶点数据使用我们在Compute Shader中处理过的Buffer。
-
-最后我们在C#中关联一个带有上面Shader的Material，然后将粒子数据传递过去，最终绘制出来。完整代码如下：
-
-```
-public class ParticleEffect : MonoBehaviour
-{
-    public ComputeShader computeShader;
-    public Material material;
-
-    ComputeBuffer mParticleDataBuffer;
-    const int mParticleCount = 20000;
-    int kernelId;
-
-    struct ParticleData
-    {
-        public Vector3 pos;
-        public Color color;
-    }
-
-    void Start()
-    {
-        //struct中一共7个float，size=28
-        mParticleDataBuffer = new ComputeBuffer(mParticleCount, 28);
-        ParticleData[] particleDatas = new ParticleData[mParticleCount];
-        mParticleDataBuffer.SetData(particleDatas);
-        kernelId = computeShader.FindKernel("UpdateParticle");
-    }
-
-    void Update()
-    {
-        computeShader.SetBuffer(kernelId, "ParticleBuffer", mParticleDataBuffer);
-        computeShader.SetFloat("Time", Time.time);
-        computeShader.Dispatch(kernelId,mParticleCount/1000,1,1);
-        material.SetBuffer("_particleDataBuffer", mParticleDataBuffer);
-    }
-
-    void OnRenderObject()
-    {
-        material.SetPass(0);
-        Graphics.DrawProceduralNow(MeshTopology.Points, mParticleCount);
-    }
-
-    void OnDestroy()
-    {
-        mParticleDataBuffer.Release();
-        mParticleDataBuffer = null;
-    }
-}
-```
-
-**material.SetBuffer：**传递ComputeBuffer到我们的Shader当中。
-
-**OnRenderObject：**该方法里我们可以自定义绘制几何。
-
-**DrawProceduralNow：**我们可以用该方法绘制几何，第一个参数是拓扑结构，第二个参数数顶点数。
-
-[](https://link.segmentfault.com/?enc=ShMea2%2BAp21LBbTvJs2wvQ%3D%3D.aFMzR6iyR3Qk%2FZgUCf3L7%2BOBweivSJxVerHqUvTA2bdiGnm%2FWrwYuE06z%2FuRHq5RmcnwXpFaTQ7LHsjR2nHl1S6VVOocTk%2BzMAmr6FbCHzM%3D)[https://docs.unity3d.com/Scri...](https://link.segmentfault.com/?enc=dyRb%2FRQvKTv7N%2FApfRA7mg%3D%3D.ScegLs2LwKaUdhswfTgA4lE%2BQfokMi9G6OY5gPbChLa9ceac7x%2FrUCr0Z5Ox1cCluEhl%2F7cFe9Gaf6g8z6ez63gJOYmOl9qqbCayrdtcKyk%3D)
-
-最终得到的效果如下：  
-![](https://segmentfault.com/img/remote/1460000040825848)
-
-Demo链接如下：  
-[](https://link.segmentfault.com/?enc=kQ72cLA8b%2FiLInfdcvGgKQ%3D%3D.OkkYAIeU4imY9XIL11qHq5xuFikR08PuspbD%2BHMUz9tZH8bbNUX9PPZowdSviFiAoGO1xyK0JfsxLL2sYtKP66as2gtiSesUd7H%2BadRvl7w%3D)[https://github.com/luckyWjr/C...](https://link.segmentfault.com/?enc=QxpbhpRkr9Ihqp7VOyljXA%3D%3D.elnnQpwy%2FRglTnEVOjCgAdIMPfd72Pu5mO%2BnAqT3X3e8oXRddXR619ONwaUEoCRl0nC5jRVGHCAOVzd15Ndy2YyuwabOJxDGYEK7mHauMP0%3D)
-
-> ### **ComputeBufferType**
-
-在例子中，我们new一个ComputeBuffer的时候并没有使用到[ComputeBufferType](https://link.segmentfault.com/?enc=caI9bCYBYN5U5QRZf00eXA%3D%3D.lx3UqaSCRgwwlbLRv8ULQzP5y3XG1tIzIjkT0dqILHXCgJ8%2FUD3QG%2FmtuBFEyuhufh4ppzTtZF1dPkzGdlvBCQ%3D%3D)的参数，默认使用了ComputeBufferType.Default。实际上我们的ComputeBuffer可以有多种不同的类型对应[HLSL中不同的Buffer](https://link.segmentfault.com/?enc=6fdtOHLJksBi3PP1NSWdOw%3D%3D.5Mw%2BgaIW1zgbCuFJBiFHe%2Fl5HTMeIMo5fY%2FSJTV1VTJ0C96Iaqy%2BKfrVxHe3AiJFnZ%2BKv8eLOVGgCgIFQnGLR4pUn9awK0YVyQfsTExbVNVOKzUrnceK7i2xBaAr7oS2gA%2Bx1n9rwymZDnXn%2B3ynng%3D%3D)，来在不同的场景下使用，一共有如下几种类型：  
-![](https://segmentfault.com/img/remote/1460000040825849)
-
-举个例子，在做GPU剔除的时候经常会使用到Append的Buffer（例如后面介绍的用Compute Shader实现视椎剔除），C#中的声明如下：
-
-```
-var buffer = new ComputeBuffer(count, sizeof(float), ComputeBufferType.Append);
-```
-
-注：Default，Append，Counter，Structured对应的Buffer每个元素的大小，也就是stride的值应该是4的倍数且小于2048。
-
-上述ComputeBuffer可以对应Compute Shader中的AppendStructuredBuffer，然后我们可以在Compute Shader里使用Append方法为Buffer添加元素，例如：
-
-```
-AppendStructuredBuffer<float> result;
-
-[numthreads(640, 1, 1)]
-void ViewPortCulling(uint3 id : SV_DispatchThreadID)
-{
-    if(满足一些自定义条件)
-        result.Append(value);
-}
-```
-
-那么我们的Buffer中到底有多少个元素呢？计数器可以帮助我们得到这个结果。
-
-在C#中，我们可以先使用ComputeBuffer.SetCounterValue方法来初始化计数器的值，例如：
-
-```
-buffer.SetCounterValue(0);//计数器值为0
-```
-
-随着AppendStructuredBuffer.Append方法，我们计数器的值会自动的++。当Compute Shader处理完成后，我们可以使用ComputeBuffer.CopyCount方法来获取计数器的值，如下：
-
-```
-public static void CopyCount(ComputeBuffer src, ComputeBuffer dst, int dstOffsetBytes);
-```
-
-Append、Consume或者Counter的Buffer会维护一个计数器来存储Buffer中的元素数量，该方法可以把src中的计数器的值拷贝到dst中，dstOffsetBytes为在dst中的偏移。在DX11平台dst的类型必须为Raw或者IndirectArguments，而在其他平台可以是任意类型。
-
-因此获取buffer中元素数量的代码如下：
-
-```
-uint[] countBufferData = new uint[1] { 0 };
-var countBuffer = new ComputeBuffer(1, sizeof(uint), ComputeBufferType.IndirectArguments);
-ComputeBuffer.CopyCount(buffer, countBuffer, 0);
-countBuffer.GetData(countBufferData);
-//buffer中的元素数量即为：countBufferData[0]
-```
-
-* * *
-
-从上面两个最基础的例子中，我们可以看出，Compute Shader中的数据都是由C#传递过来的，也就是说**数据要从CPU传递到GPU**。并且在Compute Shader处理结束后**又要从GPU传回CPU**。这样可能会有点延迟，而且它们之间的传输速率也是一个瓶颈。
+从上面最基础的例子中，我们可以看出，Compute Shader中的数据都是由C#传递过来的，也就是说**数据要从CPU传递到GPU**。并且在Compute Shader处理结束后**又要从GPU传回CPU**。这样可能会有点延迟，而且它们之间的传输速率也是一个瓶颈。
 
 但是如果我们有大量的计算需求，不要犹豫，请使用Compute Shader，对性能能有很大的提升。
 
