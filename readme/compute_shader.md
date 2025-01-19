@@ -2,7 +2,7 @@
 Compute Shader和其他Shader一样是运行在GPU上的，但是它是**独立于渲染管线之外**的。我们可以利用它实现**大量且并行**的GPGPU算法，用来加速我们的游戏。
 
 在Unity中，我们在Project中右键，即可创建出一个Compute Shader文件：  
-![image](../images/compute_shader/Compute_Shader_Create.webp)
+![image](../images/compute_shader/compute_shader_create.webp)
 
 生成的文件属于一种Asset文件，并且都是以 **.compute**作为文件后缀的。
 
