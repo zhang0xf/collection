@@ -101,6 +101,8 @@
 ### 骨骼
 * `control + p -> 保持偏移量`:设置父子关系(骨骼)
 * `option + p -> Clear Parent`:清除父子关系(骨骼)
+* `control + l`:全选与当前骨骼相连的骨骼链
+* `[姿态模式] Pose -> Constraints -> Copy Constraints to select bones`:拷贝活动骨骼的'Constraints'到选择的骨骼
 
 ### 动画
 * `k -> location & rotation`:插入选中骨骼的关键帧
@@ -114,8 +116,62 @@
 * `[曲线编辑模式] option + s`:缩放曲线控制点（control point）的半径（radius）
 * `[曲线编辑模式] control + t`:缩放曲线控制点（control point）的倾斜角（tilt）
 
-# blender实用技巧
+# blender实用技巧、注意事项、问题及解决方案
+### UV同步
 * 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项
+
+### UV与游戏表现和性能的相关性
+* 展UV时，叠放UV布局(例如对称的左右手)可以充分利用Texture有限的空间，减少Texture数量有助于提升性能。但是会限制艺术表现(例如左右手可能会要求不同的贴花,则不适合叠放UV)。
+* 展UV时，游戏中细节多、屏幕占比大的UV孤岛需要尽可能放大,相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
+
+### 建模、绑定和动画分文件(多人协作开发)
+* 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件；对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)；另见:[鸽子老师的Blender教程 第一节](https://www.bilibili.com/video/BV1Md4y1g7qZ/?spm_id_from=333.1387.favlist.content.click)
+
+### UV形变的镜像同步
+* 问题描述:镜像对称的对象,更改某一边UV,希望另一边UV镜像同步
+![image](../images/blender/UV_Mirror_Sync.png)
+* 解决方案:删除另一边UV,并添加镜像修改器,勾选UV沿轴向对称,最后应用修改器
+![image](../images/blender/UV_Mirror_Sync_Solution.png)
+
+### UV打直
+* 问题描述:UV弯曲占用较多Texture空间,打直以更好地布局
+![image](../images/blender/Make_UV_Straight.png)
+* 问题解决:安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit),取消勾选`UV Sync Selection`,全选弯曲的UV孤岛,使用`Straighten UVs`打直UV
+![image](../images/blender/Make_UV_Straight_Solution.png)
+
+### 权重绘制
+* 使用自动权重以减少工作量,然后在常用姿势和极限姿势下进行权重的修缮.
+* 必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
+* 细节处权重绘制可以从`骨骼模式`切换到`点模式`,并且将视窗切换到`线框模式`以方便操作;例如:大腿和短裤在接缝处的两组点应该是重叠的,可以对相应点进行`Add`和`Subtract`以修缮权重。
+![image](../images/blender/Rig_Weight_Paint.png)
+
+### 绑定和导出
+* 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(交由后续的动画制作/游戏引擎的导入)，并且如果需求变动仍需要有能力分离为各个部分再次编辑。
+* 问题解决:为每个部分添加材质(命名规则`****_Rig`),使用`control + j`合并各个部分为一个整体，执行分离操作时，选择按材质分离即可。注意:材质添加需要在建模文件中完成,然后同步到绑定文件。
+
+### 骨骼的精确定位
+* 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
+
+### 在Rigfy上添加自定义骨骼
+* 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
+* 问题解决:
+  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`格式。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
+  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`,勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy控制骨、`Relink Constraints`对于只有一根骨骼来说暂不需要设置。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
+  3. 使用`control + j`合并新增骨架(只有一根骨骼)到Rigfy的原型骨架`metarig`,在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
+  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
+  5. 点击`Re-Generate Rig`重新生成Rigfy骨架`Rig`,依然会保留之前已经绘制好的权重。(重新生成Rig需要保证`Rig`不是隐藏且可选状态)
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
+  6. 选择重新生成的`Rig`,切换到`Pose Mode`,检查UI和父子关系是否正确。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy06.png)
+  7. 最后进行权重绘制。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
+  8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
+  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+  10. 过程中需要注意原始文件`***_AttachBones`和`Metarig`的备份
 
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
