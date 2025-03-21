@@ -260,7 +260,8 @@ bpy.context.scene.frame_end = 60
 ![image](../images/blender/Export_FBX_Armature_Wrong.png)
 * 问题解决:使用`Expy Kit`插件重新组织骨架骨骼的层级关系，使导出的FBX模型骨架转换为对游戏引擎友好。具体:选择需要转换的骨架并切换到`Pose Mode`,`w`呼出上下文菜单，找到`Expy Kit`工具集的下的`Conversion -> Rigfy Game Friendly`。
 ![image](../images/blender/Convert_Rigfy_To_Game_Friendly.png)
-* 注意:即使后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，针对这种情况，插件也是支持新的`Rigfy`骨架转换的。
+![image](../images/blender/Rigfy_Game_Friendly_Result.png)
+* 注意:即使后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，针对这种情况，插件也是支持新的`Rigfy`骨架转换的。**但是如果更改了Rigfy骨架，则关联当前Rig文件的所有动画文件可能会失去动画数据**。为了避免这种情况，
 
 ### 重新组织文件的目录结构后，导致link关联文件丢失。
 * 问题描述：被关联的文件路径未改变，改变了操作关联的文件路径，导致工程出现问题。blender提示“`1 libraries and 318 linked data-blocks are missing(...)`”。
