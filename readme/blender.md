@@ -224,7 +224,7 @@ bpy.context.scene.frame_end = 60
 
 ### 导出FBX模型文件到游戏引擎
 * 另见下文 **导出FBX动画文件到游戏引擎**。不同点在于无需重命名场景，无需导出`Animation`。
-* 注意：导出前，必须检查是否已经选择了骨架和模型。
+* 注意：由于灵活Rig的需求,在权重绘制和动画制作过程中，需要保持各个部分的分离，另见上文 **绑定和导出的矛盾**。所以导出前，需要重新分配各部分的材质并且合并所有分离部分为一个整体(例如：只有一个Mesh，只包含Hair、Face、Body三个材质)。合并前使用`Save As`将当前文件备份(备份文件的命名规则:`****_BK`)。
 
 ### 导出FBX动画文件到游戏引擎
 * 切换到当前需要导出的Action,并且更改场景名称(导出的FBX文件中，场景名称对应动画切片的名称，命名规则可以形如:`Zeri_Walking01`)
@@ -261,7 +261,8 @@ bpy.context.scene.frame_end = 60
 * 问题解决:使用`Expy Kit`插件重新组织骨架骨骼的层级关系，使导出的FBX模型骨架转换为对游戏引擎友好。具体:选择需要转换的骨架并切换到`Pose Mode`,`w`呼出上下文菜单，找到`Expy Kit`工具集的下的`Conversion -> Rigfy Game Friendly`。
 ![image](../images/blender/Convert_Rigfy_To_Game_Friendly.png)
 ![image](../images/blender/Rigfy_Game_Friendly_Result.png)
-* 注意:即使后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，针对这种情况，插件也是支持新的`Rigfy`骨架转换的。**但是如果更改了Rigfy骨架，则关联当前Rig文件的所有动画文件可能会失去动画数据**。为了避免这种情况，
+* 注意:即使后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，针对这种情况，插件也支持新的`Rigfy`骨架转换为游戏引擎友好。
+* 注意:如果更改了Rigfy骨架，则所有关联此骨架制作的动画有可能丢失动画数据（原因可能是骨骼层级和命名变得不匹配）。为了避免这种情况,尽量在制作动画之前将所有物理模拟的骨骼加入Rigfy骨架，在最后导出时再使用`Expy Kit`插件转换骨架为游戏引擎友好。（实际测试时，任何时间点转换骨架，相应的动画文件都不会出问题）为了防止万一的不幸，记得使用`File -> Save As`做好文件的备份。随时使用`File -> Clean Up -> Purge Unused Data`清理不再使用的对象,保持工程文件的简洁(例如:动画重定向完成后，清理Mixamo动画相关)。
 
 ### 重新组织文件的目录结构后，导致link关联文件丢失。
 * 问题描述：被关联的文件路径未改变，改变了操作关联的文件路径，导致工程出现问题。blender提示“`1 libraries and 318 linked data-blocks are missing(...)`”。
