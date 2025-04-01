@@ -11,7 +11,7 @@
 * `m`:切换到材质模式
 * `option + 鼠标左键[点击材质channel]`:启用该channel并且关闭其他channel
 * `option + 鼠标左键选择图层属性的color通道`:会快速置灰其他的通道(normal,user0, user1等)
-* `cmd + 鼠标右键[左右滑动]`:缩放笔刷大小
+* `cmd + 鼠标右键[左右滑动]/鼠标滚轮`:缩放笔刷大小
 * `cmd + 鼠标左键[上下滑动]`:旋转笔刷
 * `option + shift + 鼠标左键`:切换到某个正视图
 * `w`:移动变换操纵器
@@ -19,6 +19,8 @@
 * `r`:缩放变换操纵器
 * `shift + 拖动参数滚动条`:更精细地调整参数
 * `shift + 鼠标左键`:将笔刷沿直线路径绘制
+* `command + z`:撤销(Undo)
+* `command + Shift + z`:取消撤销(Redo)
 
 # Substance Painter使用技巧、问题及解决方案
 
@@ -44,3 +46,46 @@
   * 问题描述:人物头发在展UV时，由于`UV孤岛`很多,故使用了`UV -> Pack Islands`自动排列所有头发的所有`UV孤岛`，导致隶属于同一个`Mesh`的头发会随机分布整张Texture的不同区域，而使用Substance Painter制作贴图时，为了使工程整洁，自然而然需要按照模型组织目录。
   * 问题解决：在绘制`遮罩`时,使用`几何体填充`中的`模型填充`。
   ![image](../images/substance_painter/SP_Mask_Model_Fill.png)
+
+  ### 重新聚焦
+  * 问题描述:绘制贴图的过程中，旋转、缩放等都是必要的操作，那么如何重新摆正？
+  ![image](../images/substance_painter/Substance_Painter_Refocus_Texture.png)
+  * 问题解决:`f`重新聚焦.
+
+  ### 制作脸部SDF图
+  * 使用`Substance Painter`制作`SDF阈值图`的优势：有参考模型，可以直观地观察并绘制脸部的`伦勃朗光`(例如：眼角、鼻尖区域的伦勃朗光)。
+  * 在`Blender`中额外复制一份脸部模型,并使用`Grid Fill`将眼睛和嘴巴的镂空部分填充(注意: 1.**不可**使用`UV -> Unwrap`重新展开,否则会导致SDF的UV坐标与原模型脸部UV坐标不再匹配，进而导致游戏引擎中对人物脸部阴影的渲染出现差错! 2.这里的`Grid Fill`操作也是必须的，否则导入到`Substance Painter`后，无法选取包含眼睛和嘴巴镂空区域，导致无法完整选取整个面部区域，最终导致导出的`SDF阈值图`图集(A、B、C ...等)无法正确合成最终的`Face_LightMap`,关于眼睛和嘴巴区域多出的阴影，我们会在游戏引擎中，使用一张`Face_Shadow_Mask`进行剔除。)
+  ![image](../images/substance_painter/SP_paint_Face_SDF01.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF02.png)
+  * 单独导出用于制作`SDF阈值图`的脸部模型，并创建独立的`Substance Painter`项目,在`纹理集设置`中，设置分辨率与原模型脸部贴图一致（均为2048 * 2048）清理所有不需要的通道,只保留`Base Color`通道,并添加自定义的`用户通道`（user0 ~ user15）,并且重命名通道名称为:`SDF-A`、`SDF-B` ... `SDF-H`;
+  ![image](../images/substance_painter/SP_paint_Face_SDF03.png)
+  * 在`蒙版(Mask)`上绘制`SDF阈值`(光线从0 ~ 180度的不同角度照射到脸部的明暗分布),我们绘制`A ~ H`共8张阈值图(注意:`Default`图层必须将所有通道的值设置为0)。
+  ![image](../images/substance_painter/SP_paint_Face_SDF04.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF10.png)
+  * 修改每个图层的`Base color`，使其拥有不同的颜色，并按序排列图层，检查并优化阈值(鼻尖的`伦勃朗光`可最后绘制)。（注意：每个图层对应不同的`纹理通道`）
+  ![image](../images/substance_painter/SP_paint_Face_SDF05.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF06.png)
+  * 完成所有绘制工作后，检查无误后，进行导出贴图的设置。添加自定义的`Zeri ToonShader Face SDF`导出预设：
+  ![image](../images/substance_painter/SP_paint_Face_SDF07.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF08.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF09.png)
+  ![image](../images/substance_painter/SP_paint_Face_SDF11.png)
+  * 将制作的阈值图导入`Unity`引擎，并使用编写的`Unity Editor`工具`SDFGenerator`:1、运行命令`Generate SDF`生成各阈值图对应的SDF图;2、运行命令`Smooth SDF`将相邻的两张SDF图平滑合并生成一张小范围的阈值图;3、运行命令`Combine SDF`将各小范围阈值图相加得出最后的`SDF面部光照贴图`。
+
+### 制作脸部阴影遮罩
+* 在`blender`中单独导出脸部模型，并在`Substance Painter`中创建新的工程，在`纹理集设置`中,删除不同通道，只保留`Base Color`通道。添加自定义`用户通道`并且重命名为`ShadowMask`。
+![image](../images/substance_painter/SP_paint_Face_Shadow_Mask01.png)
+* 添加`填充图层(fill layer)`作为背景图层，来控制导出贴图的默认值（例如：默认背景色），设置`Base Color`通道的默认颜色为纯白,`ShadowMask`通道的默认灰度值为1（在游戏引擎中代表此处无阴影）。
+![image](../images/substance_painter/SP_paint_Face_Shadow_Mask02.png)
+* 绘制完遮罩之后，进入`导出贴图`设置，并新增自定义导出设置`Zeri ToonShader Face Shadow Mask`,检查无误后导出。
+![image](../images/substance_painter/SP_paint_Face_Shadow_Mask03.png)
+
+### 游戏引擎渲染的阴影色过暗
+* 问题描述:RampMap(使用编写的Unity工具生成)中的阴影色由`Substance painter`中直接拷贝而来,最终的渲染效果，阴影色明显过暗!
+![image](../images/substance_painter/Render_Shadow_Too_Dark01.png)
+![image](../images/substance_painter/Render_Shadow_Too_Dark02.png)
+* 问题分析:由于最终的渲染代码计算最终颜色时，部分因子为`BaseColor`的采样值 * `RampMap`的采样值。这导致计算阴影色时，`BaseColor`贴图上本就存在的手绘阴影，会再次与`RampMap`上复制而来的阴影色相乘（Multiply混合模式），所以加深了阴影色，使之与`Substance painter`中所见的颜色效果不符
+* 问题解决: 在`Substance painter`中，不能直接绘制阴影色，而是应该将图层的混合模式更改为`Multiply`模式，即底色与图层颜色相乘来调整最后的阴影色，以达到混合模式为`Normal`时直接绘制阴影色的效果。在`RampMap`工具中，复制的不再是最终的阴影色，而是在`Substance painter`图层中用于`Multiply`的颜色。（这种方式也可以认为是颜色的预处理。当然，对于不需要确定阴影色的图层直接使用`Normal`即可）
+![image](../images/substance_painter/Render_Shadow_Too_Dark03.png)
+![image](../images/substance_painter/Render_Shadow_Too_Dark04.png)
+![image](../images/substance_painter/Render_Shadow_Too_Dark05.png)
