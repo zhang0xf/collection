@@ -122,10 +122,34 @@
 
 ### UV与游戏表现和性能的相关性
 * 展UV时，叠放UV布局(例如对称的左右手)可以充分利用Texture有限的空间，减少Texture数量有助于提升性能。但是会限制艺术表现(例如左右手可能会要求不同的贴花,则不适合叠放UV)。
-* 展UV时，游戏中细节多、屏幕占比大的UV孤岛需要尽可能放大,相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
+* 展UV时，细节多、屏幕占比大的UV孤岛需要尽可能放大；相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
+* 导入Unity游戏引擎后，制作Prefab时选择`Prefab -> Unpack`而非`Prefab -> UnPack Completely`。
 
 ### 建模、绑定和动画分文件(多人协作开发)
-* 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件；对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)；另见:[鸽子老师的Blender教程 第一节](https://www.bilibili.com/video/BV1Md4y1g7qZ/?spm_id_from=333.1387.favlist.content.click)
+* 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
+* 对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)(或者在导入时使用`Append`)；在执行`Make Local`后可能遇到`Object`已经本地化，但是相关联的`Mesh Data`以及`Material`仍然是关联状态,导致`Object`依旧不支持编辑,可使用如下脚本将选中的对象本地化:
+![image](../images/blender/Make_Link_Object_Local_Error.png)
+```
+import bpy
+
+# 获取所有链接对象
+linked_objects = [obj for obj in bpy.data.objects if obj.library]
+
+for obj in linked_objects:
+    # 本地化 Object
+    obj.make_local()
+    
+    # 本地化 Mesh 数据（如果存在）
+    if obj.data and obj.data.library:
+        obj.data.make_local()
+    
+    # 本地化 Material 数据（遍历所有材质槽）
+    for slot in obj.material_slots:
+        if slot.material and slot.material.library:
+            slot.material.make_local()
+
+print("所有对象及其关联数据已本地化！")
+```
 
 ### UV形变的镜像同步
 * 问题描述:镜像对称的对象,更改某一边UV,希望另一边UV镜像同步
@@ -139,6 +163,9 @@
 * 问题解决:安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit),取消勾选`UV Sync Selection`,全选弯曲的UV孤岛,使用`Straighten UVs`打直UV
 ![image](../images/blender/Make_UV_Straight_Solution.png)
 
+### 骨骼的精确定位
+* 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
+
 ### 权重绘制
 * 使用自动权重以减少工作量,然后在常用姿势和极限姿势下进行权重的修缮.
 * 必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
@@ -147,19 +174,21 @@
 
 ### 绑定和导出的矛盾
 * 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(导入到游戏引擎)。
-* 问题解决:为每个部分添加材质(命名规则`****_Rig`),以防止使用`control + j`合并后，需求变动仍需要更改对象重新绑定。各部分拥有材质后，执行分离操作时，选择按材质分离即可。在导出时，复制需要导出的对象,将各对象合并并分配相应的材质，此时也是对副本骨骼使用插件`Expy Kit`的骨骼转换功能（`Rigfy Game Friendly`）的最佳时机.
+* 问题解决:为每个部分添加`顶点组`,在使用`control + j`合并后，如果需求变动，仍可以通过`顶点组`方便地分离对象。
 ![image](../images/blender/Rig_and_Export_Conflict01.png)
 ![image](../images/blender/Rig_and_Export_Conflict02.png)
-
-### 骨骼的精确定位
-* 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
+![image](../images/blender/Rig_and_Export_Conflict03.png)
+![image](../images/blender/Rig_and_Export_Conflict04.png)
+![image](../images/blender/Rig_and_Export_Conflict05.png)
+![image](../images/blender/Rig_and_Export_Conflict06.png)
+![image](../images/blender/Rig_and_Export_Conflict07.png)
 
 ### 在Rigfy上添加自定义骨骼
 * 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
 * 问题解决:
-  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`格式。
+  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`格式或者`Custom_*****`格式等。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
-  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`,勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy控制骨、`Relink Constraints`对于只有一根骨骼来说暂不需要设置。
+  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`(只需要生成控制骨应当设置为：`basic.row_copy`),勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy形变骨、`Relink Constraints`对于只有一根骨骼来说暂不需要设置。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
   3. 使用`control + j`合并新增骨架(只有一根骨骼)到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
@@ -173,7 +202,7 @@
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
   9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-  10. 过程中需要注意原始文件`***_AttachBones`和`Metarig`的备份
+  10. 过程中需要注意原始文件`AttachBones_*****`和`Metarig`的备份
 
 ### 将Mixamo等网站的动画重定向到Rigfy骨架
 * 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
@@ -182,7 +211,7 @@
   ![image](../images/blender/Mixamo_Animation_Format.png)
   * 导入Mixamo动画,并检查角色的`Rest Pose`是`T Pose`还是`A Pose`
   ![image](../images/blender/Import_Mixamo_Animation.png)
-  * 调整关联的Rig对象的当前Pose(`Rest Pose`依旧保持`A Pose`,无需更改)为`T Pose`,此举可保证重定向的两方起始姿势相同，避免重定向过程中骨骼的不正确旋转。
+  * 调整Rig对象的`当前`Pose(`Rest Pose`依旧保持`A Pose`,无需更改)为`T Pose`,此举可保证重定向的两方起始姿势相同，避免重定向过程中骨骼的不正确旋转。
   ![image](../images/blender/Rig_Target_Change_T_Pose.png)
   * 选择需要制作动画的Rig骨架并切换到`Pose Mode`,打开`Expy Kit`面板，设置`Bind To`为导入的Mixamo动画骨骼`Armature`。
   ![image](../images/blender/Expy_Kit_Bind_Armature01.png)
@@ -195,50 +224,26 @@
   ![image](../images/blender/Check_Retarget_Animation02.png)
   * 逐帧检查动画重定向的结果是否正确合理，如重定向结果出现偏差，可通过在源骨架(即Mixamo动画的骨架)的`Retarget Bones`层（该层的所有骨骼均由插件为重定向功能自动生成且后缀名均带有`***_RET`），选择出错的骨骼,并调整该骨骼的位置、旋转等使动画重定向结果正确。(为方便观察,请隐藏不必要的视窗信息,仅保留`Retarget Bones`层骨骼和正在制作动画的Rig模型)
   ![image](../images/blender/Retarget_Animation_Adjust_Operation.png)
-  * 重定向无误之后，选择制作动画的骨骼并切换`Pose Mode`,`w`呼出上下文菜单，在`Expy Kit`工具集中，使用`Animation -> Bake Constrainted Actions`烘焙动画(烘焙动画到形变骨)。
+  * 重定向无误之后，选择制作动画的骨骼并切换`Pose Mode`,`w`呼出上下文菜单，在`Expy Kit`工具集中，使用`Animation -> Bake Constrainted Actions`烘焙动画。
   ![image](../images/blender/Retarget_Animation_Bake.png)
   * 在弹出的`Bake Constrainted Actions`面板中，取消勾选`Stash to NLA stack`,点击`Bake and Exit`完成动画烘焙。
   * 将`Timeline`视窗类型切换到`Dope Sheet`下的`Action Editor`查看相应的`Action`。
   ![image](../images/blender/Retarget_Animation_Action_Result.png)
 
-### 重定向得到的动画如何从230帧缩减为60帧
-* 问题描述:使用`Expy Kit`重定向`Mixamo`动画到`Rigfy`骨骼后,由于`Mixamo`动画是动捕，有230帧，无法应用到游戏中；需要缩减帧数至少到60帧，甚至30帧(具体不同动作的总帧数有待商榷)。
-* 问题解决：将视窗切换到`Text Editor`,输入Python脚本并执行，将当前的`Action`从230帧缩减为60帧。
-![image](../images/blender/Animation_230_To60_Frame.png)
-```
-import bpy
-
-# 获取当前动画
-action = bpy.context.object.animation_data.action
-
-# 获取所有关键帧
-fcurves = action.fcurves
-for fcurve in fcurves:
-    keyframe_points = fcurve.keyframe_points
-    for keyframe in keyframe_points:
-        # 计算新帧位置
-        new_frame = int(keyframe.co[0] * 60 / 230)
-        keyframe.co[0] = new_frame
-
-# 更新动画
-bpy.context.scene.frame_end = 60
-```
-
 ### 导出FBX模型文件到游戏引擎
 * 另见下文 **导出FBX动画文件到游戏引擎**。不同点在于无需重命名场景，无需导出`Animation`。
-* 注意：由于灵活Rig的需求,在权重绘制和动画制作过程中，需要保持各个部分的分离，另见上文 **绑定和导出的矛盾**。
 
 ### 导出FBX动画文件到游戏引擎
 * 切换到当前需要导出的Action,并且更改场景名称(导出的FBX文件中，场景名称对应动画切片的名称，命名规则可以形如:`Zeri_Walking01`)
 ![image](../images/blender/Export_Animation_FBX01.png)
 * 导出窗口:`Include`选项卡下，设置`Limit To`为`Selected Objects`、设置`Object Types`为`Armature` + `Mesh`;
 ![image](../images/blender/Export_FBX_Include_Setting.png)
-* 导出窗口:`Transform`选项卡下,设置`Forward`为`-Y Forward`,`Up`应该回自动更改为`Z Up`(如果没有，需手动更改)，取消勾选`Apply Space Transform`;
+* 导出窗口:`Transform`选项卡下,设置`Forward`为`-Y Forward`,`Up`应该会自动更改为`Z Up`(如果没有，需手动更改)，取消勾选`Apply Space Transform`;
 ![image](../images/blender/Export_FBX_Transform_Setting.png)
 * 导出窗口:`Geometry`选项卡下，保持默认设置
 * 导出窗口:`Armature`选项卡下，勾选`Only Deform Bones`,取消勾选`Add Leaf Bones`，其余保持默认设置。
 ![image](../images/blender/Export_FBX_Armature_Setting.png)
-* 导出窗口:`Animation`选项卡下,取消勾选`Key All Bones`（不需要为所有骨骼在每一帧都生成关键帧）,取消勾选`NLA Strips`,取消勾选`All Actions`（只导出当前Action，且由于工程分文件，一个文件只包含一个Action动画）,勾选`Force Start/End Keying`（在动画的起始帧和结束帧强制插入关键帧，即使这些帧原本没有关键帧，例如：一段30帧的行走动画第1帧和第30帧；如果动画需要在游戏引擎中循环播放，例如角色的`Idle`动画，勾选此项可以确保动画的平滑过渡）。
+* 导出窗口:`Animation`选项卡下,取消勾选`Key All Bones`（不需要为所有骨骼在每一帧都生成关键帧）,取消勾选`NLA Strips`,取消勾选`All Actions`（只导出当前Action，且由于工程分文件，一个文件只包含一个Action动画）,勾选`Force Start/End Keying`（在动画的起始帧和结束帧强制插入关键帧，即使这些帧处原本没有关键帧，例如：一段30帧的行走动画第1帧和第30帧。如果动画需要在游戏引擎中循环播放，例如角色的`Idle`动画，勾选此项可以确保动画的平滑过渡）。
 ![image](../images/blender/Export_FBX_Animation_Setting.png)
 * 导出的FBX动画文件命名规则,可以形如:`@Zeri_Walking01`或`@ZeriWalking01`或`Zeri_Walking01_Animation`
 * 如果游戏有换装功能，这里选择导出的骨骼和模型对象会有所不同(后补)
@@ -250,7 +255,7 @@ bpy.context.scene.frame_end = 60
 ### Unity游戏引擎导入FBX动画文件
 * 在FBX的`Inspector`面板中,`Model`选项卡下:勾选`Bake Axis Conversion`，取消勾选`Import Visibility`,取消勾选`Import Camera`，取消勾选`Import Light`；
 ![image](../images/blender/Unity_Import_FBX_Animation01.png)
-* 在FBX的`Inspector`面板中,`Rig`选项卡下:`Animation Type`下拉菜单选择`Generic`（为何不使用`Humanoid`类型？因为导入动画会有`Lower Retargeting Quality`警告，并且我们暂时不会使用`Humanoid`的动画重定向功能,至于`Humanoid IK`功能也不是必须的，我们在`Generic`类型上自定义脚部的`IK`功能）;`Avatar Definition`下拉菜单选择`Copy From Other Avatar`;`Source`选择对应人物模型所生成的`Avatar`。
+* 在FBX的`Inspector`面板中,`Rig`选项卡下:`Animation Type`下拉菜单选择`Generic`（为何不使用`Humanoid`类型？因为导入动画会有`Lower Retargeting Quality`警告，并且我们暂时不会使用`Humanoid`的动画重定向功能,至于`Humanoid IK`功能也不是必须的，我们可以在`Generic`类型上自定义脚部的`IK`功能）;`Avatar Definition`下拉菜单选择`Copy From Other Avatar`;`Source`选择对应人物模型所生成的`Avatar`。
 ![image](../images/blender/Unity_Import_FBX_Animation02.png)
 * 在FBX的`Inspector`面板中,`Animation`选项卡下:`Anim Compression`下拉菜单选择`Optimal`(Unity会自动选择动画的压缩方式，同时保持较高的动画质量),对于需要循环播放的动画(例如:Idle、Walking)勾选`Loop Time`，是否需要勾选`Loop Pose`，取决于动画的起始帧和结束帧是否一致，当起始帧和结束帧不一致时(例如角色的Idle动画)，需要勾选`Loop Pose`以使动画循环平滑过渡；关于`Root Transform ***`相关是否勾选，可参考视频: [Root Motion Explained (Unity Tutorial)](https://www.youtube.com/watch?v=Xl_5roq4UlI&list=WL&index=24)
 ![image](../images/blender/Unity_Import_FBX_Animation03.png)
@@ -263,8 +268,7 @@ bpy.context.scene.frame_end = 60
 * 问题解决:使用`Expy Kit`插件重新组织骨架骨骼的层级关系，使导出的FBX模型骨架转换为对游戏引擎友好。具体:选择需要转换的骨架并切换到`Pose Mode`,`w`呼出上下文菜单，找到`Expy Kit`工具集的下的`Conversion -> Rigfy Game Friendly`。
 ![image](../images/blender/Convert_Rigfy_To_Game_Friendly.png)
 ![image](../images/blender/Rigfy_Game_Friendly_Result.png)
-* 注意:即使后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，针对这种情况，插件也支持新的`Rigfy`骨架转换为游戏引擎友好。
-* 注意:如果更改了Rigfy骨架，则所有关联此骨架制作的动画有可能丢失动画数据（原因可能是骨骼层级和命名变得不匹配）。为了避免这种情况,尽量复制一份副本之后，再使用`Expy Kit`插件转换骨架为游戏引擎友好。（实际测试时，任何时间点转换骨架，相应的动画文件都不会出问题）为了防止万一的不幸，记得使用`File -> Save As`做好文件的备份。随时使用`File -> Clean Up -> Purge Unused Data`清理不再使用的对象,保持工程文件的简洁(例如:动画重定向完成后，清理Mixamo动画相关)。
+* 注意:若后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，再次使用插件的骨骼转换功能也是可行的(但存在风险:由于骨架骨骼变动,所以可能导致新的`Rigfy`骨架经过插件的骨骼变换之后，新骨架的层级关系可能和旧骨架的层级关系不再相同，进而导致关联此Rig的动画文件的动画出现异常,丢失动画数据;为了避免这种情况，应该在制作动画之前,完成所有骨骼的添加工作,包括：头发、飘带、小物件等，并且锁定骨骼不被修改。如果不幸还是遇到这种情况,首先请做好文件的备份，然后尝试在动画文件中重新关联新骨架。)
 
 ### 重新组织文件的目录结构后，导致link关联文件丢失。
 * 问题描述：被关联的文件路径未改变，改变了操作关联的文件路径，导致工程出现问题。blender提示“`1 libraries and 318 linked data-blocks are missing(...)`”。
