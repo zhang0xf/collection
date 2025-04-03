@@ -47,6 +47,20 @@
 ![image](../images/substance_painter/Hair_Texture_Exports.png)
 ![image](../images/substance_painter/Textures_Exports_Result.png)
 
+### Unity游戏引擎贴图导入设置
+* BaseMap:勾选`sRGB(Color Texture)`、设置`Wrap Mode`为`Clamp`、主角是摄像机跟随的对象，故取消勾选`Generate Mipmaps`；
+![image](../images/substance_painter/Unity_BaseMap_Import_Setting.png)
+* LightMap:由于存储灰度值，取消勾选`sRGB(Color Texture)`、设置`Wrap Mode`为`Clamp`、取消勾选`Generate Mipmaps`；
+![image](../images/substance_painter/Unity_LightMap_Import_Setting.png)
+* NormalMap:设置`Texture Type`为`Normal Map`、设置`Wrap Mode`为`Clamp`、取消勾选`Generate Mipmaps`；
+![image](../images/substance_painter/Unity_NormalMap_Import_Setting.png)
+* RampMap:勾选`sRGB(Color Texture)`、设置`Wrap Mode`为`Clamp`、设置`Non-Power of 2`为`None`、取消勾选`Generate Mipmaps`；
+![image](../images/substance_painter/Unity_RampMap_Import_Setting.png)
+* FaceLightMap(SDF):勾选`sRGB(Color Texture)`,设置`Wrap Mode`为`Clamp`、保证A通道有SDF灰度值信息;
+![image](../images/substance_painter/Unity_FaceLightMap_Import_Setting.png)
+* FaceShadowMask:勾选`sRGB(Color Texture)`,设置`Wrap Mode`为`Clamp`、保证A通道有SDF灰度值信息;
+![image](../images/substance_painter/Unity_FaceShadow_Mask_Import_Setting.png)
+
 ### 灵活使用笔刷的校准属性
 * 问题描述:使用笔刷在模型上绘制时，笔刷被前边模型遮挡。
 * 问题解决:调整笔刷的校准属性,将`Wrap包裹`改为`UV`就不用担心在UV上绘制时,笔刷会涂抹到其他对象上
@@ -107,7 +121,7 @@
 * 问题描述:RampMap(使用编写的Unity工具生成)中的阴影色由`Substance painter`中直接拷贝而来,最终的渲染效果，阴影色明显过暗!
 ![image](../images/substance_painter/Render_Shadow_Too_Dark01.png)
 ![image](../images/substance_painter/Render_Shadow_Too_Dark02.png)
-* 问题分析:由于最终的渲染代码计算最终颜色时，部分因子为`BaseColor`的采样值 * `RampMap`的采样值。这导致计算阴影色时，`BaseColor`贴图上本就存在的手绘阴影，会再次与`RampMap`上复制而来的阴影色相乘（Multiply混合模式），所以加深了阴影色，使之与`Substance painter`中所见的颜色效果不符
+* 问题分析:由于最终的渲染代码计算最终颜色时，部分因子为`BaseColor`的采样值 * `RampMap`的采样值。这导致计算阴影色时，`BaseColor`贴图上本就存在的手绘阴影，会与`RampMap`上复制而来的阴影色相乘（Multiply混合模式），所以加深了阴影色，使之与`Substance painter`中所见的颜色效果不符
 * 问题解决: 在`Substance painter`中，不能直接绘制阴影色，而是应该将图层的混合模式更改为`Multiply`模式，即底色与图层颜色相乘来调整最后的阴影色，以达到混合模式为`Normal`时直接绘制阴影色的效果。在`RampMap`工具中，复制的不再是最终的阴影色，而是在`Substance painter`图层中用于`Multiply`的颜色。（这种方式也可以认为是颜色的预处理。当然，对于不需要确定阴影色的图层直接使用`Normal`即可）
 ![image](../images/substance_painter/Render_Shadow_Too_Dark03.png)
 ![image](../images/substance_painter/Render_Shadow_Too_Dark04.png)
