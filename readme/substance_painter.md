@@ -24,6 +24,29 @@
 
 # Substance Painter使用技巧、问题及解决方案
 
+### 高低模烘焙的准备
+* 高模分配纯色材质,以支持`Substance Painter`；
+* 低模规划好UV布局；
+* 高低模需符合命名规则(`_Low`,`_High`)；
+
+### 高低模烘焙的设置
+* 参考视频: [Substance 3D Painter 8.3 烘焙功能讲解](https://www.bilibili.com/video/BV1mv4y1k7yC/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+* 参考视频: [MainMian GameModel Pate35(时间戳1:52:18)](https://www.bilibili.com/video/BV1gZ4y1e7nW?spm_id_from=333.788.videopod.episodes&vd_source=b9589ad635db7dddd215259c55a8a09c&p=3)
+![image](../images/substance_painter/High_And_Low_Bake_Settings01.png)
+![image](../images/substance_painter/High_And_Low_Bake_Settings02.png)
+![image](../images/substance_painter/High_And_Low_Bake_Settings03.png)
+![image](../images/substance_painter/High_And_Low_Bake_Settings04.png)
+![image](../images/substance_painter/High_And_Low_Bake_Settings05.png)
+
+### 自定义卡通渲染贴图导出设置
+* 添加自定义`Zeri ToonShader`贴图导出设置:
+![image](../images/substance_painter/Zeri_ToonShader_Default1.png)
+![image](../images/substance_painter/Zeri_ToonShader_Default2.png)
+![image](../images/substance_painter/Textures_Exports_Seettings.png)
+![image](../images/substance_painter/Face_Texture_Exports.png)
+![image](../images/substance_painter/Hair_Texture_Exports.png)
+![image](../images/substance_painter/Textures_Exports_Result.png)
+
 ### 灵活使用笔刷的校准属性
 * 问题描述:使用笔刷在模型上绘制时，笔刷被前边模型遮挡。
 * 问题解决:调整笔刷的校准属性,将`Wrap包裹`改为`UV`就不用担心在UV上绘制时,笔刷会涂抹到其他对象上
@@ -89,3 +112,11 @@
 ![image](../images/substance_painter/Render_Shadow_Too_Dark03.png)
 ![image](../images/substance_painter/Render_Shadow_Too_Dark04.png)
 ![image](../images/substance_painter/Render_Shadow_Too_Dark05.png)
+
+### 关于阴影色的选取
+* 阴影颜色不是只要比固有色深就行了,灰度值下沉的同时(也可不改变灰度值),应当增加色相和饱和度(即向色盘右下方向/右方向选取),才不会使阴影颜色变黑。
+* 基色的选择:应尽可能选择不深的基色(色盘的左上区域),重点是不要使用完美的黑色,那样会很难控制颜色。
+* 关于阴影色的参考:
+  * [https://www.bilibili.com/opus/517957632680171840](https://www.bilibili.com/opus/517957632680171840)
+  * [https://www.163.com/dy/article/GON3184U05169PP0.html](https://www.163.com/dy/article/GON3184U05169PP0.html)
+* 关于冷暖色:色彩学上根据心理感受把颜色分为暖色(红、黄、橙)、冷色(青、蓝)和中性色(紫、绿、黑、灰、白)。

@@ -125,6 +125,11 @@
 * 展UV时，细节多、屏幕占比大的UV孤岛需要尽可能放大；相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
 * 导入Unity游戏引擎后，制作Prefab时选择`Prefab -> Unpack`而非`Prefab -> UnPack Completely`。
 
+### 关于外来模型的UVMap
+* 导入的外来模型可能已有自定义的`UVMap`,与`Blender`默认的`UVMap`不在一个UV坐标通道，如果不处理或者忘记检查，则最后在导入游戏引擎后，外来模型（背包）与本地自建模型（人物）会分布在不同的`纹理坐标通道`(例如：一个在`TEXCOORD0`通道，另一个在`TEXCOORD1`通道)，进而会导致渲染代码采样UV坐标时结果错误。故导入外来模型之后，需要确保所有的对象在同一UV通道。例如:默认的`UVMap`。
+![image](../images/blender/Import_Model_UVMap.png)
+* 在建模过程中，可能需要拷贝模型的UVMap，方法如下:`选择源物体` -> `选择目标物体` -> `control + l -> Copy UV Maps`.
+
 ### 建模、绑定和动画分文件(多人协作开发)
 * 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
 * 对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)(或者在导入时使用`Append`)；在执行`Make Local`后可能遇到`Object`已经本地化，但是相关联的`Mesh Data`以及`Material`仍然是关联状态,导致`Object`依旧不支持编辑,可使用如下脚本将选中的对象本地化:
