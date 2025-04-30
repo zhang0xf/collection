@@ -11,6 +11,7 @@
 # blender资产库
 * 创建blender资产库:
 ![image](../images/blender/File_Paths_Asset_Library.png)
+* 将引用的资源打包进blend文件,避免移动文件之后丢失引用:`File -> External Data -> Pack Resources`.
 
 # blender快捷键
 
@@ -97,6 +98,7 @@
 * `f`:快速网格填充
 * `shift + n`:重新计算法线方向
 * `option + n -> 翻转`:翻转法线方向
+* `s + z + 0`:沿z轴对齐(例如:选中两个点并使其z坐标相同)
 
 ### 骨骼
 * `control + p -> 保持偏移量`:设置父子关系(骨骼)
@@ -117,6 +119,29 @@
 * `[曲线编辑模式] control + t`:缩放曲线控制点（control point）的倾斜角（tilt）
 
 # blender实用技巧、注意事项、问题及解决方案
+
+### 雕刻边沿
+* 问题描述：在雕刻鞋子时，希望雕刻出鞋底和鞋面的边沿并使鞋底平整。
+* 问题解决：使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
+![image](../images/blender/Sculpt_Shoes_Edge.png)
+
+### 雕刻时的遮罩和限制
+* 问题描述：在制作“编制手环”时,我们需要对单个"编织绳"进行`抓取`，并固定x轴，使雕刻只能在y和z轴上进行。
+![image](../images/blender/Sculpt_Bracelet01.png)
+* 问题解决：使用`Face Sets -> Initialize Face Sets -> By Loose Parts`;打开并勾选`Auto-Masking`下的`Face Sets`以及`Mesh Boundary`;打开`Symmetry`并固定x轴；
+![image](../images/blender/Sculpt_Bracelet02.png)
+![image](../images/blender/Sculpt_Bracelet03.png)
+![image](../images/blender/Sculpt_Bracelet04.png)
+
+### 面吸附无法准确吸附到最近的面
+* 问题描述:在对耳朵部分进行拓扑时，点应当吸附到"耳朵"上而非"头部"
+![image](../images/blender/Vertex_Snap_To_Face_Error.png)
+* 问题解决:更改吸附规则为`Face Project`,并确保启用`Backface Culling`。
+![image](../images/blender/Vertex_Snap_To_Face.png)
+
+### 挤出的点自动吸附到表面
+* 问题解决:更改吸附规则为`Face Nearest`,并确保开启`Backface Culling`。在使用`e`挤出顶点之后,再使用`g`移动顶点（移动时会自动吸附）。
+
 ### UV同步
 * 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项
 
@@ -124,6 +149,8 @@
 * 展UV时，叠放UV布局(例如对称的左右手)可以充分利用Texture有限的空间，减少Texture数量有助于提升性能。但是会限制艺术表现(例如左右手可能会要求不同的贴花,则不适合叠放UV)。
 * 展UV时，细节多、屏幕占比大的UV孤岛需要尽可能放大；相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
 * 导入Unity游戏引擎后，制作Prefab时选择`Prefab -> Unpack`而非`Prefab -> UnPack Completely`。
+
+### 百褶裙的双面渲染
 
 ### 关于外来模型的UVMap
 * 导入的外来模型可能已有自定义的`UVMap`,与`Blender`默认的`UVMap`不在一个UV坐标通道，如果不处理或者忘记检查，则最后在导入游戏引擎后，外来模型（背包）与本地自建模型（人物）会分布在不同的`纹理坐标通道`(例如：一个在`TEXCOORD0`通道，另一个在`TEXCOORD1`通道)，进而会导致渲染代码采样UV坐标时结果错误。故导入外来模型之后，需要确保所有的对象在同一UV通道。例如:默认的`UVMap`。
@@ -203,7 +230,7 @@ print("所有对象及其关联数据已本地化！")
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
   6. 选择重新生成的`Rig`,切换到`Pose Mode`,检查UI和父子关系是否正确。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy06.png)
-  7. 最后进行权重绘制。
+  7. 进行权重绘制(此步骤最好在加入Rigfy之前完成)。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
   9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
