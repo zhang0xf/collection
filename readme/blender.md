@@ -99,6 +99,7 @@
 * `shift + n`:重新计算法线方向
 * `option + n -> 翻转`:翻转法线方向
 * `s + z + 0`:沿z轴对齐(例如:选中两个点并使其z坐标相同)
+* `shift + tab`:开启/关闭吸附功能
 
 ### 骨骼
 * `control + p -> 保持偏移量`:设置父子关系(骨骼)
@@ -148,6 +149,10 @@
 ### UV与游戏表现和性能的相关性
 * 展UV时，叠放UV布局(例如对称的左右手)可以充分利用Texture有限的空间，减少Texture数量有助于提升性能。但是会限制艺术表现(例如左右手可能会要求不同的贴花,则不适合叠放UV)。
 * 展UV时，细节多、屏幕占比大的UV孤岛需要尽可能放大；相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
+* 展UV时，可能遇到“整个UV孤岛”应当尽可能缩小，即细节较少（例如：人物腿部几乎是纯皮肤色）；但是“UV”孤岛中的一些区域应当尽可能放大，因为细节较多（例如：腿部有贴纸，希望高分辨率展示）。则此时可以单独挖出拥有细节的区域并放大该部分区域的UV,其余对称的区域仍然可进行UV叠放。（参考自米哈游模型的做法）
+![image](../images/blender/UV_Unwrap_suggestion01.png)
+![image](../images/blender/UV_Unwrap_suggestion02.png)
+![image](../images/blender/UV_Unwrap_suggestion03.png)
 * 导入Unity游戏引擎后，制作Prefab时选择`Prefab -> Unpack`而非`Prefab -> UnPack Completely`。
 
 ### 百褶裙的双面渲染
@@ -203,6 +208,19 @@ print("所有对象及其关联数据已本地化！")
 * 必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
 * 细节处权重绘制可以从`骨骼模式`切换到`点模式`,并且将视窗切换到`线框模式`以方便操作;例如:大腿和短裤在接缝处的两组点应该是重叠的,可以对相应点进行`Add`和`Subtract`以修缮权重。
 ![image](../images/blender/Rig_Weight_Paint.png)
+
+### 权重传递
+* 问题描述:两个独立网格(即使两个Mesh属于同一个Object，例如:鞋子和其上的装饰、鞋带等)使用自动权重后，分配的权重不连续，导致独立的相互独立的Mesh形变程度不一致，最终出现`分离`的现象。
+![image](../images/blender/Transfer_Weight01.png)
+* 原因分析：因为是独立的Mesh，所以即使属于同一个Object，但是其顶点不是连续的，那么`自动权重`给到的权重就不可能是连续的，就会出现上述现象。
+* 问题解决(使用权重传递，效果可能不理想):
+  1. 模型绑定到骨骼，选择`with empty groups`；
+  ![image](../images/blender/Transfer_Weight02.png)
+  2. 先点选鞋子(已绘制权重),后点选鞋带(未有权重)，进入`weight paint`模式,使用`weights -> transfer weights`，在弹出的`Transfer Mesh Data`设置面板中，设置`Vertex Mapping`为`Nearest Face Vertex`,设置`Source Layer`为`By Name`。
+  ![image](../images/blender/Transfer_Weight03.png)
+  ![image](../images/blender/Transfer_Weight04.png)
+* 问题解决(建议方案)：低模拓扑时，尽量拓扑为一个整体的`封套`，即顶点连续的一个Mesh。
+* 问题解决：若拓扑为一个`封套`过于复杂，可采用手动绘制权重，确保多个Mesh权重的连续性（参考模型:`绝区零-玲`）。
 
 ### 绑定和导出的矛盾
 * 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(导入到游戏引擎)。
