@@ -200,6 +200,43 @@ print("所有对象及其关联数据已本地化！")
 * 问题解决:安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit),取消勾选`UV Sync Selection`,全选弯曲的UV孤岛,使用`Straighten UVs`打直UV
 ![image](../images/blender/Make_UV_Straight_Solution.png)
 
+### UV对齐
+* 问题描述:在叠放镜像UV时，可能会遇到大部分顶点对齐，部分顶点不对齐的场景；
+![image](../images/blender/UV_Mirror_Align01.png)
+* 问题解决：打开顶点吸附,关闭`UV Sync Selection`并切换到`点模式`，选择顶点，移动并吸附。
+![image](../images/blender/UV_Mirror_Align02.png)
+* 问题解决【进阶】：如果顶点过多,那么一个一个手动操作是十分浪费时间的!对于这种明显的重复劳动，我们可以使用脚本来操作（**重要前提**：两个镜像的UV已经尽可能地叠放在一起，顶点都尽可能地接近,关闭`UV Sync Selection`，并且确保只选择相关顶点。更保险的方式是进行备份）。脚本如下:
+```
+import bpy
+import bmesh
+
+# 获取当前UV编辑器选中的顶点
+obj = bpy.context.active_object
+bm = bmesh.from_edit_mesh(obj.data)
+uv_layer = bm.loops.layers.uv.active
+
+# 设置吸附阈值（根据需求调整）
+SNAP_THRESHOLD = 0.001
+
+# 收集所有选中的UV顶点
+selected_uvs = []
+for face in bm.faces:
+    for loop in face.loops:
+        if loop[uv_layer].select:
+            selected_uvs.append(loop[uv_layer])
+
+# 批量吸附：将距离小于阈值的顶点合并到第一个顶点的位置
+for i, uv in enumerate(selected_uvs):
+    for j, other_uv in enumerate(selected_uvs[i+1:], i+1):
+        distance = (uv.uv - other_uv.uv).length
+        if distance < SNAP_THRESHOLD:
+            other_uv.uv = uv.uv  # 将other_uv吸附到uv的位置
+
+# 更新网格
+bmesh.update_edit_mesh(obj.data)
+```
+![image](../images/blender/UV_Mirror_Auto_Snap.png)
+
 ### 骨骼的精确定位
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
@@ -222,6 +259,7 @@ print("所有对象及其关联数据已本地化！")
 * 问题解决(建议方案)：低模拓扑时，尽量拓扑为一个整体的`封套`，即顶点连续的一个Mesh(参考模型：`绝区零-哲`,`绝区零-安比`,`绝区零-妮可`)。
 * 问题解决：若拓扑为一个`封套`过于复杂，可采用手动绘制权重，确保多个Mesh权重的连续性（参考模型:`绝区零-玲`,`绝区零-哲`,`绝区零-安比`，`绝区零-妮可`）。
 * 问题总结：实际建模中，多是混合上述方案，尽量将相邻的、贴合的部分拓扑为一个`封套`（例如：鞋带贴合鞋面的部分），将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结部分）独立出一个Mesh。
+* 建议：可以导出高低模到Substance Painter中，使用默认封套距离，观察低模拓扑是否可改进。
 
 ### 绑定和导出的矛盾
 * 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(导入到游戏引擎)。
