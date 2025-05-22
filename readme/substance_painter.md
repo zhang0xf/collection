@@ -38,6 +38,12 @@
 ![image](../images/substance_painter/High_And_Low_Bake_Settings04.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings05.png)
 
+### 单独烘焙某个部位
+* 问题描述：在烘焙人物模型时，由于只给了低模三个材质：头发、脸部和身体；导致身体这一个“纹理集”包含了太多“部件”，从而在设置`封套`的“最大前部距离”时，出现“水桶效应”，必须扩大到完全去除红色的“匹配错误”，从而导致手部区域的“最大前部距离”不是最佳值。进而导致烘焙结果出错：手指沟区域法线和AO均出错。
+![image](../images/substance_painter/Bake_By_Parts01.png)
+* 问题解决：将手部单独设置一个`纹理集`并进行烘焙，即可设置合理的`最大前部距离`，从而得到正确的烘焙结果。但需要注意的是，此时“部件”的UV仍然应该是整个身体UV的“一小部分区域”，最后各个“部件”导出的贴图再经过绘图软件，如Photoshop、Kirta等合并，得到最后的整体贴图。
+![image](../images/substance_painter/Bake_By_Parts02.png)
+
 ### 自定义卡通渲染贴图导出设置
 * 添加自定义`Zeri ToonShader`贴图导出设置:
 ![image](../images/substance_painter/Zeri_ToonShader_Default1.png)
