@@ -45,6 +45,14 @@
 ![image](../images/substance_painter/Bake_By_Parts02.png)
 * 注意：在实际工程时，“部件”的单独烘焙，即给它创建一个单独的`纹理集`，即在低模分配材质时，不再是头发、脸部和身体三个材质，而是有着诸如"手部"，“鞋子”等部件的材质。当然，这些材质只用于烘焙，最终导入Unity引擎时，仍然应该是仅有三个材质（对应三个贴图）。
 
+### 烘焙得到的法线贴图存在锯齿状接缝
+* 问题描述：由于Texture空间有限，所以尽可能将镜像的UV进行叠放，例如：左右手臂；但是由于不经意间对手臂拓扑的更改，使得镜像UV不再绝对镜像。（尽管在展UV时，已经将镜像UV的顶点一一对齐，使得镜像UV完全重叠）
+![image](../images/substance_painter/Bake_NormalMap_Seam01.png)
+* 问题分析：Substance Painter在烘焙镜像UV时，接缝处的法线计算可能混合左右两侧的投影，导致锯齿。即使顶点位置对齐，微小的拓扑差异或法线插值仍会导致接缝处法线不连续。
+* 问题解决：回到`Blender`使网格完全镜像。
+![image](../images/substance_painter/Bake_NormalMap_Seam02.png)
+![image](../images/substance_painter/Bake_NormalMap_Seam03.png)
+
 ### 自定义卡通渲染贴图导出设置
 * 添加自定义`Zeri ToonShader`贴图导出设置:
 ![image](../images/substance_painter/Zeri_ToonShader_Default1.png)
