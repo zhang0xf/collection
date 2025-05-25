@@ -38,12 +38,38 @@
 ![image](../images/substance_painter/High_And_Low_Bake_Settings04.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings05.png)
 
-### 单独烘焙某个部位
-* 问题描述：在烘焙人物模型时，由于只给了低模三个材质：头发、脸部和身体；导致身体这一个“纹理集”包含了太多“部件”，从而在设置`封套`的“最大前部距离”时，出现“水桶效应”，必须扩大到完全去除红色的“匹配错误”，从而导致手部区域的“最大前部距离”不是最佳值。进而导致烘焙结果出错：手指沟区域法线和AO均出错。
+### *兼顾工作流的“分部件烘焙”及合并贴图
+* 问题描述：在烘焙人物模型时，由于只给了低模三个材质：头发、脸部和身体；导致身体这一个“纹理集”包含了太多“部件”，从而在设置`封套`的“最大前部距离”时，出现“水桶效应”，必须扩大到完全去除红色的“匹配错误”，从而导致手部区域的“最大前部距离”不是最佳值。进而导致烘焙结果出错：手指沟区域法线（Normal）、曲率（Curvature）、厚度（Thickness）以及环境光遮蔽（AO）均出错。
 ![image](../images/substance_painter/Bake_By_Parts01.png)
-* 问题解决：将手部单独设置一个`纹理集`并进行烘焙，即可设置合理的`最大前部距离`，从而得到正确的烘焙结果。但需要注意的是，此时“部件”的UV仍然应该是整个身体UV的“一小部分区域”，最后各个“部件”导出的贴图再经过绘图软件，如Photoshop、Kirta等合并，得到最后的整体贴图。
+* 问题解决：将“手部”单独进行烘焙，即可为“手部”设置合理的`最大前部距离`，从而得到正确的烘焙结果。
 ![image](../images/substance_painter/Bake_By_Parts02.png)
-* 注意：在实际工程时，“部件”的单独烘焙，即给它创建一个单独的`纹理集`，即在低模分配材质时，不再是头发、脸部和身体三个材质，而是有着诸如"手部"，“鞋子”等部件的材质。当然，这些材质只用于烘焙，最终导入Unity引擎时，仍然应该是仅有三个材质（对应三个贴图）。
+* 冲突：为了得到最佳的烘焙效果,自然希望所有"部件"均单独烘焙；因此要求人物模型的每个“部件”都有独立的材质，对应在Substance Painter中拥有独立的`纹理集`，甚至需要为“部件”新建一个工程（经测试，即使“部件”拥有独立的`纹理集`，还是会因为整个工程的其他`纹理集`的影响而导致烘焙结果出现问题，此时就不得不为“部件”单独新建一个工程）。但是渲染代码出于性能考虑，要求`Body`、`Face`和`Hair`三个材质的**每种**贴图只能有一张，而Substance Painter(2023)只能为每一个`纹理集`输出贴图。所以最后为了得到完整贴图，我们不得不将所有“部件”输出的纹理贴图进行合并！而合并依赖于外部的绘图软件（也许Substance Painter有符合需求的插件/脚本，暂不研究），更糟糕的是，如果需要合并的贴图是Substance Painter输出的“自定义光照贴图”，那么RGBA四个通道均需要一次合并！在此过程中，各类贴图在不同软件之间的导入导出是否会错误地修改贴图的格式/数据？而且从美术角度，我们也希望在一个工程中能够看到整体的美术效果！
+* 冲突解决：用“部件”正确的烘焙结果去修复“主工程”错误的烘焙结果，在法线（Normal）、曲率（Curvature）、厚度（Thickness）以及环境光遮蔽（AO）修复完成之后，才进行模型的贴图绘制流程。以法线贴图的修复为例，其他贴图同理：
+  * 从Substance Painter中导出“部件”烘焙得到的正确法线贴图以及“主工程”烘焙得到的错误法线贴图：
+  ![image](../images/substance_painter/Export_Bake_Texture01.png)
+  ![image](../images/substance_painter/Export_Bake_Texture02.png)
+  * 将两张法线贴图导入到Krita中(导入方式使用“拖入法”，并选择`插入为 - 新图层`。如果Krita提示贴图导入格式，一致使用默认)，“主工程”的法线贴图为“底”，“部件”工程的法线贴图用于覆盖“主工程”法线贴图中错误的区域。
+  ![image](../images/substance_painter/Krita_Import_Normal01.png)
+  ![image](../images/substance_painter/Krita_Import_Normal02.png)
+  ![image](../images/substance_painter/Krita_Import_Normal03.png)
+  * 在Substance Painter中制作“遮罩”：新建`图层`，添加黑色遮罩，使用`UV块填充`。
+  ![image](../images/substance_painter/Make_UV_Mask.png)
+  * 将“遮罩”从Substance Painter中导出，并导入到Krita新图层中。
+  ![image](../images/substance_painter/Export_UV_Mask.png)
+  ![image](../images/substance_painter/Krita_Import_UV_Mask.png)
+  * 使用Krita的`相似颜色选区工具`进行选区，右键呼出`选区操作`菜单，使用`变形 -> 扩大选区`来将选区沿UV边沿外扩2像素（也可更多）注意：外扩是必须的，以防止接缝处出现问题。
+  ![image](../images/substance_painter/Krita_Select_Mask01.png)
+  ![image](../images/substance_painter/Krita_Select_Mask02.png)
+  ![image](../images/substance_painter/Krita_Select_Mask03.png)
+  * 在Krita中，切换到“部件”法线贴图图层,右键呼出`选区操作`菜单，使用`复制选区 - 到新图层`将正确的法线贴图区域复制并粘贴到“上层”图层。
+  ![image](../images/substance_painter/Copy_Selected_To_NewLayer01.png)
+  ![image](../images/substance_painter/Copy_Selected_To_NewLayer02.png)
+  * 在Kirta中，打开“最下层”的“主工程”包含错误的法线贴图的图层，以及“上层”的“部件”用于覆盖错误区域的正确法线贴图的图层，使用`文件 -> 导出`来导出最终不包含错误的法线贴图PNG。（导出设置应当最小化更改贴图并保留透明度通道）
+  ![image](../images/substance_painter/Krita_Export_PNG_Settings.png)
+  * 将正确的法线贴图烘焙结果导入Substance Painter中，并替换原有烘焙结果。
+  ![image](../images/substance_painter/Import_Fixed_NormalMap01.png)
+  ![image](../images/substance_painter/Import_Fixed_NormalMap02.png)
+  * 其他类型的贴图同理，在修复完所有“烘焙结果”后，便可按正常流程绘制模型的各类贴图。
 
 ### 烘焙得到的法线贴图存在锯齿状接缝
 * 问题描述：由于Texture空间有限，所以尽可能将镜像的UV进行叠放，例如：左右手臂；但是由于不经意间对手臂拓扑的更改，使得镜像UV不再绝对镜像。（尽管在展UV时，已经将镜像UV的顶点一一对齐，使得镜像UV完全重叠）
