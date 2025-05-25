@@ -38,6 +38,14 @@
 ![image](../images/substance_painter/High_And_Low_Bake_Settings04.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings05.png)
 
+### 烘焙得到的法线贴图存在锯齿状接缝
+* 问题描述：由于Texture空间有限，所以尽可能将镜像的UV进行叠放，例如：左右手臂；但是由于不经意间对手臂拓扑的更改，使得镜像UV不再绝对镜像。（尽管在展UV时，已经将镜像UV的顶点一一对齐，使得镜像UV完全重叠）
+![image](../images/substance_painter/Bake_NormalMap_Seam01.png)
+* 问题分析：Substance Painter在烘焙镜像UV时，接缝处的法线计算可能混合左右两侧的投影，导致锯齿。即使顶点位置对齐，微小的拓扑差异或法线插值仍会导致接缝处法线不连续。
+* 问题解决：回到`Blender`使网格完全镜像。
+![image](../images/substance_painter/Bake_NormalMap_Seam02.png)
+![image](../images/substance_painter/Bake_NormalMap_Seam03.png)
+
 ### *兼顾工作流的“分部件烘焙”及合并贴图
 * 问题描述：在烘焙人物模型时，由于只给了低模三个材质：头发、脸部和身体；导致身体这一个“纹理集”包含了太多“部件”，从而在设置`封套`的“最大前部距离”时，出现“水桶效应”，必须扩大到完全去除红色的“匹配错误”，从而导致手部区域的“最大前部距离”不是最佳值。进而导致烘焙结果出错：手指沟区域法线（Normal）、曲率（Curvature）、厚度（Thickness）以及环境光遮蔽（AO）均出错。
 ![image](../images/substance_painter/Bake_By_Parts01.png)
@@ -71,13 +79,9 @@
   ![image](../images/substance_painter/Import_Fixed_NormalMap02.png)
   * 其他类型的贴图同理，在修复完所有“烘焙结果”后，便可按正常流程绘制模型的各类贴图。
 
-### 烘焙得到的法线贴图存在锯齿状接缝
-* 问题描述：由于Texture空间有限，所以尽可能将镜像的UV进行叠放，例如：左右手臂；但是由于不经意间对手臂拓扑的更改，使得镜像UV不再绝对镜像。（尽管在展UV时，已经将镜像UV的顶点一一对齐，使得镜像UV完全重叠）
-![image](../images/substance_painter/Bake_NormalMap_Seam01.png)
-* 问题分析：Substance Painter在烘焙镜像UV时，接缝处的法线计算可能混合左右两侧的投影，导致锯齿。即使顶点位置对齐，微小的拓扑差异或法线插值仍会导致接缝处法线不连续。
-* 问题解决：回到`Blender`使网格完全镜像。
-![image](../images/substance_painter/Bake_NormalMap_Seam02.png)
-![image](../images/substance_painter/Bake_NormalMap_Seam03.png)
+### 将最终导入游戏引擎的法线贴图变“干净”
+* 问题描述：
+* 问题解决:
 
 ### 自定义卡通渲染贴图导出设置
 * 添加自定义`Zeri ToonShader`贴图导出设置:

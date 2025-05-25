@@ -126,7 +126,7 @@
 * 问题解决：使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
 ![image](../images/blender/Sculpt_Shoes_Edge.png)
 
-### 雕刻时的遮罩和限制
+### 雕刻时的遮罩和限制轴向
 * 问题描述：在制作“编制手环”时,我们需要对单个"编织绳"进行`抓取`，并固定x轴，使雕刻只能在y和z轴上进行。
 ![image](../images/blender/Sculpt_Bracelet01.png)
 * 问题解决：使用`Face Sets -> Initialize Face Sets -> By Loose Parts`;打开并勾选`Auto-Masking`下的`Face Sets`以及`Mesh Boundary`;打开`Symmetry`并固定x轴；
@@ -271,6 +271,60 @@ bmesh.update_edit_mesh(obj.data)
 ![image](../images/blender/Rig_and_Export_Conflict05.png)
 ![image](../images/blender/Rig_and_Export_Conflict06.png)
 ![image](../images/blender/Rig_and_Export_Conflict07.png)
+* 注意：当对象很多时，务必使用脚本批量为选中对象添加顶点组，脚本如下:
+```
+import bpy
+
+def add_vertex_group_to_selected():
+    """为所有选中的网格对象添加同名顶点组，权重设为1.0"""
+    selected_objects = bpy.context.selected_objects
+    
+    for obj in selected_objects:
+        if obj.type != 'MESH':
+            print(f"跳过非网格对象: {obj.name}")
+            continue
+        
+        # 检查是否已存在同名顶点组
+        if obj.vertex_groups.get(obj.name):
+            print(f"已存在顶点组 '{obj.name}'，跳过")
+            continue
+        
+        # 创建顶点组并设置权重
+        vgroup = obj.vertex_groups.new(name=obj.name)
+        vgroup.add(range(len(obj.data.vertices)), 1.0, 'REPLACE')
+        print(f"已为 {obj.name} 添加顶点组并设置权重=1")
+
+    print("操作完成")
+
+# 执行函数
+add_vertex_group_to_selected()
+```
+* 相应删除这些顶点组的脚本如下（可能会使用到）：
+```
+import bpy
+
+def remove_vertex_groups_by_object_name():
+    """删除选中对象中与对象同名的顶点组"""
+    selected_objects = bpy.context.selected_objects
+    
+    for obj in selected_objects:
+        if obj.type != 'MESH':
+            print(f"跳过非网格对象: {obj.name}")
+            continue
+        
+        # 查找与对象同名的顶点组
+        vgroup = obj.vertex_groups.get(obj.name)
+        if vgroup:
+            obj.vertex_groups.remove(vgroup)
+            print(f"已从 {obj.name} 删除顶点组 '{obj.name}'")
+        else:
+            print(f"对象 {obj.name} 无同名顶点组，跳过")
+
+    print("删除操作完成")
+
+# 执行函数
+remove_vertex_groups_by_object_name()
+```
 
 ### 在Rigfy上添加自定义骨骼
 * 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
