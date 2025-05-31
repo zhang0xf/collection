@@ -241,10 +241,52 @@ bmesh.update_edit_mesh(obj.data)
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
 ### 权重绘制
-* 使用自动权重以减少工作量,然后在常用姿势和极限姿势下进行权重的修缮.
-* 必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
+* 绘制权重时，切换到`线框模式`以方便观察，且必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
 * 细节处权重绘制可以从`骨骼模式`切换到`点模式`,并且将视窗切换到`线框模式`以方便操作;例如:大腿和短裤在接缝处的两组点应该是重叠的,可以对相应点进行`Add`和`Subtract`以修缮权重。
 ![image](../images/blender/Rig_Weight_Paint.png)
+
+### 自动权重的清理和修缮
+* 问题描述：使用自动权重后，“部件”网格可能受到不必要骨骼的权重影响。如果需要去除不必要骨骼影响，需要额外的大量检查工作。
+* 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个“相关”顶点，然后在`Item`页签中的`Vertex Weights`下查看该顶点的`Vertex Groups（骨骼）`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.
+![image](../images/blender/Fix_Auto_Weights.png)
+* 小技巧：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并顶点，这样自动权重给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”。
+* **问题解决PLUS**：在自动权重之前，将不必要骨骼的`Deform`属性取消勾选！在自动权重完成之后再回复勾选!(十分好使!)，选择骨骼的脚本如下:
+```
+import bpy
+import re
+
+def select_bones_by_pattern(pattern="DEF-Skirt"):
+    armature = bpy.context.active_object
+    
+    if not armature or armature.type != 'ARMATURE':
+        print("请先选中一个骨架对象")
+        return
+    
+    bpy.ops.object.mode_set(mode='EDIT')
+    bones = armature.data.edit_bones
+    
+    # 取消选择所有骨骼
+    for bone in bones:
+        bone.select = False
+    
+    # 使用正则表达式匹配
+    regex = re.compile(pattern, re.IGNORECASE)  # 忽略大小写
+    matched_bones = [bone for bone in bones if regex.search(bone.name)]
+    
+    if not matched_bones:
+        print(f"没有找到匹配'{pattern}'的骨骼")
+        return
+    
+    for bone in matched_bones:
+        bone.select = True
+    
+    print(f"已选择 {len(matched_bones)} 个匹配'{pattern}'的骨骼")
+
+# 示例用法：
+select_bones_by_pattern("DEF-Skirt")  # 选择所有包含DEF-Skirt的骨骼
+# select_bones_by_pattern("^DEF-Skirt")  # 选择以DEF-Skirt开头的骨骼
+# select_bones_by_pattern("DEF-Skirt.*$")  # 选择以DEF-Skirt开头的骨骼
+```
 
 ### 权重传递
 * 问题描述:两个独立网格(即使两个Mesh属于同一个Object，例如:鞋子和其上的装饰、鞋带等)使用自动权重后，分配的权重不连续，导致独立的相互独立的Mesh形变程度不一致，最终出现`分离`的现象。
@@ -346,6 +388,10 @@ remove_vertex_groups_by_object_name()
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
   9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
   10. 过程中需要注意原始文件`AttachBones_*****`和`Metarig`的备份
+
+### 使用MMD来实现头发、衣裙的物理模拟
+* 问题描述：
+* 问题解决：
 
 ### 将Mixamo等网站的动画重定向到Rigfy骨架
 * 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
