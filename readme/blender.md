@@ -250,7 +250,7 @@ bmesh.update_edit_mesh(obj.data)
 * 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个“相关”顶点，然后在`Item`页签中的`Vertex Weights`下查看该顶点的`Vertex Groups（骨骼）`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.
 ![image](../images/blender/Fix_Auto_Weights.png)
 * 小技巧：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并顶点，这样自动权重给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”。
-* **问题解决PLUS**：在自动权重之前，将不必要骨骼的`Deform`属性取消勾选！在自动权重完成之后再回复勾选!(十分好使!)，选择骨骼的脚本如下:
+* **问题解决PLUS**：在自动权重之前，将不必要骨骼的`Deform`属性取消勾选！在自动权重完成之后再恢复勾选!(十分好使!)，选择骨骼的脚本如下:
 ```
 import bpy
 import re
