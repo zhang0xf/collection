@@ -241,17 +241,30 @@ bmesh.update_edit_mesh(obj.data)
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
 ### 权重绘制
-* 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)
+* 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
 * 绘制权重时，切换到`线框模式`以方便观察，且必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。
 * 细节处权重绘制可以从`骨骼模式`切换到`点模式`,并且将视窗切换到`线框模式`以方便操作;例如:大腿和短裤在接缝处的两组点应该是重叠的,可以对相应点进行`Add`和`Subtract`以修缮权重。
 ![image](../images/blender/Rig_Weight_Paint.png)
+* 在权重修缮过程中，如果遇到不合理的拓扑结构需要及时修正，例如：遇到平滑着色器下的明显硬边，应当换一种三角形切分方式。(当然对于分文件合作开发工作流，应当通知建模文件更改，而非在绑定文件中更改!)
+![image](../images/blender/Sharp_when_Rig01.png)
+![image](../images/blender/Sharp_when_Rig02.png)
+![image](../images/blender/Sharp_when_Rig03.png)
+![image](../images/blender/Sharp_when_Rig04.png)
+* 绘制权重时，可以使用`Paint Mask`来设置笔刷的遮罩。
+![image](../images/blender/Fix_Auto_weight_Mask01.png)
+![image](../images/blender/Fix_Auto_weight_Mask02.png)
+* 绘制权重时，需要结合各种骨骼姿势。对于链式骨骼（衣服飘带、尾巴等）可以使用`r + x + x（沿本地X轴旋转）`来创建链式骨骼的姿势。
+![image](../images/blender/Weight_Paint_With_Chain.png)
+* 如果在权重已经修缮完成之后，再次<del>使用`Armature Deform -> with empty groups`</del>使用`Armature Deform`(避免产生冗余顶点组，另见下文：**自动权重的清理和修缮**)，此举并不会覆盖已经绘制好的权重！
 
 ### 自动权重的清理和修缮
 * 问题描述：使用自动权重后，“部件”网格可能受到不必要骨骼的权重影响。如果需要去除不必要骨骼影响，需要额外的大量检查工作。
 * 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个“相关”顶点，然后在`Item`页签中的`Vertex Weights`下查看该顶点的`Vertex Groups（骨骼）`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.
-![image](../images/blender/Fix_Auto_Weights.png)
-* 小技巧：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并顶点，这样自动权重给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”。
-* **问题解决PLUS**：在自动权重之前，将不必要骨骼的`Deform`属性取消勾选！在自动权重完成之后再恢复勾选!(十分好使!)，选择骨骼的脚本如下:
+![image](../images/blender/Fix_Auto_Weights01.png)
+* **问题解决 PLUS**：在将网格绑定到骨架时，不再使用`Armature Deform -> with automatic weights`来一步创建自动权重，因为这种方式会将所有标记为`Deform`的骨骼纳入权重绘制的考量中，这样就不可避免地存在距离“当前部件”较近的且应当属于“其它部件”的骨骼参与“当前部件”权重分配！因此，我们需要明确地指出哪些骨骼应当参与“当前部件”的自动权重分配。方法如下：在将网格绑定到骨架时，<del>使用`Armature Deform -> with empty groups`只创建所有骨骼的空顶点组,</del>使用`Armature Deform`只执行绑定，不自动创建所有骨骼的空顶点组（**避免冗余顶点组**，即未被使用的、所有权重=0的组，冗余顶点组对游戏引擎的内存和性能仅有细微影响,但可能会使团队协作混淆；且冗余顶点组过多，不利于调试，也会使权重错误隐藏很深不被发现）；然后进入权重绘制，选择需要参与“当前部件”权重分配的所有骨骼，使用`Weights -> Assign Automatic From Bones`来给选定的骨骼创建自动权重（只会添加被选择骨骼的顶点组，无关骨骼不会被添加顶点组，即不产生冗余顶点组）。如果没使用正确工作流，产生了冗余顶点组，或者是外部模型导入，可通过脚本来批量删除冗余顶点组!
+![image](../images/blender/Fix_Auto_Weights02.png)   
+![image](../images/blender/Fix_Auto_Weights03.png)
+* 批量选择骨骼的脚本如下: 
 ```
 import bpy
 import re
@@ -288,6 +301,37 @@ select_bones_by_pattern("DEF-Skirt")  # 选择所有包含DEF-Skirt的骨骼
 # select_bones_by_pattern("^DEF-Skirt")  # 选择以DEF-Skirt开头的骨骼
 # select_bones_by_pattern("DEF-Skirt.*$")  # 选择以DEF-Skirt开头的骨骼
 ```
+* 批量删除冗余顶点组的脚本如下：（注意：使用脚本删除“冗余顶点组”之后，错误骨骼一览无余！可再做一次检查和修正，修正时务必**关闭“X轴镜像”且打开`Auto Normalized`**，使用权重为0的`Draw`笔刷，去除冗余顶点组的权重，然后再运行一次脚本。当然最佳操作应当是按照正确工作流，避免冗余顶点组产生！）
+```
+import bpy
+
+obj = bpy.context.active_object
+if obj and obj.type == 'MESH':
+    vgroups = obj.vertex_groups
+    used_groups = set()  # 记录所有被使用的顶点组（权重>0）
+    
+    # 第一次遍历：找出所有被使用的顶点组
+    for v in obj.data.vertices:
+        for g in v.groups:
+            if g.weight > 0.0:
+                used_groups.add(g.group)
+    
+    # 第二次遍历：找出未被使用的顶点组（即空组）
+    unused_groups = []
+    for i, vg in enumerate(vgroups):
+        if i not in used_groups:
+            unused_groups.append(i)
+    
+    # 从高到低删除，避免索引错乱
+    for i in sorted(unused_groups, reverse=True):
+        vgroups.remove(vgroups[i])
+    
+    print(f"已删除 {len(unused_groups)} 个空顶点组")
+else:
+    print("未选中有效网格物体")
+```
+* 运行脚本之后：
+![image](../images/blender/Remove_Unused_Vertex_Groups.png)
 
 ### 权重传递
 * 问题描述:两个独立网格(即使两个Mesh属于同一个Object，例如:鞋子和其上的装饰、鞋带等)使用自动权重后，分配的权重不连续，导致独立的相互独立的Mesh形变程度不一致，最终出现`分离`的现象。
@@ -378,7 +422,7 @@ remove_vertex_groups_by_object_name()
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
   3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
-  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系。
+  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系【**这一步很容易忘记**】。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
   5. 点击`Re-Generate Rig`重新生成Rigfy骨架`Rig`,依然会保留之前已经绘制好的权重。(重新生成Rig需要保证`Rig`不是隐藏且可选状态)
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
