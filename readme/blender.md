@@ -262,8 +262,10 @@ bmesh.update_edit_mesh(obj.data)
 
 ### 自动权重的清理和修缮
 * 问题描述：使用自动权重后，“部件”网格可能受到不必要骨骼的权重影响。如果需要去除不必要骨骼影响，需要额外的大量检查工作。
-* 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个“相关”顶点，然后在`Item`页签中的`Vertex Weights`下查看该顶点的`Vertex Groups（骨骼）`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.
+* 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个顶点，然后在`Item`页签中的`Vertex Weights`标签下查看该顶点的`Vertex Groups`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.(可以删除某顶点的不相关顶点组，防止`Smooth`/`Blur笔刷`为该顶点分配错误权重到不相关的骨骼，当然如果顶点很多，需要使用脚本来批量操作!最后不要忘记对所有顶点使用`Weights -> Normalized All`来将所有顶点的所有权重归一化。)
 ![image](../images/blender/Fix_Auto_Weights01.png)
+![image](../images/blender/Fix_Auto_Weights04.png)
+![image](../images/blender/Fix_Auto_Weights05.png)
 * **问题解决 PLUS**：在将网格绑定到骨架时，不再使用`Armature Deform -> with automatic weights`来一步创建自动权重，因为这种方式会将所有标记为`Deform`的骨骼纳入权重绘制的考量中，这样就不可避免地存在距离“当前部件”较近的且应当属于“其它部件”的骨骼参与“当前部件”权重分配！因此，我们需要明确地指出哪些骨骼应当参与“当前部件”的自动权重分配。方法如下：在将网格绑定到骨架时，<del>使用`Armature Deform -> with empty groups`只创建所有骨骼的空顶点组,</del>使用`Armature Deform`只执行绑定，不自动创建所有骨骼的空顶点组（**避免冗余顶点组**，即未被使用的、所有权重=0的组，冗余顶点组对游戏引擎的内存和性能仅有细微影响,但可能会使团队协作混淆；且冗余顶点组过多，不利于调试，也会使权重错误隐藏很深不被发现）；然后进入权重绘制，选择需要参与“当前部件”权重分配的所有骨骼，使用`Weights -> Assign Automatic From Bones`来给选定的骨骼创建自动权重（只会添加被选择骨骼的顶点组，无关骨骼不会被添加顶点组，即不产生冗余顶点组）。如果没使用正确工作流，产生了冗余顶点组，或者是外部模型导入，可通过脚本来批量删除冗余顶点组!
 ![image](../images/blender/Fix_Auto_Weights02.png)   
 ![image](../images/blender/Fix_Auto_Weights03.png)
