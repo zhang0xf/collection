@@ -240,6 +240,27 @@ bmesh.update_edit_mesh(obj.data)
 ### 骨骼的精确定位
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
+### 在Rigfy上添加自定义骨骼
+* 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
+* 问题解决:
+  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`等格式。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
+  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`(只需要生成控制骨应当设置为：`basic.row_copy`),勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy形变骨、`Relink Constraints`暂不需要设置。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
+  3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
+  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系【**这一步很容易忘记**】。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
+  5. 点击`Re-Generate Rig`重新生成Rigfy骨架`Rig`,依然会保留之前已经绘制好的权重。(重新生成Rig需要保证`Rig`不是隐藏且可选状态)
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
+  6. 选择重新生成的`Rig`,切换到`Pose Mode`,检查UI和父子关系是否正确。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy06.png)
+  7. 进行权重绘制。
+  ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
+  8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
+  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+  10. 注意备份骨架
+
 ### 权重绘制
 * 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
 * 绘制权重时，切换到`线框模式`以方便观察，且必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。(也可以借助`Weights -> Smooth`来平滑权重)
@@ -418,26 +439,8 @@ def remove_vertex_groups_by_object_name():
 remove_vertex_groups_by_object_name()
 ```
 
-### 在Rigfy上添加自定义骨骼
-* 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
-* 问题解决:
-  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`等格式。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
-  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`(只需要生成控制骨应当设置为：`basic.row_copy`),勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy形变骨、`Relink Constraints`暂不需要设置。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
-  3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
-  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系【**这一步很容易忘记**】。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
-  5. 点击`Re-Generate Rig`重新生成Rigfy骨架`Rig`,依然会保留之前已经绘制好的权重。(重新生成Rig需要保证`Rig`不是隐藏且可选状态)
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
-  6. 选择重新生成的`Rig`,切换到`Pose Mode`,检查UI和父子关系是否正确。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy06.png)
-  7. 进行权重绘制。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
-  8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
-  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-  10. 注意备份骨架
+### 表情形态键的制作
+* 
 
 ### 将Mixamo等网站的动画重定向到Rigfy骨架
 * 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
