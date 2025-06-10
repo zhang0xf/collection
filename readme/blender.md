@@ -258,7 +258,7 @@ bmesh.update_edit_mesh(obj.data)
   7. 进行权重绘制。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
-  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)(注意，我们需要参考视频里的“FK”与“Physics”隔离的方式以及将物理模拟骨骼合并到`Rigfy`骨架中的方法，但是物理模拟不建议使用视频中“跟随布料”的方式，而应使用基于“Rigidbody”的插件，例如：[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
   10. 注意备份骨架
 
 ### 权重绘制
@@ -271,7 +271,7 @@ bmesh.update_edit_mesh(obj.data)
 ![image](../images/blender/Sharp_when_Rig02.png)
 ![image](../images/blender/Sharp_when_Rig03.png)
 ![image](../images/blender/Sharp_when_Rig04.png)
-但是，有些不合理拓扑的修改涉及到增删顶点以及UV改动，那么此时“绑定文件”就必须从“建模文件”同步修改对象，并且将旧对象的权重传递给新同步的对象，此时可以使用`Data Transfer`修改器,勾选`Vertex Data`及`Vertex Groups`，并点击`Generate Data Layers`，最后应用修改器。检查顶点组权重没有问题之后，使用`Armature Deform`来将新同步的对象绑定到骨骼。
+但是，有些不合理拓扑的修改涉及到增删顶点以及UV改动，那么此时“绑定文件”就必须从“建模文件”同步修改对象，并且将旧对象的权重传递给新同步的对象，此时可以使用`Data Transfer`修改器,勾选`Vertex Data`及`Vertex Groups`，并点击`Generate Data Layers`，最后应用修改器。检查顶点组权重没有问题之后，使用`Armature Deform`来将新同步的对象绑定到骨骼。(上述流程也适用于形态键改动)
 ![image](../images/blender/Copy_Weights_for_Modified_Mesh.png)
 * 绘制权重时，可以使用`Paint Mask`来设置笔刷的遮罩。
 ![image](../images/blender/Fix_Auto_weight_Mask01.png)
@@ -440,7 +440,17 @@ remove_vertex_groups_by_object_name()
 ```
 
 ### 表情形态键的制作
-* 
+* 在`Object Data Properties`页签中，点击`Shape Keys`下的`加号➕`增加一个`Basis`默认基础形态键并将其锁定（此形态键十分重要且不可随意删除，存储未形变的默认网格）。如果需要增加新的形态键,首先需要点击`加号➕`添加一个`Shape Keys Index`并且选中这个“Index”（即设置为`Active`），将新建形态键的`value`值设置为`1`，否则无法观察到变化！之后才能对网格进行变形/雕刻。（注意不可删除/隐藏顶点）
+![image](../images/blender/Shape_Keys01.png)
+[参考视频：かぐや様は告らせたい 白銀圭 3Dモデリング【Timelapse】](https://www.youtube.com/watch?v=ycVqiR2p8mc&t=3869s)- Facial Expression
+* 对称模型可通过镜像形态键减少工作量,例如：左眼眨眼(Blink_L)可镜像到右眼(Blink_R)。
+  * 将`Blink_L`的值=1，然后找到`Shape Keys Special`下的`New Shape From Mix`来按照当前的形变创建一个新的形态键索引(`Shape Keys Index`),将新的形态键索引命名为`Blink_R`并重置`Blink_L`的值=0。
+  ![image](../images/blender/Shape_Keys02.png)
+  ![image](../images/blender/Shape_Keys03.png)
+  * 点击新形态键`Blink_R`使其为`Active`状态，找到`Shape Keys Special`下的`Mirror Shape Key`来镜像当前形态键,得到镜像的“右眼眨眼”形态键。
+  ![image](../images/blender/Shape_Keys04.png)
+  ![image](../images/blender/Shape_Keys05.png)
+  * 依照上述方法，还可以得到“两眼同时眨眼”的形态键。
 
 ### 将Mixamo等网站的动画重定向到Rigfy骨架
 * 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
