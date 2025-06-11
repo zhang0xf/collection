@@ -259,10 +259,11 @@ bmesh.update_edit_mesh(obj.data)
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
   9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)(注意：我们仅参考视频里的“FK”与“Physics”隔离的方式以及将骨骼物理模拟合并到`Rigfy`骨架中的方法，但是物理模拟不建议使用视频中“跟随布料”的方式，而应使用基于“Rigidbody”的插件，例如：<del>[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)</del>、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
-  10. 插件`Swingy Bone Physics`用法的参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+  10. 插件`Swingy Bone Physics`用法的参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)（注意：该插件大部分操作以`Bone Chain`为单元进行，避免“全选”后进行操作）
   ![image](../images/blender/Swingy_Bone_Settings01.png)
   ![image](../images/blender/Swingy_Bone_Settings02.png)
   ![image](../images/blender/Swingy_Bone_Settings03.png)
+  ![image](../images/blender/Swingy_Bone_Settings04.png)
 
 ### 权重绘制
 * 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
@@ -286,7 +287,7 @@ bmesh.update_edit_mesh(obj.data)
 
 ### 自动权重的清理和修缮
 * 问题描述：使用自动权重后，“部件”网格可能受到不必要骨骼的权重影响。如果需要去除不必要骨骼影响，需要额外的大量检查工作。
-* 问题解决：目前只发现手动修的方法，但是也有辅助方法提高效率，即进入权重绘制模式之后，可以将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个顶点，然后在`Item`页签中的`Vertex Weights`标签下查看该顶点的`Vertex Groups`有哪些。然后再切回`Bone Selection`模式，有目的地将不相关的骨骼权重绘制为0.(可以删除某顶点的不相关顶点组，防止`Smooth`/`Blur笔刷`为该顶点分配错误权重到不相关的骨骼，当然如果顶点很多，需要使用脚本来批量操作!最后不要忘记对所有顶点使用`Weights -> Normalized All`来将所有顶点的所有权重归一化。)
+* 问题解决：1、将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个顶点，然后在`Item`页签中的`Vertex Weights`标签下可以查看该顶点的`Vertex Groups`有哪些。2、使用 [Weights -> Clean](https://swingy-bone-physics.github.io/wiki/performance/#clean-model-weights) 功能将那些可以忽略不计但不完全=0的权重清理掉。3、可以删除某顶点的不相关顶点组，防止`Auto Normalized`为该顶点分配错误权重到不相关顶点组，删除不相关顶点组之后一定需要使用`Weights -> Normalize`来使该顶点的权重归一化。（如果顶点很多，需要使用脚本来批量操作）
 ![image](../images/blender/Fix_Auto_Weights01.png)
 ![image](../images/blender/Fix_Auto_Weights04.png)
 ![image](../images/blender/Fix_Auto_Weights05.png)
