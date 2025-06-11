@@ -247,7 +247,7 @@ bmesh.update_edit_mesh(obj.data)
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
   2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`(只需要生成控制骨应当设置为：`basic.row_copy`),勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy形变骨、`Relink Constraints`暂不需要设置。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
-  3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
+  3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`，注意备份骨架),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
   4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系【**这一步很容易忘记**】。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
@@ -258,8 +258,11 @@ bmesh.update_edit_mesh(obj.data)
   7. 进行权重绘制。
   ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
   8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
-  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)(注意，我们需要参考视频里的“FK”与“Physics”隔离的方式以及将物理模拟骨骼合并到`Rigfy`骨架中的方法，但是物理模拟不建议使用视频中“跟随布料”的方式，而应使用基于“Rigidbody”的插件，例如：[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
-  10. 注意备份骨架
+  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)(注意：我们仅参考视频里的“FK”与“Physics”隔离的方式以及将骨骼物理模拟合并到`Rigfy`骨架中的方法，但是物理模拟不建议使用视频中“跟随布料”的方式，而应使用基于“Rigidbody”的插件，例如：<del>[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)</del>、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
+  10. 插件`Swingy Bone Physics`用法的参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+  ![image](../images/blender/Swingy_Bone_Settings01.png)
+  ![image](../images/blender/Swingy_Bone_Settings02.png)
+  ![image](../images/blender/Swingy_Bone_Settings03.png)
 
 ### 权重绘制
 * 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
