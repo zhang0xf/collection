@@ -240,30 +240,32 @@ bmesh.update_edit_mesh(obj.data)
 ### 骨骼的精确定位
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
-### 在Rigfy上添加自定义骨骼
-* 问题描述:人物模型上的许多小挂件(例如:手表、背包等),希望添加专属的额外骨骼与之绑定，而非将小挂件直接绑定到Rigfy人体骨骼上。
-* 问题解决:
-  1. `Shift + a`添加单个骨骼(属于新骨架),更改`Bone Collection`为`AttachBones_*****`等格式。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy01.png)
-  2. 切换到`Pose Mode`更改相应骨骼的`Rigfy Type`为`basic.super_copy`(只需要生成控制骨应当设置为：`basic.row_copy`),勾选`Control`表示会生成`CTRL-***`类型的Rigfy控制骨、通过`Widget`自定义骨骼的形状、勾选`Deform`表示会生成`DEF-***`Rigfy形变骨、`Relink Constraints`暂不需要设置。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy02.png)
-  3. 使用`control + j`合并骨架到Rigfy的原型骨架`metarig`(合并之前记得使骨架`Apply All Transform`，注意备份骨架),在`metarig`的`骨架`属性页签，设置新增`Bone Collection`的UI位置。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy03.png)
-  4. 合并之后的`metarig`切换的`Edit Mode`设置新增骨骼与`Rigfy`原型骨架的骨骼之间的父子关系【**这一步很容易忘记**】。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy04.png)
-  5. 点击`Re-Generate Rig`重新生成Rigfy骨架`Rig`,依然会保留之前已经绘制好的权重。(重新生成Rig需要保证`Rig`不是隐藏且可选状态)
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy05.png)
-  6. 选择重新生成的`Rig`,切换到`Pose Mode`,检查UI和父子关系是否正确。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy06.png)
-  7. 进行权重绘制。
-  ![image](../images/blender/Add_Custom_Bone_To_Rigfy07.png)
-  8. 参考视频:[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
-  9. 关于更复杂的(比如:头发的物理模拟如何加入Rigfy骨架)，可参考视频:[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)(注意：我们仅参考视频里的“FK”与“Physics”隔离的方式以及将骨骼物理模拟合并到`Rigfy`骨架中的方法，但是物理模拟不建议使用视频中“跟随布料”的方式，而应使用基于“Rigidbody”的插件，例如：<del>[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)</del>、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
-  10. 插件`Swingy Bone Physics`用法的参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)（注意：该插件大部分操作以`Bone Chain`为单元进行，避免“全选”后进行操作）
-  ![image](../images/blender/Swingy_Bone_Settings01.png)
-  ![image](../images/blender/Swingy_Bone_Settings02.png)
-  ![image](../images/blender/Swingy_Bone_Settings03.png)
-  ![image](../images/blender/Swingy_Bone_Settings04.png)
+### 为Rigify骨架增加物理骨骼
+* 问题描述：我们需要在`Rigify`基础人形骨架的基础上，添加用于头发、衣服、飘带等物理模拟的“自定义”骨骼。
+* 使用插件：<del>[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)</del>、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
+* 参考视频：[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
+* 参考视频：[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+* 参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+* 问题解决：（以“马尾”为例）
+  1. `Shift + a -> Armature -> Single Bone`添加一个用于“马尾”绑定和物理模拟的骨架。进入`Edit Mode`完成“形变骨(Deform)”的添加和编辑工作，将所有“形变骨”放入到同一个`Bone Collections`中，例如“Hair03”骨骼集合。
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify01.png)
+  2. 复制需要物理模拟的“形变骨”，并纳入新的`Bone Collections`，例如“Hair03_Physics”骨骼集合。
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify02.png)
+  3. 进入`Pose Mode`，将所有物理模拟骨骼的`Rigify Type`设置为`basic.row_copy`;`Widget Type`设置为`bone`。并且所有物理模拟骨骼取消勾选`Deform`。（注意：按住`option`以同时操作所有选中骨骼）
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify03.png)
+  4. 回到“形变骨”集合，将所有“形变骨”的`Rigify Type`设置为`basic.super_copy`,`options`需要勾选`Control`(表示会生成`CTRL-***`类型的Rigify控制骨)、勾选`Widget`并设置控制骨“自定义”形状为`bone`、勾选`Deform`（表示会生成`DEF-***`类型的Rigify形变骨）
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify04.png)
+  5. 对于需要跟随物理骨骼的"形变骨"，需要添加`Bone Constraint`下的`Copy Rotation`。通过添加"CTRL:"前缀，更改其命名为`CTRL:Copy Rotation`，且勾选`Rigify Type`下的`Relink Constraints`，来将骨骼约束转移到生成的`rig`的“控制骨”上。
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify05.png)
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify06.png)
+  6. 备份“马尾”骨架，并使用`Aplly All Transform`应用骨骼形变。使用`control + j`合并“马尾”骨架到`metarig`骨架中。合并完成之后，进入`Edit Mode`设置”马尾“骨骼与`metarig`骨骼的父子关系。最后进入`Bone Collection UI`面板下，设置新增“马尾”骨骼集合在`Rigify`UI中的位置。
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify07.png)
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify08.png)
+  7. 点击`Re-Generate Rig`按钮，重新生成`Rig`绑定(会保留之前已经绘制好的权重)。切换到`Pose Mode`检查生成的`Rig`绑定中对应的父子关系是否正确。
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify09.png)
+  8. 在骨架面板中，使`DEF`骨骼集合(bone Collection)变为可见的`Visible`。最后切换到`Weight Paint Mode`对前缀为“DEF-”的骨骼进行权重绘制。（参见下文：**权重绘制**）
+  ![image](../images/blender/Add_PhysicsBone_To_Rigify10.png)
+* 总结：使用这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，使用`FK`控制器进行微调来解决一些物理模拟中的“穿模”问题。其次，不管使用何种物理模拟的插件，插件只需专注于`Physics`物理骨骼集合，而无需考虑其它。
 
 ### 权重绘制
 * 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
