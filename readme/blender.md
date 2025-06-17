@@ -246,6 +246,7 @@ bmesh.update_edit_mesh(obj.data)
 * 参考视频：[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
 * 参考视频：[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
 * 参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+* 参考文档：[Swingy Bone Physics Addon](https://swingy-bone-physics.github.io/wiki/)
 * 问题解决：（以“马尾”为例）
   1. `Shift + a -> Armature -> Single Bone`添加一个用于“马尾”绑定和物理模拟的骨架。进入`Edit Mode`完成“形变骨(Deform)”的添加和编辑工作，将所有“形变骨”放入到同一个`Bone Collections`中，例如“Hair03”骨骼集合。
   ![image](../images/blender/Add_PhysicsBone_To_Rigify01.png)
