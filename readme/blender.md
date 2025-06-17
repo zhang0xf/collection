@@ -466,7 +466,7 @@ remove_vertex_groups_by_object_name()
   ![image](../images/blender/Mixamo_Animation_Format.png)
   * 导入Mixamo动画,并检查角色的`Rest Pose`是`T Pose`还是`A Pose`
   ![image](../images/blender/Import_Mixamo_Animation.png)
-  * 调整Rig对象的`当前`Pose(`Rest Pose`依旧保持`A Pose`,无需更改)为`T Pose`,此举可保证重定向的两方起始姿势相同，避免重定向过程中骨骼的不正确旋转。
+  * 调整Rig对象的`当前`Pose为`T Pose`(`Rest Pose`依旧保持`A Pose`,无需更改),此举可保证重定向的两方起始姿势相同，避免重定向过程中骨骼的不正确旋转。
   ![image](../images/blender/Rig_Target_Change_T_Pose.png)
   * 选择需要制作动画的Rig骨架并切换到`Pose Mode`,打开`Expy Kit`面板，设置`Bind To`为导入的Mixamo动画骨骼`Armature`。
   ![image](../images/blender/Expy_Kit_Bind_Armature01.png)
