@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "socket/poolsocket.h"
-#include "asn1/teacher/teacher_code.h"
+#include "teacher_code.h"
 #include "client_initialize.h"
 
 #define MAX_LEN 100

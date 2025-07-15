@@ -6,7 +6,7 @@
 #include <unistd.h>
 #endif // linux
 #include "server_initialize.h"
-#include "asn1/teacher/teacher_code.h"
+#include "teacher_code.h"
 
 #define MAX_LEN 1024
 #define DEFAULT_LEN 1024
