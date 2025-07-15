@@ -34,8 +34,8 @@ source /opt/homebrew/bin/virtualenvwrapper.sh
   * 选择:`Python 3.13.5 (blender_development_env) VirtualEnvWrapper`，确保**VSCode**解释器环境是`blender_development_env`虚拟环境(可能需要重启VSCode)
 
 ### 调试Blender
-* **VSCode**安装插件**Blender Development**
-* 打开**VSCode**命名面板:`command + shift + p`
+* 安装VSCode扩展:**Blender Development**
+* 打开VSCode命名面板:`command + shift + p`
 * 输入:`Blender:Start`
-* 点击:`Choose a new Blender Excutable`
-* 选择Blender可执行程序并进入调试模式
+* 选择:`Choose a new Blender Excutable -> 选择Blender.exe`
+* **热重载代码**:`Edit -> perference 插件取消勾选 + 重新勾选`
