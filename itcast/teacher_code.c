@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../itcastderlog.h"
-#include "../itcast_asn1_der.h"
+#include "./asn1/itcastderlog.h"
+#include "./asn1/itcast_asn1_der.h"
 #include "teacher_code.h"
 
 #define MAX_LEN 1024
