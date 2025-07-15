@@ -7,4 +7,5 @@
 * 每个项目文件夹（如 behavior/、itcast/）都可以有自己的 .vscode/launch.json，这是 VS Code 多工作区（multi-root workspace）支持的。
 * 此外，该项目还需要为调试器指定动态库的位置,需要修改`environment`字段。
 ![image](../images/vscode/vscode_create_cpp_debug_settings06.png)
+* 在终端执行`make`,编译并生成可执行程序`client_main`以及`server_main`
 * 设置断点,`F5`进入调试
