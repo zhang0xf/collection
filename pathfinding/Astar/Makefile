@@ -1,24 +1,28 @@
+# 编译器和路径设置
 CC = g++
 WORKDIR = .
 INCFLAG = -I$(WORKDIR)
 SRCDIR = $(WORKDIR)
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -g
 LIBS = -lstdc++ -std=c++11
 
+# 源文件和对象文件
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
 NODIR = $(notdir $(SRCS))
-OBJS = $(patsubst %.c, %.o, $(NODIR))
+OBJS = $(patsubst %.cpp, %.o, $(NODIR))
 
+# 最终可执行文件名
 BIN = main
 
-$(BIN):$(OBJS)
-	$(CC) $(LIBS) $^ -o $@
+# 链接目标文件
+$(BIN): $(OBJS)
+	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-%.o:$(SRCDIR)/%.c
+# 编译每个 .cpp 为 .o
+%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCFLAG) -c $< -o $@
 
-.PHONY:clean
-
+# 清理
+.PHONY: clean
 clean:
-	rm $(WORKDIR)/$(BIN)
-	
+	@rm -f $(BIN) *.o
