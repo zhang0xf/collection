@@ -24,7 +24,8 @@
 	"settings": {
 		"files.associations": {
 			"random": "cpp",
-			"itcastderlog.h": "c"
+			"itcastderlog.h": "c",
+			"stdlib.h": "c"
 		}
 	},
 }
