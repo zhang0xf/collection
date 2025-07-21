@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"name": "collection",
+			"path": "."
+		},
+		{
+			"name": "behavior",
+			"path": "behavior"
+		},
+		{
+			"name": "itcast",
+			"path": "itcast"
+		},
+		{
+			"name": "pathfinding",
+			"path": "pathfinding"
+		},
+		{
+			"name": "sheetparser",
+			"path": "sheetparser"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"random": "cpp",
+			"itcastderlog.h": "c"
+		}
+	},
+}
