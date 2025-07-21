@@ -27,6 +27,14 @@
 			"itcastderlog.h": "c",
 			"stdlib.h": "c",
 			"iostream": "cpp"
+		},
+		"gopls": {
+			"directoryFilters": [
+				"-.",
+				"-behavior",
+				"-itcast",
+				"+sheetparser"
+			]
 		}
 	},
 }
