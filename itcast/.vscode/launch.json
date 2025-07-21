@@ -8,18 +8,19 @@
             "name": "(lldb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/client_main",
+            "program": "${fileDirname}/client_main",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${fileDirname}",
             "environment": [
                 {
                     "name": "DYLD_LIBRARY_PATH",
-                    "value": "${workspaceFolder}/lib"
+                    "value": "${fileDirname}/lib"
                 }
             ],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "preLaunchTask": "build itcast project"
         }
     ]
 }
