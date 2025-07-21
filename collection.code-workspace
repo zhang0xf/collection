@@ -19,6 +19,10 @@
 		{
 			"name": "sheetparser",
 			"path": "sheetparser"
+		},
+		{
+			"name": "webserver",
+			"path": "webserver"
 		}
 	],
 	"settings": {
@@ -33,7 +37,9 @@
 				"-.",
 				"-behavior",
 				"-itcast",
-				"+sheetparser"
+				"-pathfinding",
+				"+sheetparser",
+				"+webserver"
 			]
 		}
 	},
