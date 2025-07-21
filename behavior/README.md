@@ -10,7 +10,6 @@
 ![image](../images/vscode/vscode_create_cpp_debug_settings03.png)
 ![image](../images/vscode/vscode_create_cpp_debug_settings04.png)
 
-
 ### 自动编译可执行文件
 * 添加`.vscode/tasks.json`文件并创建`"build behavior project"`任务
 * 在`.vscode/launch.json`文件中添加字段`"preLaunchTask": "build behavior project"`来指示调试前先构建可执行程序。
