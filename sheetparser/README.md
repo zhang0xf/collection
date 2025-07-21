@@ -20,4 +20,5 @@
 * 创建`launch package(sheetparser)`调试器。另见:[behavior/README.md](../behavior/README.md)或者[itcast/README.md](../itcast/README.md)
 * 不同点在于:需要修改`collection/collection.code-workspace`工作区文件来使`gopls`插件的语言分析器仅作用于`collection/sheetparser`子文件夹以成功去除编辑器警告(注意:该警告只有在`运行和调试`界面选择了`launch package(sheetparser)`时才会在编辑器出现，且该警告并不影响go项目的编译,运行和调试)
 ![image](../images/vscode/vscode_create_cpp_debug_settings10.png)
-* 此外，该项目并不像`collection/behavior`、`collection/itcast`以及`collection/pathfinding`等项目。不需要`tasks.json`配置，`F5`进入调试时能够**自动生成**可执行程序
+* 注意: `launch.json`配置的`program`字段需要指向`main.go`所在的目录或直接指向`main.go`,而不是编译之后的二进制文件(与`c/c++`的调试配置是不同的)
+* 此外，该项目不需要`tasks.json`配置
