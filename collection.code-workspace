@@ -23,6 +23,10 @@
 		{
 			"name": "webserver",
 			"path": "webserver"
+		},
+		{
+			"name": "alieninvasion",
+			"path": "alieninvasion"
 		}
 	],
 	"settings": {
