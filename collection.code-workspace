@@ -30,7 +30,8 @@
 			"random": "cpp",
 			"itcastderlog.h": "c",
 			"stdlib.h": "c",
-			"iostream": "cpp"
+			"iostream": "cpp",
+			"functional": "cpp"
 		},
 		"gopls": {
 			"directoryFilters": [
