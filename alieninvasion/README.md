@@ -14,3 +14,14 @@
   * 输入并选择:`Python:选择解释器(Python:Select Interpreter)`
   * 选择工作区:`alieninvasion`
   * 选择解释器:`Python 3.13.5(python_crash_course_env)`
+
+### 运行游戏
+* 方式1：`python alien_invasion.py`
+* 方式2：右键`alien_invasion.py`文件，并在上下文菜单中选择`在终端中运行Python文件`
+![image](../images/vscode/vscode_create_python_debug_settings01.png)
+
+### 搭建调试环境
+* 另见: [itcast/README.md](../itcast/README.md)
+* 不同点在于: 需要选择`Python调试程序` -> `Python文件(当前正在运行的Python文件)`
+![image](../images/vscode/vscode_create_python_debug_settings02.png)
+![image](../images/vscode/vscode_create_python_debug_settings03.png)
