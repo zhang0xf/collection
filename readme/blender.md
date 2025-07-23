@@ -166,7 +166,7 @@
 * 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
 * 对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)(或者在导入时使用`Append`)；在执行`Make Local`后可能遇到`Object`已经本地化，但是相关联的`Mesh Data`以及`Material`仍然是关联状态,导致`Object`依旧不支持编辑,可使用如下脚本将选中的对象本地化:
 ![image](../images/blender/Make_Link_Object_Local_Error.png)
-```
+```python
 import bpy
 
 # 获取所有链接对象
@@ -206,7 +206,7 @@ print("所有对象及其关联数据已本地化！")
 * 问题解决：打开顶点吸附,关闭`UV Sync Selection`并切换到`点模式`，选择顶点，移动并吸附。
 ![image](../images/blender/UV_Mirror_Align02.png)
 * 问题解决【进阶】：如果顶点过多,那么一个一个手动操作是十分浪费时间的!对于这种明显的重复劳动，我们可以使用脚本来操作（**重要前提**：两个镜像的UV已经尽可能地叠放在一起，顶点都尽可能地接近,关闭`UV Sync Selection`，并且确保只选择相关顶点。更保险的方式是进行备份）。脚本如下:
-```
+```python
 import bpy
 import bmesh
 
@@ -298,7 +298,7 @@ bmesh.update_edit_mesh(obj.data)
 ![image](../images/blender/Fix_Auto_Weights02.png)   
 ![image](../images/blender/Fix_Auto_Weights03.png)
 * 批量选择骨骼的脚本如下: 
-```
+```python
 import bpy
 import re
 
@@ -335,7 +335,7 @@ select_bones_by_pattern("DEF-Skirt")  # 选择所有包含DEF-Skirt的骨骼
 # select_bones_by_pattern("DEF-Skirt.*$")  # 选择以DEF-Skirt开头的骨骼
 ```
 * 批量删除冗余顶点组的脚本如下：（注意：使用脚本删除“冗余顶点组”之后，错误骨骼一览无余！可再做一次检查和修正，修正时务必**关闭“X轴镜像”且打开`Auto Normalized`**，使用权重为0的`Draw`笔刷，去除冗余顶点组的权重，然后再运行一次脚本。当然最佳操作应当是按照正确工作流，避免冗余顶点组产生！）
-```
+```python
 import bpy
 
 obj = bpy.context.active_object
@@ -392,7 +392,7 @@ else:
 ![image](../images/blender/Rig_and_Export_Conflict06.png)
 ![image](../images/blender/Rig_and_Export_Conflict07.png)
 * 注意：当对象很多时，务必使用脚本批量为选中对象添加顶点组，脚本如下:
-```
+```python
 import bpy
 
 def add_vertex_group_to_selected():
@@ -420,7 +420,7 @@ def add_vertex_group_to_selected():
 add_vertex_group_to_selected()
 ```
 * 相应删除这些顶点组的脚本如下（可能会使用到）：
-```
+```python
 import bpy
 
 def remove_vertex_groups_by_object_name():
