@@ -1,0 +1,66 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables with extensions
+*.exe
+*.out
+*.app
+
+# Debug information files
+*.dwo
+
+# 忽略无扩展名的文件（通常是可执行文件）
+**/[^.]*
+!*/
+
+# 忽略 macOS 调试符号目录
+**/*.dSYM/
+
+# 忽略中间产物
+**/*.o
+**/*.out
+**/*.exe
+**/*.a
+**/*.so
+**/*.d
+**/*.dwo
+
+# 保留 .vscode 文件夹及其所有内容
+!.vscode/
+!.vscode/**
+
+# 保留源码和文档
+!**/*.cpp
+!**/*.md
+!**/Makefile
