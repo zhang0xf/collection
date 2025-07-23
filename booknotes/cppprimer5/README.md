@@ -9,9 +9,9 @@
 * 构建可执行程序:`make`
 
 ### 调试单个示例代码
-* **选中**.cpp文件(如：standard_io.cpp)
+* 选中.cpp文件(如：standard_io.cpp)
 * `F5`进入调试时会自动生成.cpp对应的可执行程序
 
 ### 搭建调试环境
 * 另见: [itcast/README.md](../../itcast/README.md)
-* 不同点在于:由于示例代码众多，但是我们只关心当前示例代码及其可执行程序的调试环境的搭建。(详见`launch.json`与`tasks.json`中的`"${fileDirname}/${fileBasenameNoExtension}"`)
+* 不同点在于:我们只关心当前示例代码及其可执行程序的调试环境的搭建。(详见`launch.json`与`tasks.json`中的`"${fileDirname}/${fileBasenameNoExtension}"`)
