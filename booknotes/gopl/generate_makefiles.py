@@ -1,6 +1,7 @@
 import os
 
 def generate_makefile(dir_path, binary_name):
+    # 这里的 f"""...""" 是一个多行的格式化字符串，它会将 {binary_name} 替换为变量的值。
     content = f"""# Auto-generated Makefile for {binary_name}
 
 BIN := {binary_name}
