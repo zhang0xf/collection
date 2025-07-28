@@ -8,11 +8,9 @@
 
 ### 编译所有示例代码
 * 切换到“根目录”:`cd booknotes/gopl`
-* 构建可执行程序(**Makefile递归**):`make`
-
-### 编译单个章节的示例代码
-* 切换到“章节目录”:`cd booknotes/gopl/chapter01`
-* 构建可执行程序:`make`
+* 确保`gopl/generate_makefiles.py`具有执行权限: `chmod +x generate_makefiles.py`
+* 为所有示例(例如:`gopl/chapter01/hello_world/main.go`)生成`Makefile`文件(通过`Python`脚本创建): `make generate`
+* 为所有示例构建可执行程序(**Makefile递归**):`make`
 
 ### 调试单个示例代码
 * 选中.go文件(hello_world.go)

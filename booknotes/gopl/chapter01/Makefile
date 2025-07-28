@@ -1,13 +1,15 @@
 # gopl/chapter01/Makefile
-GOFILES := $(wildcard *.go)
-BINARIES := $(GOFILES:.go=)
 
-.PHONY: all clean
+SUBDIRS := $(wildcard */)
 
-all: $(BINARIES)
+.PHONY: all clean $(SUBDIRS)
 
-%: %.go
-	go build -o $@ $<
+all: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 clean:
-	rm -f $(BINARIES)
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done

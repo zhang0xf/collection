@@ -1,14 +1,20 @@
 # gopl/Makefile
-SUBDIRS := $(wildcard chapter*/)
 
-.PHONY: all clean $(SUBDIRS)
+CHAPTERS := $(wildcard chapter*/)
 
-all: $(SUBDIRS)
+.PHONY: all clean generate $(CHAPTERS)
 
-$(SUBDIRS):
+all: $(CHAPTERS)
+	@echo "✅ Build complete."
+
+$(CHAPTERS):
 	$(MAKE) -C $@
 
 clean:
-	for dir in $(SUBDIRS); do \
+	for dir in $(CHAPTERS); do \
 		$(MAKE) -C $$dir clean; \
 	done
+
+generate:
+	@echo "🔧 Generating Makefiles for all examples..."
+	python3 generate_makefiles.py
