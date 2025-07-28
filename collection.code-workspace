@@ -31,6 +31,10 @@
 		{
 			"name": "cppprimer5",
 			"path": "booknotes/cppprimer5"
+		},
+		{
+			"name": "gopl",
+			"path": "booknotes/gopl"
 		}
 	],
 	"settings": {
@@ -92,11 +96,16 @@
 		"gopls": {
 			"directoryFilters": [
 				"-.",
+				"-alieninvasion",
 				"-behavior",
 				"-itcast",
 				"-pathfinding",
+				"-socket",
+				"-unityprojects",
 				"+sheetparser",
-				"+webserver"
+				"+webserver",
+				"-booknotes/cppprimer5",
+				"+booknotes/gopl",
 			]
 		}
 	},
