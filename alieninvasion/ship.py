@@ -10,7 +10,7 @@ class Ship(Sprite):
         self.ai_settings = ai_settings
 
         # 加载飞船图像并获取其外接矩形
-        self.original_image = pygame.image.load('images/ship.png')
+        self.original_image = pygame.image.load('images/ship.bmp')
         self.original_rect = self.original_image.get_rect()
         # 设定缩放比例为屏幕宽度的百分比（可调整）
         scale_factor = 0.08  # 例如：图片宽度 = 屏幕宽度 × 8%

@@ -10,7 +10,7 @@ class Alien(Sprite):
         self.screen_rect = screen.get_rect()
         self.ai_settings = ai_settings
 
-        self.original_image = pygame.image.load('images/alien.png')
+        self.original_image = pygame.image.load('images/alien.bmp')
         self.original_rect = self.original_image.get_rect()
         # 设定缩放比例为屏幕宽度的百分比
         scale_factor = 0.05  # 例如：图片宽度 = 屏幕宽度 × 5%
