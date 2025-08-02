@@ -84,7 +84,10 @@ BStatus Selector::Update() {
 
 // 并行更新复合节点
 BStatus Parallel::Update() {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     int successCount = 0;
+#pragma GCC diagnostic pop
     int failureCount = 0;
     int count = childs.size();
 
