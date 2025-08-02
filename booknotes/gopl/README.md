@@ -1,17 +1,28 @@
 # The Go Programming Language
 
-* 参考: [Go语言圣经](https://golang-china.github.io/gopl-zh/index.html)
+《The Go Programming Language》随书笔记及代码整理
+
+Github在线书籍: [Go语言圣经](https://golang-china.github.io/gopl-zh/index.html)
+
+### 切换国内代理【可选】
+* `go env -w GO111MODULE=on`
+* `go env -w GOPROXY=https://goproxy.io,direct`
 
 ### 初始化项目
-* `cd booknotes/gopl`
+* `cd collection/booknotes/gopl`
 * `go mod init gopl`
+* `go mod tidy`
 
-### 编译所有示例代码
-* 切换到“根目录”:`cd booknotes/gopl`
-* 确保`gopl/generate_makefiles.py`具有执行权限: `chmod +x generate_makefiles.py`
-* 为所有示例(例如:`gopl/chapter01/hello_world/main.go`)生成`Makefile`文件(通过`Python`脚本创建): `make generate`
-* 为所有示例构建可执行程序(**Makefile递归**):`make`
+### 编译代码
+* `cd collection/booknotes/gopl`
+* `chmod +x generate_makefiles.py`（确保具有执行权限）
+* `make generate`（生成Makefile）
+* `make`
 
-### 调试单个示例代码
-* 选中.go文件(hello_world.go)
-* `F5`进入调试(无论是否使用`make`生成可执行程序，均可调试`.go`文件)
+### 运行项目
+略
+
+### 搭建调试环境
+参考：[搭建Python调试器](../../alieninvasion/README.md#搭建调试环境)
+
+注意：调试某一示例代码时，必须先选中`main()`函数所在文件（例如：`chapter01/hello_world/main.go`）

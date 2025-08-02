@@ -1,24 +1,23 @@
-# Behavior Tree
-参考: [GameAI-BehaviorTree](https://github.com/zzwzfy/GameAI-BehaviorTree)
+# 行为树AI
+
+一个用c++编写的行为树案例（参考：[GameAI-BehaviorTree](https://github.com/zzwzfy/GameAI-BehaviorTree)）
+
+### 编译代码
+* （方式1）通过`Makefile`编译项目：`make`
+* （方式2）通过`tasks.json`编译项目：
+  * 打开命令面板：`shift + cmd + p`
+  * 搜索并选择`Tasks: Run Task`
+  * 运行`tasks.json`中的自定义任务
+  ![gif](../images/vscode/vscode_run_tasks.gif)
+
+### 运行项目
+略
 
 ### 搭建调试环境
-* 选中`main.cpp`(如果不选中cpp文件,vscode可能不能识别当前子文件夹为c++项目,就不能正确配置c++工具链或不能激活c++插件环境,那么在调试配置菜单中就不会显示gdb/lldb相关选项),进入`运行和调试`页签,点击`创建launch.json文件`
-![image](../images/vscode/vscode_create_cpp_debug_settings01.png)
-* 选择`behavior`工作区,并为该工作区创建`c/c++ lldb(启动)`调试器
-![image](../images/vscode/vscode_create_cpp_debug_settings02.png)
-* 在生成的`launch.json`文件中修改`program`字段为相应的可执行程序路径
-![image](../images/vscode/vscode_create_cpp_debug_settings03.png)
-![image](../images/vscode/vscode_create_cpp_debug_settings04.png)
+参考：[创建Python调试器](../alieninvasion/README.md#搭建调试环境)（注意：必须选中`main.cpp`，否则将不会正确配置c/c++工具链或不能激活c/c++插件环境，进而导致`C/C++：（lldb）启动`调试器不会出现在上下文菜单中）
 
-### 自动编译可执行文件
-* 添加`.vscode/tasks.json`文件并创建`"build behavior project"`任务
-* 在`.vscode/launch.json`文件中添加字段`"preLaunchTask": "build behavior project"`来指示调试前先构建可执行程序。
-![image](../images/vscode/vscode_create_cpp_debug_settings07.png)
-* `F5`进入调试时会自动构建可执行程序
+注意：当`工作区`存在多个c/c++子项目时，由于c/c++插件的限制，可能无法正确地创建调试器模版(`launch.json`)。此时，可选择手动创建c/c++子项目的`launch.json`文件并设置相关参数。
 
-### 通过"指令"执行构建和清理任务
-* 在`.vscode/tasks.json`文件中创建`"build behavior project"`以及`"clean behavior project"`
-* 使用`cmd + shift + p`并搜索`Tasks`,选择`任务:运行任务(Tasks:Run Task)`,最后执行自定义的`"build behavior project"`或`"clean behavior project"`任务即可编译/清理项目
-![image](../images/vscode/vscode_create_cpp_debug_settings08.png)
-![image](../images/vscode/vscode_create_cpp_debug_settings09.png)
-* 当然,终端命令`make/make clean`也许更简洁
+**自动化**：我们希望在进入调试前能自动地创建相应的可执行文件。为此，可以在`launch.json`配置中添加字段`"preLaunchTask"`来指定调试前需要执行的`构建任务`。
+
+TODO：调试完成之后自动清理

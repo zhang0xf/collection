@@ -1,24 +1,32 @@
 # Sheet Parser
 
-### Go Build
-* [optional]`go env -w GO111MODULE=on`
-* [optional]`go env -w GOPROXY=https://goproxy.io,direct`
+一个用go编写的excel表格解析模块
+
+### 切换国内代理【可选】
+* `go env -w GO111MODULE=on`
+* `go env -w GOPROXY=https://goproxy.io,direct`
+
+### 初始化项目
 * `go mod init parser`
 * `go get github.com/tealeg/xlsx`
 * `go get github.com/kai1987/go-text-censor`
 * `go mod tidy`
 
-### Makefile Build
-* 使用`Makefile`指令替代`go`指令(简化常用构建流程、跨平台统一构建、更易与CI/CD工具集成):
-  * `make`/`make build`: 编译`main.go`为`bin/parser`
-  * `make clean`: 删除`bin/parser`
-  * `make fmt`: 格式化所有 Go 文件
-  * `make tidy`: 清理无用依赖
-  * `make test`: 运行所有子包测试
+### 编译代码
+使用make指令替代go指令（简化常用构建流程、跨平台统一构建、更易与CI/CD工具集成）：
+* `make`/`make build`
+* `make clean`
+* `make fmt`（按标准格式格式化所有代码文件）
+* `make tidy`
+* `make test`
+
+### 运行项目
+略
 
 ### 搭建调试环境
-* 创建`launch package(sheetparser)`调试器。另见:[behavior/README.md](../behavior/README.md)或者[itcast/README.md](../itcast/README.md)
-* 不同点在于:需要修改`collection/collection.code-workspace`工作区文件来使`gopls`插件的语言分析器仅作用于`collection/sheetparser`子文件夹以成功去除编辑器警告(注意:该警告只有在`运行和调试`界面选择了`launch package(sheetparser)`时才会在编辑器出现，且该警告并不影响go项目的编译,运行和调试)
-![image](../images/vscode/vscode_create_go_debug_settings01.png)
-* 注意: `launch.json`配置的`program`字段需要指向`main.go`所在的目录或直接指向`main.go`,而不是编译之后的二进制文件(与`c/c++`的调试配置是不同的)
-* 此外，该项目不需要`tasks.json`配置
+参考：[搭建Python调试器](../alieninvasion/README.md#搭建调试环境)
+
+注意：调试器配置(`launch.json`)中的`"program"`字段需要指向`sheetparser/main.go`所在的目录或直接指向`sheetparser/main.go`，而非编译生成的可执行文件！
+
+### 编辑器警告去除
+在工作区文件`collection.code-workspace`中添加`"directoryFilters"`字段来告诉`gopls`编辑器扩展应该对哪些子文件夹项目使用`语言分析器`(注意：该警告只有在`运行和调试`界面选择了`launch package(sheetparser)`调试器时才会在编辑器出现，且该警告并不影响go项目的编译、运行和调试)
