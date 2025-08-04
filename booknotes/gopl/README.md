@@ -15,7 +15,7 @@ Github在线书籍: [Go语言圣经](https://golang-china.github.io/gopl-zh/inde
 
 ### 编译代码
 * `cd collection/booknotes/gopl`
-* `chmod +x generate_makefiles.py`（确保具有执行权限）
+* <del>`chmod +x generate_makefiles.py`（确保具有执行权限）</del>【无需】
 * `make generate`（生成Makefile）
 * `make`
 
