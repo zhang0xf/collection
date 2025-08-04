@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug chapter program",
+            "name": "C++ 调试程序：当前文件",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
@@ -14,7 +14,7 @@
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb", // macOS 用 lldb，Linux 用 gdb
+            "MIMode": "lldb",
             "preLaunchTask": "build current file"
         }
     ]
