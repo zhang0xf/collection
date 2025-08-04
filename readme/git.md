@@ -34,7 +34,7 @@
 * 查看“历史中存在、当前已删除”的文件：
 <div style="margin-left: 2em"> <!--代码块的缩进-->
 
-```bash
+```shell
 git log --diff-filter=D --summary | grep delete
 ```
 </div>
@@ -42,7 +42,7 @@ git log --diff-filter=D --summary | grep delete
 * 提取Git历史中所有曾出现过的图片路径（以图片文件为例）：
 <div style="margin-left: 2em">
 
-```bash
+```shell
 git log --all --pretty=format: --name-only \
   | grep -E '\.(gif|png|jpg|jpeg|bmp)$' \
   | sort -u > all_images_in_history.txt
@@ -52,7 +52,7 @@ git log --all --pretty=format: --name-only \
 * 生成当前Git跟踪的图片文件列表
 <div style="margin-left: 2em"> 
 
-```bash
+```shell
 git ls-files | grep -Ei '\.(gif|png|jpg|jpeg|bmp)$' | sort > current_images.txt
 ```
 </div>
@@ -60,7 +60,7 @@ git ls-files | grep -Ei '\.(gif|png|jpg|jpeg|bmp)$' | sort > current_images.txt
 * 对比历史和当前，找出已被删除的图像文件
 <div style="margin-left: 2em"> 
 
-```bash
+```shell
 comm -23 all_images_in_history.txt current_images.txt > deleted_images.txt
 ```
 </div>
