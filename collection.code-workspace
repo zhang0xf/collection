@@ -35,6 +35,10 @@
 		{
 			"name": "gopl",
 			"path": "booknotes/gopl"
+		},
+		{
+			"name": "algorithms4",
+			"path": "booknotes/algorithms4"
 		}
 	],
 	"settings": {
@@ -107,6 +111,13 @@
 				"-booknotes/cppprimer5",
 				"+booknotes/gopl",
 			]
-		}
+		},
+		"java.project.sourcePaths": [
+			"source/chapter1-1",
+			"source/chapter1-2"
+		],
+		"java.project.referencedLibraries": [
+			"/Users/zhangfei/Code/Repositories/collection/booknotes/algorithms4/libraries/algs4.jar"
+		]
 	},
 }
