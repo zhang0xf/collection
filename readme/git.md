@@ -30,7 +30,8 @@
 
 解决方法：
 * `cd “仓库根目录“`
-* 清理前确认`.git`目录大小：`du -sh .git`
+* 确保本地已无修改：`git status`
+* 确认`.git`目录大小：`du -sh .git`【可选】
 * 查看“历史中存在、当前已删除”的文件
 <div style="margin-left: 2em"> <!--代码块的缩进-->
 
@@ -121,7 +122,7 @@ du -sh .git
 ```
 </div>
 
-* 替换远程仓库
+* 替换远程仓库（这里没有选择新建远程仓库。如果需要保留旧的远程仓库，那么应该选择新建一个远程仓库）
 <div style="margin-left: 2em"> 
 
 ```shell
@@ -130,7 +131,7 @@ git remote -v
 ```
 </div>
 
-* 强制推送新历史到远端仓库【WARNING：这一步会覆盖远程仓库的历史记录，确认协作者已经知情】
+* 强制推送新历史到远端仓库【WARNNING：这一步会覆盖远程仓库的历史记录，确认协作者已经知情】
 <div style="margin-left: 2em"> 
 
 ```shell
@@ -138,9 +139,25 @@ git push --force origin main
 ```
 </div>
 
-* TODO ...
+* 如果一切正常，将`"cleaned-collection"`设置为本地的工作区
+<div style="margin-left: 2em"> 
 
-* 其它协作人员需要重新克隆：`git clone ...`
+```shell
+rm -rf collection
+mv cleaned-collection collection
+```
+</div>
+
+* 清理现场（WARNNING：必须确认新仓库没有问题，可以不着急清理）
+<div style="margin-left: 2em"> 
+
+```shell
+rm -rf filtered-repo.git
+rm -rf collection_backup
+```
+</div>
+
+* 通知协作人员重新克隆：`git clone git@github.com:zhang0xf/collection.git`
 
 实际项目建议：
 * 如果历史中虽然有图像/视频，但仓库体积没有大到克隆非常慢，就可以不处理。
