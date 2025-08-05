@@ -13,14 +13,14 @@ Github在线书籍: [Go语言圣经](https://golang-china.github.io/gopl-zh/inde
 * `go mod init gopl`
 * `go mod tidy`
 
-### 编译代码
-* `cd collection/booknotes/gopl`
-* <del>`chmod +x generate_makefiles.py`（确保具有执行权限）</del>【无需】
-* `make generate`（生成Makefile）
-* `make`
-
-### 运行项目
-略
+### 编译和运行
+编译：
+```shell
+cd collection/booknotes/gopl
+make generate
+make
+```
+运行：略
 
 ### 搭建调试环境
 参考：[搭建Python调试器](../../alieninvasion/README.md#搭建调试环境)

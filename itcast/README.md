@@ -2,12 +2,10 @@
 
 一个用c编写的网络加密传输案例
 
-### 编译代码
-参考：[编译代码](../behavior/README.md#编译代码)
+### 编译和运行
+编译：[编译C/C++代码](../behavior/README.md#编译代码)
 
-### 运行项目
-* 运行`server_main`
-* 再运行`client_main`
+运行：略
 
 ### 搭建调试环境
 参考：[创建C/C++调试器](../behavior/README.md#搭建调试环境)

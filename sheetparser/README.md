@@ -12,16 +12,15 @@
 * `go get github.com/kai1987/go-text-censor`
 * `go mod tidy`
 
-### 编译代码
-使用make指令替代go指令（简化常用构建流程、跨平台统一构建、更易与CI/CD工具集成）：
+### 编译和运行
+编译：`make`指令替代`go`指令（简化常用构建流程、跨平台统一构建、更易与CI/CD工具集成）
 * `make`/`make build`
 * `make clean`
 * `make fmt`（按标准格式格式化所有代码文件）
 * `make tidy`
 * `make test`
 
-### 运行项目
-略
+运行：略
 
 ### 搭建调试环境
 参考：[搭建Python调试器](../alieninvasion/README.md#搭建调试环境)

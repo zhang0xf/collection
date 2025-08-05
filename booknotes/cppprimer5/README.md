@@ -2,17 +2,20 @@
 
 《C++ Primer》（第五版）随书笔记及代码整理
 
-### 编译代码
+### 编译和运行
 编译所有示例代码：
-* `cd collection/booknotes/cppprimer5`
-* `make`
+```shell
+cd collection/booknotes/cppprimer5
+make
+```
 
 编译单个章节示例代码
-* `cd collection/booknotes/cppprimer5/chapter01`
-* `make`
+```shell
+cd collection/booknotes/cppprimer5/chapter01
+make
+```
 
-### 运行项目
-略
+运行：略
 
 ### 搭建调试环境
 参考：[创建C/C++调试器](../../behavior/README.md#搭建调试环境)

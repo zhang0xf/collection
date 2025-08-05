@@ -2,7 +2,8 @@
 
 一个用c++编写的行为树案例（参考：[GameAI-BehaviorTree](https://github.com/zzwzfy/GameAI-BehaviorTree)）
 
-### 编译代码
+### 编译和运行
+编译：
 * （方式1）通过`Makefile`编译项目：`make`
 * （方式2）通过`tasks.json`编译项目：
   * 打开命令面板：`shift + cmd + p`
@@ -10,8 +11,7 @@
   * 运行`tasks.json`中的自定义任务
   ![gif](../images/vscode/vscode_run_tasks.gif)
 
-### 运行项目
-略
+运行：略
 
 ### 搭建调试环境
 参考：[创建Python调试器](../alieninvasion/README.md#搭建调试环境)（注意：必须选中`main.cpp`，否则将不会正确配置c/c++工具链或不能激活c/c++插件环境，进而导致`C/C++：（lldb）启动`调试器不会出现在上下文菜单中）

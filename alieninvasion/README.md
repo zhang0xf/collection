@@ -25,7 +25,7 @@
 ### 运行游戏
 * 方式1(通过终端)：`python alien_invasion.py`
 * 方式2(通过编辑器)：右键`alien_invasion.py`文件，并在上下文菜单中选择`在终端中运行Python文件`
-![image](../images/vscode/run_python.png)
+![image](../images/vscode/vscode_run_python.png)
 
 ### 搭建调试环境
 ![gif](../images/vscode/vscode_python_debugger.gif)
