@@ -25,13 +25,13 @@
 * `git commit -m "commit message"`
 * `git push origin 'remote branch'` -->
 
-### <del>清理仓库中的历史文件</del>【不要使用】
+### 清理仓库中的历史文件【慎重使用】
 问题描述：`git clone`会将整个仓库的历史记录（完整的commit DAG + 所有文件快照）下载到`.git`目录中，包括那些已经被`git delete`的文件。如果提交历史中存在很多大的图片或二进制文件，即使在后来的提交中被删除了，也仍然会导致仓库变大，`git clone`操作变慢。
 
 解决方法：
-* `cd 仓库根目录`
+* `cd “仓库根目录“`
 * 清理前确认`.git`目录大小：`du -sh .git`
-* 查看“历史中存在、当前已删除”的文件：
+* 查看“历史中存在、当前已删除”的文件
 <div style="margin-left: 2em"> <!--代码块的缩进-->
 
 ```shell
@@ -65,16 +65,81 @@ comm -23 all_images_in_history.txt current_images.txt > deleted_images.txt
 ```
 </div>
 
-* 安装`git-filter-repo`：`brew install git-filter-repo`
-* 清理 Git 历史中的图片（注意：这是**不可逆**操作！Git的`commit`历史将被重写，因为你从历史中移除了某些文件的所有痕迹。其次所有的`commit`的`SHA`哈希值都可能改变。也会影响Github网页端的`Contributions`（贡献图/小绿点））
+* 安装`git-filter-repo`
 <div style="margin-left: 2em"> 
 
 ```shell
-git filter-repo --paths-from-file deleted_images.txt --invert-paths
+brew install git-filter-repo
 ```
 </div>
 
-* 强制推送到远端：`git push origin main --force`
+* 备份原始仓库【保险起见】：
+<div style="margin-left: 2em"> 
+
+```shell
+cd ..
+cp -r collection collection_backup
+```
+</div>
+
+* 克隆一份用于清理历史的新仓库（因为`git-filter-repo`工具要求`operate on a fresh clone`。参数`--no-local`表示强制要求Git复制仓库对象而非出于优化考虑使用“硬链接”。此外，`filtered-repo.git`是一个裸仓库，只包含`.git`，不包含工作文件）：
+<div style="margin-left: 2em"> 
+
+```shell
+git clone --mirror --no-local ./collection filtered-repo.git
+```
+</div>
+
+* 进入克隆并执行清理命令（注意：这是**不可逆**操作！Git的`commit`历史将被重写，因为你从历史中移除了某些文件的所有痕迹。其次所有的`commit`的`SHA`哈希值都可能改变。也会影响`Github`网页端的`Contributions`（贡献图/小绿点））
+<div style="margin-left: 2em"> 
+
+```shell
+cd filtered-repo.git
+git filter-repo --paths-from-file ../collection/deleted_images.txt --invert-paths--invert-paths
+```
+</div>
+
+* 对比`log`输出，确认文件是否已被彻底删除（以`deleted_images.txt`文件中列出的`images/blender/Add_Custom_Bone_To_Rigfy01.png`，`log`不一致，则表明`git-filter-repo`已经重写了历史记录）
+<div style="margin-left: 2em"> 
+
+```shell
+cd ../collection
+git log -- images/blender/Add_Custom_Bone_To_Rigfy01.png
+cd ../filtered-repo.git
+git log -- images/blender/Add_Custom_Bone_To_Rigfy01.png
+```
+</div>
+
+* 将裸仓库克隆为一个正常的工作区【可选：确认`.git`目录是否成功瘦身】
+<div style="margin-left: 2em"> 
+
+```shell
+cd ..
+git clone filtered-repo.git cleaned-collection
+cd cleaned-collection
+du -sh .git
+```
+</div>
+
+* 替换远程仓库
+<div style="margin-left: 2em"> 
+
+```shell
+git remote set-url origin git@github.com:zhang0xf/collection.git
+git remote -v
+```
+</div>
+
+* 强制推送新历史到远端仓库【WARNING：这一步会覆盖远程仓库的历史记录，确认协作者已经知情】
+<div style="margin-left: 2em"> 
+
+```shell
+git push --force origin main
+```
+</div>
+
+* TODO ...
+
 * 其它协作人员需要重新克隆：`git clone ...`
 
 实际项目建议：
