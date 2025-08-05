@@ -7,9 +7,13 @@ struct GridWithWeights : SquareGrid {
     GridWithWeights(int w, int h) :
         SquareGrid(w, h) {
     }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
     double cost(GridLocation from_node, GridLocation to_node) const {
         return forests.find(to_node) != forests.end() ? 5 : 1;
     }
+#pragma GCC diagnostic pop
 };
 
 class DrawWeightSquareGrid : public DrawGrid {
