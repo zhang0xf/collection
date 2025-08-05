@@ -1,0 +1,4 @@
+# 清理Git历史记录时所生成的临时文件
+all_images_in_history.txt
+current_images.txt
+deleted_images.txt
