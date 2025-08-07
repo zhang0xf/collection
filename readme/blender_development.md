@@ -53,7 +53,7 @@ By default, Blender started from VS Code uses your global Blender settings
 To prevent any accidental changes to your daily setup, change environment var in VS Code setting `"blender.environmentVariables"`
 ```json
 "blender.environmentVariables": {
-			"BLENDER_USER_RESOURCES": "./blender_vscode_development" // changes folder for addons, extensions, modules, config
+  "BLENDER_USER_RESOURCES": "./blender_vscode_development" // changes folder for addons, extensions, modules, config
 },
 ```
 
