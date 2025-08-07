@@ -2,3 +2,6 @@
 all_images_in_history.txt
 current_images.txt
 deleted_images.txt
+
+# Blender插件开发和日常工作隔离
+blender_vscode_development

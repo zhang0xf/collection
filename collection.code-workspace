@@ -39,6 +39,10 @@
 		{
 			"name": "algorithms4",
 			"path": "booknotes/algorithms4"
+		},
+		{
+			"name": "myaddon",
+			"path": "blender/myaddon"
 		}
 	],
 	"settings": {
@@ -118,6 +122,10 @@
 		],
 		"java.project.referencedLibraries": [
 			"/Users/zhangfei/Code/Repositories/collection/booknotes/algorithms4/libraries/algs4.jar"
-		]
+		],
+		"blender.environmentVariables": {
+			// changes folder for addons, extensions, modules, config
+			"BLENDER_USER_RESOURCES": "./blender_vscode_development"
+		},
 	},
 }
