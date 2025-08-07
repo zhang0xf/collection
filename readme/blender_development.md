@@ -1,6 +1,6 @@
 # Blender Development Environment
 
-### Python虚拟环境
+### <del>Python虚拟环境</del>【弃用】
 参考：[Mac中使用virtualenv和virtualenvwrapper.md](https://github.com/walter201230/Python/blob/master/Article/advanced/Mac中使用virtualenv和virtualenvwrapper.md)
 * 安装Python:`brew install python`
 * 确认Python:`python3 --version`,`pip3 --version`
@@ -30,7 +30,7 @@ source /opt/homebrew/bin/virtualenvwrapper.sh
   * <del>输入:`Python: Select Interpreter`</del>
   * <del>选择:`Python 3.13.5 (blender_development_env) VirtualEnvWrapper`</del>
 
-* 注意：由于`VS Code`更新到`版本: 1.102.3 (Universal)`。新增了`Python环境管理界面`，它将 Python 环境的管理从以前的纯路径识别转向更加结构化的方式，比如强调 venv, conda, poetry, pyenv 等 “官方支持的环境管理器”，而对 virtualenvwrapper（即 mkvirtualenv）创建的环境支持 变得不明显，因此不能自动识别 ~/.virtualenvs 中的虚拟环境。在解释器选择界面（Command Palette → Python: Select Interpreter）里看不到它们。所以需要从`Python环境管理界面`来为项目创建虚拟环境。这将在"根目录"下创建`.venv`文件夹，`新建终端`也会自动激活对应的虚拟环境。
+* 注意：由于`VS Code`更新到`版本: 1.102.3 (Universal)`。新增了`Python环境管理界面`，它将 Python 环境的管理从以前的纯路径识别转向更加结构化的方式，比如强调 venv, conda, poetry, pyenv 等 “官方支持的环境管理器”，而对 virtualenvwrapper（即 mkvirtualenv）创建的环境支持 变得不明显，因此不能自动识别 ~/.virtualenvs 中的虚拟环境。在解释器选择界面（Command Palette → Python: Select Interpreter）里看不到它们。因此需要从`Python环境管理界面`来为插件项目创建虚拟环境，这将在项目的"根目录"下创建`.venv`文件夹。`新建终端`会自动激活对应的虚拟环境，在该虚拟环境下安装`blender`插件开发所需的依赖:`pip install fake-bpy-module-4.2`
 
 ### 调试插件代码
 * 安装扩展: **Blender Development**
