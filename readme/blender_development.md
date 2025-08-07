@@ -54,7 +54,7 @@ To prevent any accidental changes to your daily setup, change environment var in
 ```json
 "blender.environmentVariables": {
 			"BLENDER_USER_RESOURCES": "./blender_vscode_development" // changes folder for addons, extensions, modules, config
-		},
+},
 ```
 
 注意：如果使用“多根工作区”（[Multi-root Workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces)），那么`"blender.environmentVariables"`字段应该写入工作区文件`collection.code-workspace`，而非子项目的`myaddon/.vscode/settings.json`，否则不会生效。
