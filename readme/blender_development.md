@@ -51,6 +51,11 @@ How can I separate development environment from my daily work?
 By default, Blender started from VS Code uses your global Blender settings
 
 To prevent any accidental changes to your daily setup, change environment var in VS Code setting `"blender.environmentVariables"`
+```json
+"blender.environmentVariables": {
+			"BLENDER_USER_RESOURCES": "./blender_vscode_development" // changes folder for addons, extensions, modules, config
+		},
+```
 
 注意：如果使用“多根工作区”（[Multi-root Workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces)），那么`"blender.environmentVariables"`字段应该写入工作区文件`collection.code-workspace`，而非子项目的`myaddon/.vscode/settings.json`，否则不会生效。
 
@@ -59,3 +64,5 @@ To prevent any accidental changes to your daily setup, change environment var in
 当开发告一段落后，若直接关闭`Blender.app`会导致插件无法执行`unregister()`，进而无法清理尚在开发中的插件。可以使用编辑器扩展（`Blender Development`）提供的`Blender: Stop`终止插件的开发和调试（实际测试貌似没有用）：
 * 呼出命名面板:`command + shift + p`
 * 输入：`Blender: Stop`
+
+注意：如果配置了[插件开发和日常工作隔离](#插件开发和日常工作隔离)，那么会创建一个用于插件开发的隔离环境（`colletion/blender_vscode_development`），即配置一份新的`Userpref`，与日常工作的`Userpref`隔离开来。这样，即使未能正确清理尚在开发中的插件也没关系，因为开发用隔离环境不会影响到日常工作!
