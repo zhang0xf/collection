@@ -3,5 +3,5 @@ all_images_in_history.txt
 current_images.txt
 deleted_images.txt
 
-# Blender插件开发和日常工作隔离
+# 由'Blender Development'插件生成的目录
 blender_vscode_development

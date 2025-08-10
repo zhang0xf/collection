@@ -1,17 +1,17 @@
-# Blender Addon
+# Blender Addon Development Template
 
-这是一个`blender`插件开发的示例工程，使用“模块结构”:
+这是一个`blender`插件开发的示例模版，使用“模块结构”:
 ```
-myaddon/
+addontpl/
 ├── __init__.py         ← 插件入口，必须有
 ├── operators.py        ← 自定义操作（功能代码）
 ├── panel.py            ← UI面板（按钮、滑条等）
 ├── utils.py            ← 可选工具模块（辅助函数）
 └── README.md           ← 插件说明文档（非必需）
 ```
-最终只需要将`addon/`目录压缩成`ZIP`文件即可用于安装：
+最终只需要将`addontpl/`目录压缩成`ZIP`文件即可用于安装：
 ```shell
-zip -r myaddon.zip myaddon
+zip -r addontpl.zip addontpl
 ```
 
 ### Legacy vs Extension Add-ons
@@ -22,9 +22,9 @@ zip -r myaddon.zip myaddon
 
 Extension插件的目录结构：
 ```
-myaddon/
+addontpl/
 ├── blender_addon.yaml
-├── myaddon/
+├── addontpl/
 │   ├── __init__.py
 │   ├── operators.py
 │   └── panel.py
