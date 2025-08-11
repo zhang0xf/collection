@@ -6,7 +6,7 @@ class OBJECT_PT_HelloPanel(bpy.types.Panel): # PT = 'Panel Type'
     bl_idname = "OBJECT_PT_hello_panel" # 面板的唯一ID
     bl_space_type = 'VIEW_3D' # 表示该面板会出现在'3D视图'中
     bl_region_type = 'UI' # 表示该面板会出现在右侧标签页（按N呼出）
-    bl_category = 'Hello Panel Sidebar' # 标签页名字（例如：Rigify）
+    bl_category = 'Hello Panel Sidebar' # 标签页名字
 
     # UI绘制函数
     def draw(self, context):

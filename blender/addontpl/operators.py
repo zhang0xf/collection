@@ -1,4 +1,10 @@
 # operators.py 是集中写所有自定义操作行为的地方，每个操作都是一个继承自 bpy.types.Operator 的类
+
+# 在`Blender`中，`Operator`是所有功能的核心，比如：
+# - 添加一个立方体：`bpy.ops.mesh.primitive_cube_add()`
+# - 移动物体：`bpy.ops.transform.translate()`
+# - 自定义按钮点击逻辑：`bpy.ops.object.hello_world()`
+
 import bpy
 
 class OBJECT_OT_HelloWorld(bpy.types.Operator): # OT = 'Operator Type'
