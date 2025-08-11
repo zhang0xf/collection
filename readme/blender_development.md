@@ -30,7 +30,7 @@ source /opt/homebrew/bin/virtualenvwrapper.sh
   * <del>输入:`Python: Select Interpreter`</del>
   * <del>选择:`Python 3.13.5 (blender_development_env) VirtualEnvWrapper`</del>
 
-* 注意：由于`VS Code`更新到`版本: 1.102.3 (Universal)`。新增了`Python环境管理界面`，它将 Python 环境的管理从以前的纯路径识别转向更加结构化的方式，比如强调 venv, conda, poetry, pyenv 等 “官方支持的环境管理器”，而对 virtualenvwrapper（即 mkvirtualenv）创建的环境支持 变得不明显，因此不能自动识别 ~/.virtualenvs 中的虚拟环境。在解释器选择界面（Command Palette → Python: Select Interpreter）里看不到它们。因此需要从`Python环境管理界面`来为插件项目创建虚拟环境，这将在项目的"根目录"下创建`.venv`文件夹。`新建终端`会自动激活对应的虚拟环境，在该虚拟环境下安装`blender`插件开发所需的依赖:`pip install fake-bpy-module-4.2`
+* 注意：由于`VS Code`更新到`版本: 1.102.3 (Universal)`。新增了`Python环境管理界面`，它将 Python 环境的管理从以前的纯路径识别转向更加结构化的方式，比如强调 venv, conda, poetry, pyenv 等 “官方支持的环境管理器”，而对 virtualenvwrapper（即 mkvirtualenv）创建的环境支持 变得不明显，因此不能自动识别 ~/.virtualenvs 中的虚拟环境。在解释器选择界面（Command Palette → Python: Select Interpreter）里看不到它们。因此需要从`Python环境管理界面`来为插件项目创建虚拟环境，这将在项目的"根目录"下创建`.venv`文件夹。通过`新建终端`会自动激活对应的虚拟环境，需要在该虚拟环境下安装`blender`插件开发所需的依赖:`pip install fake-bpy-module-4.2`
 
 ### 插件开发和日常工作隔离【最先配置】
 
@@ -67,4 +67,4 @@ To prevent any accidental changes to your daily setup, change environment var in
 
 注意：如果配置了[插件开发和日常工作隔离](#插件开发和日常工作隔离最先配置)，那么会创建一个用于插件开发的隔离环境（`colletion/blender_vscode_development`），即配置一份新的`Userpref`，与日常工作的`Userpref`隔离开来。这样，即使未能正确清理尚在开发中的插件也没关系，因为开发用隔离环境不会影响到日常工作!
 
-注意：如是遇到`Counld not install debugpy`错误，删除`colletion/blender_vscode_development`目录之后重新`Blender: Start`。
+注意：如是遇到`Counld not install debugpy`错误，无法启动调试，可删除`colletion/blender_vscode_development`目录之后重新`Blender: Start`。
