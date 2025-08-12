@@ -1,6 +1,6 @@
-# Blender Addon Development Template
+# <del>Blender Addon Development Template</del>【弃用】
 
-这是一个`Blender Addon`插件开发的模版
+<del>这是一个`Blender Addon`插件开发的模版</del>【请按新的插件标准来构建项目，另见：[Blender Extension Development Template](../extensiontpl/README.md)】
 
 ### Addon插件的目录结构
 
