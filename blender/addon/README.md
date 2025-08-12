@@ -6,7 +6,7 @@
 
 简化版：
 ```
-addontpl/
+addon/
 ├── __init__.py         ← 插件入口，必须有
 ├── operators.py        ← 自定义操作（功能代码）
 ├── panel.py            ← UI面板（按钮、滑条等）
@@ -18,7 +18,7 @@ addontpl/
 
 ```shell
 cd collection/blender
-zip -r addontpl.zip addontpl
+zip -r addon.zip addon
 ```
 
 ### 搭建开发环境

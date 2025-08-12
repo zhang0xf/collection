@@ -41,12 +41,8 @@
 			"path": "booknotes/algorithms4"
 		},
 		{
-			"name": "addontpl",
-			"path": "blender/addontpl"
-		},
-		{
-			"name": "extensiontpl",
-			"path": "blender/extensiontpl"
+			"name": "addon",
+			"path": "blender/addon"
 		}
 	],
 	"settings": {
