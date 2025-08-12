@@ -43,6 +43,10 @@
 		{
 			"name": "addon",
 			"path": "blender/addon"
+		},
+		{
+			"name": "extension",
+			"path": "blender/extension"
 		}
 	],
 	"settings": {

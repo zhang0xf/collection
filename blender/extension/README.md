@@ -12,7 +12,7 @@
 
 简化版：
 ```
-extensiontpl/
+extension/
 ├── __init__.py
 ├── blender_manifest.toml ← manifest file
 ├── operators.py
@@ -38,14 +38,14 @@ extensiontpl/
 通过`新建终端`为“插件工作目录”打开一个终端（`vscode`自动为终端激活虚拟环境），然后通过以下命令打包插件：
 
 ```shell
-cd collection/blender/extensiontpl
+cd collection/blender/extension
 /Applications/Blender.app/Contents/MacOS/Blender --command extension build
 ```
 
 或者只验证清单，不打包插件：
 
 ```shell
-cd collection/blender/extensiontpl
+cd collection/blender/extension
 /Applications/Blender.app/Contents/MacOS/Blender --command extension validate
 ```
 
