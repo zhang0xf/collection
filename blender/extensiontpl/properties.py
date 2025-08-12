@@ -45,6 +45,9 @@ class MyProperties(bpy.types.PropertyGroup):
 
 def register():
     bpy.utils.register_class(MyProperties)
+    # `bpy.types.Scene`是`Blender`内置的场景数据类型，`my_tool`是自定义属性名，是挂载在`Scene`类型上的一个属性。
+    # 这个属性在`Blender`内部会自动存储到每个场景实例中，能在界面和脚本里用`context.scene.my_tool`访问。
+    # 这行代码给`Scene`类型添加一个“指针属性”（PointerProperty），指向一个`PropertyGroup`类型（`MyProperties`）
     bpy.types.Scene.my_tool = bpy.props.PointerProperty(type=MyProperties)
 
 def unregister():
