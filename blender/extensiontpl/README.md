@@ -17,8 +17,8 @@ extensiontpl/
 ├── blender_manifest.toml ← manifest file
 ├── operators.py
 ├── panel.py
-├── README.md
-└── requirements.txt
+├── properties.py
+└── README.md
 ```
 
 实际项目可参考：[blender_mmd_tools](https://github.com/MMD-Blender/blender_mmd_tools) 

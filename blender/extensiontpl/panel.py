@@ -11,7 +11,18 @@ class OBJECT_PT_HelloPanel(bpy.types.Panel): # PT = 'Panel Type'
     # UI绘制函数
     def draw(self, context):
         layout = self.layout # 一个用于创建UI元素的对象
+        props = context.scene.my_tool
+
+        # 显示属性输入
+        layout.prop(props, "my_int")
+        layout.prop(props, "my_float")
+        layout.prop(props, "my_enum")
+        layout.prop(props, "my_bool")
+        layout.prop(props, "my_string")
+
+        # 按钮区
         layout.operator("object.hello_world") # 添加一个按钮，用于执行'object.hello_world'操作
+        layout.operator("object.print_properties")
 
 def register():
     bpy.utils.register_class(OBJECT_PT_HelloPanel)

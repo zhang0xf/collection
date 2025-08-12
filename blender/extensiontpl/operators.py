@@ -17,8 +17,24 @@ class OBJECT_OT_HelloWorld(bpy.types.Operator): # OT = 'Operator Type'
         print("Hello World in Console") # 在控制台输出'Hello World in Console'
         return {'FINISHED'} # 返回 {'FINISHED'} 表示操作完成
 
+class OBJECT_OT_PrintProperties(bpy.types.Operator):
+    bl_idname = "object.print_properties"
+    bl_label = "Print Properties"
+    
+    def execute(self, context):
+        props = context.scene.my_tool
+        print(f"Integer: {props.my_int}")
+        print(f"Float: {props.my_float}")
+        print(f"Enum: {props.my_enum}")
+        print(f"Boolean: {props.my_bool}")
+        print(f"String: {props.my_string}")
+        self.report({'INFO'}, f"Int={props.my_int}, Float={props.my_float}, Enum={props.my_enum}, Bool={props.my_bool}, String='{props.my_string}'")
+        return {'FINISHED'}
+
 def register():
     bpy.utils.register_class(OBJECT_OT_HelloWorld)
+    bpy.utils.register_class(OBJECT_OT_PrintProperties)
 
 def unregister():
     bpy.utils.unregister_class(OBJECT_OT_HelloWorld)
+    bpy.utils.unregister_class(OBJECT_OT_PrintProperties)
