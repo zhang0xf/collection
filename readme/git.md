@@ -1,29 +1,148 @@
 # Github 操作规范及常见问题整理
 
-### 新建本地仓库并推送的远端
-参考：[将本地托管代码添加到 GitHub](https://docs.github.com/zh/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
+### 新建本地仓库并推送到远端
 
-<!-- ## new branch to develop
-* `git branch -a` : 查看所有的分支
-* `git branch 'new_branch'` : 创建新分支
-* `git checkout main` : 基于main分支创建新分支
-* `git checkout 'new_branch'` : 切换到新分支
-* `git add . && git commit -m "commit message"` : 完成工作
+参考：[将本地代码托管到GitHub](https://docs.github.com/zh/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
 
-## local branch merge
-* `git checkout main` : 切换到main分支
-* `git merge 'new_branch'` : 将new_branch分支合并到main分支
+### 移除远端文件或目录
 
-## push branch to origin
-* `git push -u origin 'new_branch'` : 推送本地分支到远端仓库
+```shell
+git rm [-r] --cached 'dir/files'
+git commit -m "message"
+git push origin 'remote branch'
+```
 
-## remote branch merge
-* 在github页面发起pullrequest请求
+### 分支合并
 
-## 移除远端分支的目录/文件
-* `git rm [-r] --cached 'dir/files'`
-* `git commit -m "commit message"`
-* `git push origin 'remote branch'` -->
+参考：[Git分支合并：merge、squash、rebase](https://zhuanlan.zhihu.com/p/519497650)
+
+项目场景假设：我们完成了`develop`分支的开发测试工作，需要把`develop`分支合并回`main`分支
+![image](../images/git/branch_status.jpg)
+
+#### 合并方式：merge (Create a merge commit)
+<div style="margin-left: 2em"> <!--代码块的缩进-->
+
+```shell
+git checkout main
+git merge develop
+```
+</div>
+
+* `Git`会在`main`分支上创建一个新的合并提交（merge commit）,包含完整的提交历史记录
+* 缺点：历史会有很多“合并节点”，`log`看起来可能比较乱
+* 合并代码到公共分支时，应当使用`merge`，而不应使用`rebase`，否则会让别人本地仓库冲突
+![image](../images/git/git_merge.jpg)
+
+#### 合并方式：squash (Squash and merge)
+* 由于在`develop`分支上执行的是开发工作，有一些很小的提交，或者是纠正前面的错误的提交。这些所有不必单独显示出来的提交可以合并成一个提交，然后提交到`main`分支
+* `squash`并不会替我们产生提交D（见下图），它只是把所有原本属于A、B和C的改动合并，然后放在本地文件，需要你再次手动执行`git commit`操作（注意：该`commit`是你产生的，不是原来`develop`分支上的开发人员产生的，提交者本身发生了变化）
+* 缺点：`squash`会变更提交者作者信息，这是一个很大的问题，后期问题追溯不好处理
+![image](../images/git/git_squash.jpg)
+
+#### 合并方式：Rebase
+<div style="margin-left: 2em">
+
+```shell
+git checkout develop
+git rebase -i main
+git checkout main
+git merge develop
+```
+</div>
+
+* `Rebase -i`会弹出文本编辑框，允许你手动调整`commit`历史，来决定是否合并以及如何合并
+<div style="margin-left: 2em">
+
+```
+pick <A> Message for commit #1
+pick <B> Message for commit #2
+pick <C> Message for commit #3
+```
+</div>
+
+* 假设提交B是对提交A的一个拼写错误修正，因此可以不需要显式的指出来，我们把B修改为`fixup`
+<div style="margin-left: 2em">
+
+```
+pick <A> Message for commit #1
+fixup <B> Message for commit #2
+pick <C> Message for commit #3
+```
+</div>
+
+* `rebase`会把`develop`分支上的提交“重新播放”到`main`分支的最新提交之后，就像你直接在`main`分支上开发的一样，历史干净（下图中，A'是A和B的合并）：
+![image](../images/git/git_rebase.jpg)
+* 最后将`develop`分支合并到`main`分支
+![image](../images/git/git_merge_after_rebase.jpg)
+* 缺点：`rebase`会改写提交历史（新的`commit id`），所以不能随便对公共分支做`rebase`，否则会让别人本地仓库冲突
+* 合并代码到个人分支时，应使用`rebase`，可以不污染分支的提交记录，形成简洁的线性提交历史记录
+
+#### 项目开发规范流程
+* 确保`main`分支是最新的
+<div style="margin-left: 2em"> <!--代码块的缩进-->
+
+```shell
+git checkout main
+git pull origin main
+```
+</div>
+
+* 基于`main`分支创建并切换到`develop`分支
+<div style="margin-left: 2em">
+
+```shell
+git checkout -b develop
+git checkout develop
+```
+</div>
+
+* 在`develop`分支上完成开发测试工作之后，将`main`分支合并到`develop`分支，解决合并过程中的冲突
+<div style="margin-left: 2em">
+
+```shell
+git checkout main
+git pull origin main
+git checkout develop
+git rebase -i main
+```
+</div>
+
+* 标记已解决，完成提交操作，再次确认`develop`分支无问题（编译/运行）
+<div style="margin-left: 2em">
+
+```shell
+git add <filename>
+git commit -m "message"
+```
+</div>
+
+* 将`develop`分支合并到`main`分支并推送到远端
+<div style="margin-left: 2em">
+
+```shell
+git checkout main
+git merge develop
+git push origin main
+```
+</div>
+
+* 【或者】推送`develop`分支到远端，并在远端发起`Pull Requests`
+<div style="margin-left: 2em">
+
+```shell
+git checkout develop
+git push -u origin develop
+```
+</div>
+
+* 删除本地和远端分支【可选】
+<div style="margin-left: 2em">
+
+```shell
+git branch -d develop
+git push origin --delete develop
+```
+</div>
 
 ### 清理仓库中的历史文件【慎重使用】
 问题描述：`git clone`会将整个仓库的历史记录（完整的commit DAG + 所有文件快照）下载到`.git`目录中，包括那些已经被`git delete`的文件。如果提交历史中存在很多大的图片或二进制文件，即使在后来的提交中被删除了，也仍然会导致仓库变大，`git clone`操作变慢。
