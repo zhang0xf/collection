@@ -126,7 +126,7 @@ git push origin main
 ```
 </div>
 
-* 【或者】推送`develop`分支到远端，并在远端发起`Pull Requests`
+* 【或者】推送`develop`分支到远端，并在远端发起`PR`
 <div style="margin-left: 2em">
 
 ```shell
@@ -143,6 +143,15 @@ git branch -d develop
 git push origin --delete develop
 ```
 </div>
+
+### 关于`PR`
+使用`PR`（`Pull Request`）的方式进行代码审查，保持功能模块的清晰性和审查的严格性
+
+一个简单项目场景：
+* 主分支`main`负责产品发布，对应远端分支`origin/main`，接受`PR`
+* 开发分支`develop`负责产品开发，对应远端分支`origin/develop`，由小组组长或发布负责人发起`PR`，将`develop`分支合并到`main`分支。通常这个操作会在项目发布或者版本切换时进行
+* 开发者从`develop`分支创建自己的本地分支`develop_module_A`，可以选择将分支推送到远端`origin/develop_module_A`，在完成功能模块开发后，由开发者发起`PR`，将`develop_module_A`分支合并到`develop`分支。确认无误后，可选择删除远端分支以避免远端分支过多（或者，开发者不创建远端分支`origin/develop_module_A`，只在本地分支上工作，完成工作后将本地分支`develop_module_A`合并到`develop`分支，并推送到远端分支`origin/develop`）
+* 只要`PR`处于`OPEN`状态，你在本地分支上进行更改并提交更新（例如：添加新功能、修复BUG或调整实现），这些提交会自动被添加到该`PR`中
 
 ### 清理仓库中的历史文件【慎重使用】
 问题描述：`git clone`会将整个仓库的历史记录（完整的commit DAG + 所有文件快照）下载到`.git`目录中，包括那些已经被`git delete`的文件。如果提交历史中存在很多大的图片或二进制文件，即使在后来的提交中被删除了，也仍然会导致仓库变大，`git clone`操作变慢。
