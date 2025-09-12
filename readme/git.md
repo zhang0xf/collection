@@ -188,6 +188,12 @@ git push origin --delete develop
   * 命令1：`git push origin :refs/tags/v1.0.0`
   * 命令2:`git push origin --delete v1.0.0`
 
+#### 版本号规范
+> `MAJOR.MINOR.PATCH`
+* `MAJOR`：主版本号，当你做了不兼容的`API`或重大改动，就递增
+* `MINOR`：次版本号，当你新增功能，但保持向下兼容时递增
+* `PATCH`：修订号/补丁号，当你修复 bug 或做小改动时递增
+
 ### 清理仓库中的历史文件【慎重使用】
 ---
 问题描述：`git clone`会将整个仓库的历史记录（完整的commit DAG + 所有文件快照）下载到`.git`目录中，包括那些已经被`git delete`的文件。如果提交历史中存在很多大的图片或二进制文件，即使在后来的提交中被删除了，也仍然会导致仓库变大，`git clone`操作变慢。
