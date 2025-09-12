@@ -1,11 +1,11 @@
 # Github 操作规范及常见问题整理
 
 ### 新建本地仓库并推送到远端
-
+---
 参考：[将本地代码托管到GitHub](https://docs.github.com/zh/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
 
 ### 移除远端文件或目录
-
+---
 ```shell
 git rm [-r] --cached 'dir/files'
 git commit -m "message"
@@ -13,7 +13,7 @@ git push origin 'remote branch'
 ```
 
 ### 分支合并
-
+---
 参考：[Git分支合并：merge、squash、rebase](https://zhuanlan.zhihu.com/p/519497650)
 
 项目场景假设：我们完成了`develop`分支的开发测试工作，需要把`develop`分支合并回`main`分支
@@ -144,7 +144,8 @@ git push origin --delete develop
 ```
 </div>
 
-### 关于`PR`
+### PR
+---
 使用`PR`（`Pull Request`）的方式进行代码审查，保持功能模块的清晰性和审查的严格性
 
 一个简单项目场景：
@@ -153,7 +154,42 @@ git push origin --delete develop
 * 开发者从`develop`分支创建自己的本地分支`develop_module_A`，可以选择将分支推送到远端`origin/develop_module_A`，在完成功能模块开发后，由开发者发起`PR`，将`develop_module_A`分支合并到`develop`分支。确认无误后，可选择删除远端分支以避免远端分支过多（或者，开发者不创建远端分支`origin/develop_module_A`，只在本地分支上工作，完成工作后将本地分支`develop_module_A`合并到`develop`分支，并推送到远端分支`origin/develop`）
 * 只要`PR`处于`OPEN`状态，你在本地分支上进行更改并提交更新（例如：添加新功能、修复BUG或调整实现），这些提交会自动被添加到该`PR`中
 
+### Tag
+---
+> `git tag` is a command used in Git to mark specific points in a repository's history as important. These points are typically used to mark release versions (e.g., `v1.0.0`, `v2.1-beta`)
+
+除了发布产品（`Release`）之外，`tag`在`Git`中还有很多用途：
+* 记录某个`commit`是里程碑版本、功能冻结点或稳定版本，不一定要用于发布产品，例如内部版本、测试版本、快速迭代版本等
+* 快速`checkout`到某个历史点：`git checkout v0.9-beta`
+* `CI/CD`流程触发，使用`tag`触发特定的`workflow`
+
+#### 轻量`Tag`
+> `Lightweight Tags`: These are simply pointers to a specific commit
+* 创建命令：`git tag v1.0.0`
+
+#### 附注`Tag`
+> Annotated Tags: These store extra metadata like the tagger's name, email, date, and a tagging message. They are more robust and recommended for releases.
+* 创建命令：`git tag -a v1.0.0 -m "Release version 1.0.0"`
+  * `-a`：表示`annotated tag`
+  * `-m`：`tag`的说明信息
+
+#### 查看`Tag`详细信息
+* 查看命令：`git show v1.0.0`
+> This displays information about a specific tag, including the commit it points to and, for annotated tags, the tag message and metadata.
+
+#### 推送`Tag`到远端
+> By default, `git push` does not transfer tags. You need to explicitly push them.
+* 推送单个`tag`：`git push origin v1.0.0`
+* 推送所有`tag`：`git push origin --tags`
+
+#### 删除`Tag`
+* 删除本地`Tag`：`git tag -d v1.0.0`
+* 删除远端`Tag`：
+  * 命令1：`git push origin :refs/tags/v1.0.0`
+  * 命令2:`git push origin --delete v1.0.0`
+
 ### 清理仓库中的历史文件【慎重使用】
+---
 问题描述：`git clone`会将整个仓库的历史记录（完整的commit DAG + 所有文件快照）下载到`.git`目录中，包括那些已经被`git delete`的文件。如果提交历史中存在很多大的图片或二进制文件，即使在后来的提交中被删除了，也仍然会导致仓库变大，`git clone`操作变慢。
 
 解决方法：
