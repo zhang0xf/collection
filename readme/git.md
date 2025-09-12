@@ -161,7 +161,7 @@ git push origin --delete develop
 除了发布产品（`Release`）之外，`tag`在`Git`中还有很多用途：
 * 记录某个`commit`是里程碑版本、功能冻结点或稳定版本，不一定要用于发布产品，例如内部版本、测试版本、快速迭代版本等
 * 快速`checkout`到某个历史点：`git checkout v0.9-beta`
-* `CI/CD`流程触发，使用`tag`触发特定的`workflow`
+* `CI/CD`（Continuous Integration/Continuous Deployment）流程触发，使用`tag`触发特定的`workflow`
 
 #### 轻量`Tag`
 > `Lightweight Tags`: These are simply pointers to a specific commit
