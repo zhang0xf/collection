@@ -1,20 +1,13 @@
-# operators.py 是集中写所有自定义操作行为的地方，每个操作都是一个继承自`bpy.types.Operator`的类
-
-# 在Blender中，`Operator`是所有功能的核心，比如：
-# - 添加一个立方体：`bpy.ops.mesh.primitive_cube_add()`
-# - 移动物体：`bpy.ops.transform.translate()`
-# - 自定义按钮点击逻辑：`bpy.ops.object.hello_world()`
-
 import bpy
 
-class OBJECT_OT_HelloWorld(bpy.types.Operator): # OT = 'Operator Type'
+class OBJECT_OT_HelloWorld(bpy.types.Operator): # OT: 'Operator Type'
     bl_idname = "object.hello_world" # 操作的唯一标识符
-    bl_label = "Say Hello" # 这是UI中显示的名称（按钮）
+    bl_label = "Say Hello" # UI中显示的名称
     
     def execute(self, context): 
-        self.report({'INFO'}, "Hello from plugin!") # 在界面状态栏提示
-        print("Hello World in Console") # 在控制台输出
-        return {'FINISHED'} # 返回 {'FINISHED'} 表示操作完成
+        self.report({'INFO'}, "Hello from plugin!")
+        print("Hello World in Console")
+        return {'FINISHED'}
 
 class OBJECT_OT_PrintProperties(bpy.types.Operator):
     bl_idname = "object.print_properties"
@@ -35,5 +28,5 @@ def register():
     bpy.utils.register_class(OBJECT_OT_PrintProperties)
 
 def unregister():
-    bpy.utils.unregister_class(OBJECT_OT_PrintProperties) # 习惯性逆序注销
+    bpy.utils.unregister_class(OBJECT_OT_PrintProperties) # 逆序注销
     bpy.utils.unregister_class(OBJECT_OT_HelloWorld)

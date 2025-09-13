@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 
-id = "extension_template"
+id = "extension-template"
 version = "1.0.0"
 name = "Extension Template"
 tagline = "A Template for Develop Extension"

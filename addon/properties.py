@@ -1,5 +1,3 @@
-# properties.py 存放插件自定义属性
-# 可以在`Operator`中用`context.scene.my_tool`访问这些属性，也可以在`Panel`中用`layout.prop()`显示它们。
 import bpy
 
 class MyProperties(bpy.types.PropertyGroup):
@@ -45,10 +43,7 @@ class MyProperties(bpy.types.PropertyGroup):
 
 def register():
     bpy.utils.register_class(MyProperties)
-    # `bpy.types.Scene`是Blender内置的场景数据类型，`my_tool`是自定义属性名，是挂载在`Scene`类型上的一个属性。
-    # 这个属性在Blender内部会自动存储到每个场景实例中，能在界面和脚本里用`context.scene.my_tool`访问。
-    # 这行代码给`Scene`类型添加一个“指针属性”（PointerProperty），指向一个`PropertyGroup`类型（`MyProperties`）
-    bpy.types.Scene.my_tool = bpy.props.PointerProperty(type=MyProperties)
+    bpy.types.Scene.my_tool = bpy.props.PointerProperty(type=MyProperties) # 将自定义属性`my_tool`挂载到`Scene`数据类型上（`my_tool`自动存储到每个场景实例中）
 
 def unregister():
     del bpy.types.Scene.my_tool
