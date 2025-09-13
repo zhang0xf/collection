@@ -157,13 +157,12 @@
 ![image](../images/blender/blender_uv_unwrap_suggestion02.png)
 ![image](../images/blender/blender_uv_unwrap_suggestion03.png)
 
-### 百褶裙的双面渲染
-----
+### 外来模型的`UV`
+---
+**问题描述**：导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
 
-### 关于外来模型的UVMap
-* 导入的外来模型可能已有自定义的`UVMap`,与`Blender`默认的`UVMap`不在一个UV坐标通道，如果不处理或者忘记检查，则最后在导入游戏引擎后，外来模型（背包）与本地自建模型（人物）会分布在不同的`纹理坐标通道`(例如：一个在`TEXCOORD0`通道，另一个在`TEXCOORD1`通道)，进而会导致渲染代码采样UV坐标时结果错误。故导入外来模型之后，需要确保所有的对象在同一UV通道。例如:默认的`UVMap`。
-![image](../images/blender/Import_Model_UVMap.png)
-* 在建模过程中，可能需要拷贝模型的UVMap，方法如下:`选择源物体` -> `选择目标物体` -> `control + l -> Copy UV Maps`.
+**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）
+![image](../images/blender/blender_import_model_uvmap.png)
 
 ### 建模、绑定和动画分文件(多人协作开发)
 * 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
