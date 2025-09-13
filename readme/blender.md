@@ -1,14 +1,18 @@
-# blender偏好设置
-* 视图切换-自动深度(避免缩放视图很慢):
-![image](../images/blender/Navigation_Orbit_Depth.png)
-* 右键选择:
-![image](../images/blender/Ketmap_Select_With_Mouse_Button.png)
-* 空格键搜索:
-![image](../images/blender/Keymap_Spacebar_Action.png)
-* 鼠标中键视图检视:
-![image](../images/blender/Keymap_Middle_Mouse_Action.png)
+# Blender 笔记
 
-# blender资产库
+### 偏好设置
+---
+* 视图切换-自动深度(避免缩放视图很慢):
+![image](../images/blender/blender_navigation_orbit_depth.png)
+* 右键选择:
+![image](../images/blender/blender_keymap_select_with_mouse_right.png)
+* 空格键搜索:
+![image](../images/blender/blender_keymap_spacebar_action.png)
+* 鼠标中键视图检视:
+![image](../images/blender/blender_keymap_middle_mouse_action.png)
+
+### 资产库
+---
 * 创建blender资产库:
 ![image](../images/blender/File_Paths_Asset_Library.png)
 * 将引用的资源打包进blend文件,避免移动文件之后丢失引用:`File -> External Data -> Pack Resources`.
@@ -535,3 +539,70 @@ remove_vertex_groups_by_object_name()
 # Unity优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
 * Use the Level Of Detail system.
+
+### 刚体参数
+
+mass
+- mass（质量）表示刚体的惯性大小，即它对加速度的抵抗能力
+- 加速度响应：施加相同力时，质量越大加速度越小
+- 碰撞反应：大质量物体在碰撞时会“推开”小质量物体，而自身几乎不受影（动量守恒）
+- 重力效果：质量不会影响下落速度（自由落体加速度恒定），但会影响碰撞击力
+- 惯性张量：大质量物体的旋转惯性也更大，转动更难
+- default=1 是一个方便的中性值，用 1 作为基准，其他物体的质量相对它调节
+
+friction
+- friction 控制的是物体表面与接触面之间的阻力，会影响它在接触面上的动程度
+- 数值越高 → 更“粘”，滑动时阻力更大，物体更快停下来
+- 数值越低 → 更“滑”，物体更容易在表面滑动很远
+- 0 表示完全无摩擦（冰面效果），理论上会无限滑动
+- 混合摩擦公式（Bullet 默认）：
+- friction_total = sqrt(friction_A × friction_B)
+- 这意味着：
+- 两个物体中任意一个摩擦力低，最终摩擦也会低
+- 两个物体都高摩擦时，最终摩擦才会大
+- 实际模拟感觉：
+- 0.0：冰面，几乎无限滑动
+- 0.2：很滑的地板，缓慢停下
+- 0.5：普通木地板/桌面摩擦感
+- 0.8：橡胶接触，几乎不滑动
+- \>1.0：极端高摩擦，除非强推几乎不动
+- 注意：
+- 只在接触时生效：物体必须和别的表面接触才有摩擦力的计算
+- 不是粘性：摩擦只是阻止滑动，不会让物体粘住
+- 高摩擦并不意味着不能滑：如果外力足够大（比如强推），物体仍然会滑动
+
+bounce：
+- bounce 控制的是刚体的弹性恢复系数，决定了物体在碰撞后反弹的程度
+- 它对应物理里的 系数 e（Coefficient of Restitution），定义为碰后速度与碰撞前速度的比值
+- 0 → 完全非弹性碰撞，碰到就停下（像橡皮泥砸地）
+- 1 → 完全弹性碰撞，碰到后反弹回去，速度与高度几乎完全保留（理想化的力球）
+- 0~1 → 部分弹性，碰撞时损失一部分能量
+- 碰撞的反弹系数是两个物体的 bounce 值组合，Bullet 默认取两者中较的一个
+- 只在法向方向（normal direction）生效，和摩擦不同，不影响沿接触面滑动
+- 如果 bounce 很大而且 friction 很低，就会出现“超级弹球”效果
+- 数值感受：
+- 0.0：完全不反弹，直接停下
+- 0.2：轻微弹跳
+- 0.5：弹跳一半高度
+- 0.8：弹跳高度接近原高度
+- 1.0：理论完美弹性，能无限弹（数值模拟中还是会有损耗）
+
+linear_damping：
+- 物体在没有碰撞或外力时，会因为阻力（空气阻力、摩擦等模拟）而逐渐速，这个衰减速率就是由 linear_damping 决定的。
+- 直观感受：
+- 0.0：冰上滑行感，物体会一直滑动
+- 0.04（默认）：有轻微空气阻力，物体慢慢停下来
+- 0.3：明显阻力，几秒内就停
+- 1.0：基本立即停下
+
+angular_damping：
+- angular_damping 是刚体物理里控制 旋转速度衰减 的参数，可以理解为转方向上的阻力。它和 linear_damping 类似，但作用于角速度而不是线速度
+- 刚体在旋转时，物理引擎会根据 angular_damping 每帧减少它的角速（rotation speed）
+- 值越大 → 旋转速度衰减越快 → 物体更快停下旋转
+- 值为 0 → 无旋转阻力，物体会无限旋转（除非碰撞或摩擦）
+- 值为 1 → 旋转速度几乎瞬间衰减到 0
+- 直观感受：
+- 0.0：旋转像陀螺，几乎不减速
+- 0.1（默认）：稍微阻力，慢慢停转
+- 0.3：旋转明显减速，几秒内停下
+- 1.0：旋转瞬间停下
