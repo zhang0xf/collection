@@ -131,8 +131,14 @@
 2. `Snap » Backface Culling`[✔]
 ![image](../images/blender/blender_vertex_snap2face.png)
 
-### 挤出的点自动吸附到表面
-* 问题解决:更改吸附规则为`Face Nearest`,并确保开启`Backface Culling`。在使用`e`挤出顶点之后,再使用`g`移动顶点（移动时会自动吸附）。
+### `e`挤出的点自动吸附到最近的面
+---
+**问题描述**：选择`循环边`并挤出，挤出的点不会自动吸附到最近的面
+
+**问题解决**：
+1. `Snap Target for Individual Elements » Face Nearest`[✔]
+2. `Snap » Backface Culling`[✔]
+3. 挤出点后，使用`g`移动顶点(点会自动吸附到最近的面)
 
 ### UV同步
 * 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项
