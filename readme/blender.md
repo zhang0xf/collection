@@ -108,7 +108,7 @@
 
 ### 遮罩和限制轴向
 ---
-**问题描述**：在制作“编制手环”时,我们需要对单个"编织绳"进行`抓取`，固定x轴，使雕刻工具(`抓取`)只能在y和z轴上进行。
+**问题描述**：在制作“编织手环”时,我们需要对单个"编织绳"进行`抓取`，固定x轴，使雕刻工具(`抓取`)只能在y和z轴上进行。
 ![image](../images/blender/blender_sculpt_bracelet01.png)
 
 **问题解决**：
@@ -118,7 +118,7 @@
 3. `Auto-Masking » Mesh Boundary`[✔]
 4. `Auto-Masking`[✔]
 ![image](../images/blender/blender_sculpt_bracelet03.png)
-5. `Symmetry » Lock`: `x`[✔]
+5. `Symmetry » Lock » x`[✔]
 ![image](../images/blender/blender_sculpt_bracelet04.png)
 
 ### 点无法准确吸附到最近的面
