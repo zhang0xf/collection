@@ -140,19 +140,25 @@
 2. `Snap » Backface Culling`[✔]
 3. 挤出点后，使用`g`移动顶点(点会自动吸附到最近的面)
 
-### UV同步
-* 展UV时，在`UV Editing`操作界面下，打开`UV Sync Selection`选项
+### `UV`同步选择
+---
+**经验之谈**：展`UV`时，`UV Sync Selection`[✔]
 
-### UV与游戏表现和性能的相关性
-* 展UV时，叠放UV布局(例如对称的左右手)可以充分利用Texture有限的空间，减少Texture数量有助于提升性能。但是会限制艺术表现(例如左右手可能会要求不同的贴花,则不适合叠放UV)。
-* 展UV时，细节多、屏幕占比大的UV孤岛需要尽可能放大；相反被遮挡、细节少、屏幕占比小的UV孤岛需要尽可能缩小。
-* 展UV时，可能遇到“整个UV孤岛”应当尽可能缩小，即细节较少（例如：人物腿部几乎是纯皮肤色）；但是“UV”孤岛中的一些区域应当尽可能放大，因为细节较多（例如：腿部有贴纸，希望高分辨率展示）。则此时可以单独挖出拥有细节的区域并放大该部分区域的UV,其余对称的区域仍然可进行UV叠放。（参考自米哈游模型的做法）
-![image](../images/blender/UV_Unwrap_suggestion01.png)
-![image](../images/blender/UV_Unwrap_suggestion02.png)
-![image](../images/blender/UV_Unwrap_suggestion03.png)
-* 导入Unity游戏引擎后，制作Prefab时选择`Prefab -> Unpack`而非`Prefab -> UnPack Completely`。
+### `UV`与游戏表现和性能【重要】
+---
+**经验之谈**：
+
+展`UV`时，叠放`UV`布局(例如对称的左右手)可以充分利用`Texture`有限的空间，进而减少`Texture`数量，提升性能。但是会限制艺术表现（例如：左右手`UV`不对称或需绘制不同贴花，这种情况不适合叠放`UV`）
+
+展`UV`时，放大`UV孤岛`以展现更多细节（例如：有可能被`摄像机`聚焦的部位）。相反，缩小`UV孤岛`可以减少细节（例如：被遮挡的，永远不可能出现在`摄像机`中的部位）
+
+展`UV`时，可能遇到如下情况：某部位总体上细节较少，所以对应的`UV孤岛`应当尽可能缩小（例如：人物腿部几乎是纯皮肤色）；但是该部位中的一些区域拥有较多细节，所以这部分区域应当尽可能放大（例如：腿部有贴纸，希望高分辨率展示）。面对这种“矛盾”，我们可以参考米哈游模型的解决方案，即单独挖出拥有较多细节的区域并放大该区域的`UV`，其余区域仍可进行UV叠放。
+![image](../images/blender/blender_uv_unwrap_suggestion01.png)
+![image](../images/blender/blender_uv_unwrap_suggestion02.png)
+![image](../images/blender/blender_uv_unwrap_suggestion03.png)
 
 ### 百褶裙的双面渲染
+----
 
 ### 关于外来模型的UVMap
 * 导入的外来模型可能已有自定义的`UVMap`,与`Blender`默认的`UVMap`不在一个UV坐标通道，如果不处理或者忘记检查，则最后在导入游戏引擎后，外来模型（背包）与本地自建模型（人物）会分布在不同的`纹理坐标通道`(例如：一个在`TEXCOORD0`通道，另一个在`TEXCOORD1`通道)，进而会导致渲染代码采样UV坐标时结果错误。故导入外来模型之后，需要确保所有的对象在同一UV通道。例如:默认的`UVMap`。
