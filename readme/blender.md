@@ -99,14 +99,14 @@
 * `option + s`:<u>**[编辑模式-曲线]**</u>缩放曲线控制点的半径（`radius`）
 * `control + t`:<u>**[编辑模式-曲线]**</u>缩放曲线控制点的倾斜角（`tilt`）
 
-# blender实用技巧、注意事项、问题及解决方案
-
 ### 雕刻边沿
+---
 * 问题描述：在雕刻鞋子时，希望雕刻出鞋底和鞋面的边沿并使鞋底平整。
 * 问题解决：使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
-![image](../images/blender/Sculpt_Shoes_Edge.png)
+![image](../images/blender/blender_sculpt_shoes_edge.png)
 
-### 雕刻时的遮罩和限制轴向
+### 遮罩和限制轴向
+---
 * 问题描述：在制作“编制手环”时,我们需要对单个"编织绳"进行`抓取`，并固定x轴，使雕刻只能在y和z轴上进行。
 ![image](../images/blender/Sculpt_Bracelet01.png)
 * 问题解决：使用`Face Sets -> Initialize Face Sets -> By Loose Parts`;打开并勾选`Auto-Masking`下的`Face Sets`以及`Mesh Boundary`;打开`Symmetry`并固定x轴；
