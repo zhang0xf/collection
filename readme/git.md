@@ -17,7 +17,7 @@ git push origin 'remote branch'
 参考：[Git分支合并：merge、squash、rebase](https://zhuanlan.zhihu.com/p/519497650)
 
 项目场景假设：我们完成了`develop`分支的开发测试工作，需要把`develop`分支合并回`main`分支
-![image](../images/git/branch_status.jpg)
+![image](../images/git/git_branch_status.jpg)
 
 #### 合并方式：merge (Create a merge commit)
 <div style="margin-left: 2em"> <!--代码块的缩进-->
