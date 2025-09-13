@@ -37,11 +37,9 @@ source /opt/homebrew/bin/virtualenvwrapper.sh
 
 ### 在`VSCode`中配置
 ---
-由于`VSCode`新增了`Python环境管理界面`，它将`Python`环境的管理从以前的纯路径识别转向更加结构化的方式，比如强调`venv`, `conda`, `poetry`, `pyenv`等“官方支持的环境管理器”，而对`virtualenvwrapper`即 `mkvirtualenv`）创建的环境支持变得不明显，因此不能自动识别`~/.virtualenvs`中的虚拟环境，所以在解释器选择界面（`Command Palette → Python: Select Interpreter`）里看不到它们。
-
-因此需要从`Python环境管理界面`来为插件项目创建虚拟环境，这将在项目的"根目录"下创建`.venv`文件夹。`新建终端`时会自动激活对应的虚拟环境.
-* 安装依赖：`pip install fake-bpy-module-4.2`
-* 确认安装：`pip list`
+参考：[创建python虚拟环境](../readme/vscode.md#创建python虚拟环境)
+* 安装[fake-bpy-module](https://github.com/nutti/fake-bpy-module)依赖包：`pip install fake-bpy-module-4.2`
+* 确认安装包信息：`pip list`
 
 ### 插件开发和日常工作隔离【重要】
 ---
