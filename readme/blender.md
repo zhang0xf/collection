@@ -279,7 +279,9 @@
 
 ### 骨骼的精确定位
 ---
-* 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
+* `Shift + s » Cursor to Selected`：将游标定位到某处
+* 选择`Bone`的`Head`或`Tail`<u>**[编辑模式下]**</u>
+* `Shift + s » Selected To Cursor`：将`Head`或`Tail`吸附到游标位置
 
 ### 为Rigify骨架增加物理骨骼
 * 问题描述：我们需要在`Rigify`基础人形骨架的基础上，添加用于头发、衣服、飘带等物理模拟的“自定义”骨骼。
