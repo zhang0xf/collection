@@ -3,13 +3,13 @@
 ### 偏好设置
 ---
 * 视图切换-自动深度(避免缩放视图很慢):   
-  <img src="../images/blender/blender_navigation_orbit_depth.png" alt="image" width="600">
+  <img src="../images/blender/blender_navigation_orbit_depth.png" alt="image" width="600"><br>
 * 右键选择:  
-  <img src="../images/blender/blender_keymap_select_with_mouse_right.png" alt="image" width="600">
+  <img src="../images/blender/blender_keymap_select_with_mouse_right.png" alt="image" width="600"><br>
 * 空格键搜索:  
-  <img src="../images/blender/blender_keymap_spacebar_action.png" alt="image" width="600">
+  <img src="../images/blender/blender_keymap_spacebar_action.png" alt="image" width="600"><br>
 * 鼠标中键视图检视:  
-  <img src="../images/blender/blender_keymap_middle_mouse_action.png" alt="image" width="600">
+  <img src="../images/blender/blender_keymap_middle_mouse_action.png" alt="image" width="600"><br>
 
 ### 资产库
 ---
@@ -161,8 +161,8 @@
 ---
 **问题描述**：导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
 
-**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）  
-<img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300">
+**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）<br> 
+<img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300"><br>
 
 ### 建模、绑定和动画分文件(多人协作开发)
 ---
@@ -176,7 +176,7 @@
 * 建模同步到绑定：
   1. 在绑定文件中`link`建模文件的`Collection`（建模文件会将所有需要`link`的对象放在一个`Collection`中，该`Collection`同时也是`Substance Painter`的低模源）
   2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`<br>
-  <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300">
+  <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300"><br>
   3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
   <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>
   4. 脚本如下：
