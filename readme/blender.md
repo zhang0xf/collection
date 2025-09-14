@@ -179,7 +179,7 @@
   <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300"><br>
   3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
   <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>
-  4. 脚本如下：
+  4. 脚本如下：<br>
      ```python
      import bpy
      
@@ -208,13 +208,15 @@
   <img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500"><br>
   4. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
   5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
-* TODO：如何结合`SVN`版本管理？
+* TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
 
-### UV形变的镜像同步
-* 问题描述:镜像对称的对象,更改某一边UV,希望另一边UV镜像同步
-![image](../images/blender/UV_Mirror_Sync.png)
-* 解决方案:删除另一边UV,并添加镜像修改器,勾选UV沿轴向对称,最后应用修改器
-![image](../images/blender/UV_Mirror_Sync_Solution.png)
+### `UV`的镜像同步
+---
+**问题描述**：镜像对称，更改某一侧`UV`，希望另一侧`UV`镜像同步
+![image](../images/blender/blender_uv_mirror_sync_error.png)
+
+**解决方案**：删除另一侧`UV`，并添加`Mirror`修改器，`Data » Mirror » U`[✔]
+![image](../images/blender/blender_uv_mirror_sync_solution.png)
 
 ### UV打直
 * 问题描述:UV弯曲占用较多Texture空间,打直以更好地布局
