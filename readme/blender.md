@@ -242,7 +242,6 @@
   ![image](../images/blender/blender_uv_mirror_align02.png)
 
 **问题延伸**：顶点过多，需要使用脚本来操作（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但位置非常接近。使用该脚本前应先备份`Mesh`）
-
 * 脚本如下：
   ```python
   import bpy
@@ -273,7 +272,6 @@
   # 更新网格
   bmesh.update_edit_mesh(obj.data)
   ```
-
 * `UV`自动吸附效果：
 ![image](../images/blender/blender_uv_mirror_auto_snap.png)
 
@@ -283,33 +281,54 @@
 * 选择`Bone`的`Head`或`Tail`<u>**[编辑模式下]**</u>
 * `Shift + s » Selected To Cursor`：将`Head`或`Tail`吸附到游标位置
 
-### 为Rigify骨架增加物理骨骼
-* 问题描述：我们需要在`Rigify`基础人形骨架的基础上，添加用于头发、衣服、飘带等物理模拟的“自定义”骨骼。
-* 使用插件：<del>[Wiggle2](https://github.com/shteeve3d/blender-wiggle-2)</del>、[Swingy Bone Physics v1.8.0](https://superhivemarket.com/products/swingy-bone-physics))
-* 参考视频：[[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
-* 参考视频：[blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-* 参考视频：[Swingy Bone 物理学骨骼链物理模拟Blender插件V1.8.0版](https://www.bilibili.com/video/BV1yo76z7EAs/?spm_id_from=333.337.search-card.all.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-* 参考文档：[Swingy Bone Physics Addon](https://swingy-bone-physics.github.io/wiki/)
-* 问题解决：（以“马尾”为例）
-  1. `Shift + a -> Armature -> Single Bone`添加一个用于“马尾”绑定和物理模拟的骨架。进入`Edit Mode`完成“形变骨(Deform)”的添加和编辑工作，将所有“形变骨”放入到同一个`Bone Collections`中，例如“Hair03”骨骼集合。
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify01.png)
-  2. 复制需要物理模拟的“形变骨”，并纳入新的`Bone Collections`，例如“Hair03_Physics”骨骼集合。
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify02.png)
-  3. 进入`Pose Mode`，将所有物理模拟骨骼的`Rigify Type`设置为`basic.row_copy`;`Widget Type`设置为`bone`。并且所有物理模拟骨骼取消勾选`Deform`。（注意：按住`option`以同时操作所有选中骨骼）
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify03.png)
-  4. 回到“形变骨”集合，将所有“形变骨”的`Rigify Type`设置为`basic.super_copy`,`options`需要勾选`Control`(表示会生成`CTRL-***`类型的Rigify控制骨)、勾选`Widget`并设置控制骨“自定义”形状为`bone`、勾选`Deform`（表示会生成`DEF-***`类型的Rigify形变骨）
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify04.png)
-  5. 对于需要跟随物理骨骼的"形变骨"，需要添加`Bone Constraint`下的`Copy Rotation`。通过添加"CTRL:"前缀，更改其命名为`CTRL:Copy Rotation`，且勾选`Rigify Type`下的`Relink Constraints`，来将骨骼约束转移到生成的`rig`的“控制骨”上。
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify05.png)
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify06.png)
-  6. 备份“马尾”骨架，并使用`Aplly All Transform`应用骨骼形变。使用`control + j`合并“马尾”骨架到`metarig`骨架中。合并完成之后，进入`Edit Mode`设置”马尾“骨骼与`metarig`骨骼的父子关系。最后进入`Bone Collection UI`面板下，设置新增“马尾”骨骼集合在`Rigify`UI中的位置。
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify07.png)
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify08.png)
-  7. 点击`Re-Generate Rig`按钮，重新生成`Rig`绑定(会保留之前已经绘制好的权重)。切换到`Pose Mode`检查生成的`Rig`绑定中对应的父子关系是否正确。
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify09.png)
-  8. 在骨架面板中，使`DEF`骨骼集合(bone Collection)变为可见的`Visible`。最后切换到`Weight Paint Mode`对前缀为“DEF-”的骨骼进行权重绘制。（参见下文：**权重绘制**）
-  ![image](../images/blender/Add_PhysicsBone_To_Rigify10.png)
-* 总结：使用这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，使用`FK`控制器进行微调来解决一些物理模拟中的“穿模”问题。其次，不管使用何种物理模拟的插件，插件只需专注于`Physics`物理骨骼集合，而无需考虑其它。
+### 根据曲线生成骨链
+---
+**问题描述**：为“头发”添加骨骼时，手动调整骨骼位置去适配“头发”会十分浪费时间，我们可以利用头发的原始曲线来生成对应的骨链
+
+**问题解决**：TODO
+
+### 为`Rigify`骨架添加物理骨骼
+---
+**问题描述**：我们需要在`Rigify`基础人形骨架上，添加用于头发、衣服、飘带的“自定义”骨骼
+
+**参考视频**：
+* [[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
+* [blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+
+**问题解决**：
+  1. `Shift + a » Armature » Single Bone`添加一个用于“头发”绑定的骨架，切换到<u>**[编辑模式]**</u>并添加`Deform`骨骼（手动添加和对齐骨骼很浪费时间，另见[根据曲线生成骨链](#根据曲线生成骨链)）
+  - 将所有`Deform`骨骼放入同一个`Bone Colletions`中（例如：`Hair03`）
+  ![image](../images/blender/blender_add_physicsbone_to_rigify01.png)
+  2. 复制所有`Deform`骨骼，添加后缀`_physics`，将所有物理骨骼放入同一个`Bone Collection`中（例如：`Hair03_Physics`）
+  - `Bone Properties » Deform`[❌]
+  ![image](../images/blender/blender_add_physicsbone_to_rigify02.png)
+  3. 切换到<u>**[姿态模式]**</u>，设置“物理骨骼”（`option(按住) + enter`设置所有选中骨骼）
+  - `Rigify Type » Rig type » basic.row_copy`[✔]
+  - `Rigify Type » Options » Widget » bone`[✔]
+  ![image](../images/blender/blender_add_physicsbone_to_rigify03.png)
+  4. 切换到<u>**[姿态模式]**</u>，设置`Deform`骨骼
+  - `Bone Properties » Deform`[✔]
+  - `Rigify Type » Rig type » basic.super_copy`[✔]
+  - `Rigify Type » options » Control`[✔]：要求生成`CTRL-XXX`类型的`Rigify`控制骨
+  - `Rigify Type » Options » Widget » bone`[✔]
+  - `Rigify Type » Options » Deform`[✔]：要求生成`DEF-XXX`类型的`Rigify`形变骨
+  - `Rigify Type » Options » Relink Constraints`[✔]：要求将骨骼约束转移到生成的`rig`的“控制骨”上
+  ![image](../images/blender/blender_add_physicsbone_to_rigify04.png)
+  ![image](../images/blender/blender_add_physicsbone_to_rigify06.png)
+  5. `Deform`骨骼需要拷贝物理骨骼的旋转，创建骨骼约束`Bone Constraint » Copy Rotation`，添加前缀`CTRL:`，重命名为`CTRL:Copy Rotation`
+  - `CTRL:Copy Rotation » Bone » "XXX_physics"`[✔]
+  - `CTRL:Copy Rotation » Mix » Before Original`[✔]
+  - `CTRL:Copy Rotation » Target » Local Space`[✔]
+  - `CTRL:Copy Rotation » Owner » Local Space`[✔]
+  ![image](../images/blender/blender_add_physicsbone_to_rigify05.png)
+  6. 备份“头发”骨架。合并前：`cmd/control » Aplly All Transform`[✔]，合并到`metarig`骨架：`control + j`[✔]，合并后：切换到<u>**[编辑模式]**</u>设置父子关系，最后设置`Bone Collection UI`
+  ![image](../images/blender/blender_add_physicsbone_to_rigify07.png)
+  ![image](../images/blender/blender_add_physicsbone_to_rigify08.png)
+  7. 点击`Re-Generate Rig`按钮，重新生成`Rig`(已经绘制的权重不会丢失)。切换到<u>**[姿态模式]**</u>检查`Rig`中父子关系是否正确
+  ![image](../images/blender/blender_add_physicsbone_to_rigify09.png)
+  8. 显示`DEF Bone Collection`,对前缀为“DEF-”的骨骼进行权重绘制(另见：[权重绘制](#权重绘制))
+  ![image](../images/blender/blender_add_physicsbone_to_rigify10.png)
+  9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合。
 
 ### 权重绘制
 * 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
