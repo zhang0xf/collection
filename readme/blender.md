@@ -176,10 +176,10 @@
 * 建模同步到绑定：
   1. 在绑定文件中`link`建模文件的`Collection`（建模文件会将所有需要`link`的对象放在一个`Collection`中，该`Collection`同时也是`Substance Painter`的低模源）
   2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`  
-  <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300">
+    <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300">
   3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）  
-  <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300">  
-  脚本如下：
+    <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300">  
+  4. 脚本如下：
      ```python
      import bpy
      
@@ -202,10 +202,10 @@
      ```
 * 建模更改同步到绑定
   1. 在绑定文件中`Append`建模文件中被修改的对象（建模文件通常会创建新对象并备份原对象，新对象的改动可能是修改了拓扑（例如：“马尾辫”增加了一条分叉），也可能是修改了`形态键`（例如：“脸部”添加或修改了一个`表情键`））  
-  <img src="../images/blender/blender_transfer_vertex_group01.png" alt="image" width="500">
+    <img src="../images/blender/blender_transfer_vertex_group01.png" alt="image" width="500">
   2. 将新对象绑定到骨骼（不要生成顶点组）：`control + p » Armature Deform`
   3. 为新对象添加`Data Transfer`修改器，`Source`设为原对象，`Vertex Data`[✔]，`Vertex Data » Vertex Groups`[✔]  
-  <img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500">  
+    <img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500">  
   4. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
   5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
 * TODO：如何结合`SVN`版本管理？
