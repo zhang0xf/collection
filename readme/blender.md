@@ -241,43 +241,44 @@
   4. 选择顶点，移动并吸附
   ![image](../images/blender/blender_uv_mirror_align02.png)
 
-**问题延伸**：顶点过多，需要使用脚本来操作（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但也位置非常接近，使用该脚本前应先备份`Mesh`）
+**问题延伸**：顶点过多，需要使用脚本来操作（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但位置非常接近。使用该脚本前应先备份`Mesh`）
 
-脚本如下：
-```python
-import bpy
-import bmesh
+* 脚本如下：
+  ```python
+  import bpy
+  import bmesh
+  
+  # 获取当前UV编辑器选中的顶点
+  obj = bpy.context.active_object
+  bm = bmesh.from_edit_mesh(obj.data)
+  uv_layer = bm.loops.layers.uv.active
+  
+  # 设置吸附阈值（根据需求调整）
+  SNAP_THRESHOLD = 0.001
+  
+  # 收集所有选中的UV顶点
+  selected_uvs = []
+  for face in bm.faces:
+      for loop in face.loops:
+          if loop[uv_layer].select:
+              selected_uvs.append(loop[uv_layer])
+  
+  # 批量吸附：将距离小于阈值的顶点合并到第一个顶点的位置
+  for i, uv in enumerate(selected_uvs):
+      for j, other_uv in enumerate(selected_uvs[i+1:], i+1):
+          distance = (uv.uv - other_uv.uv).length
+          if distance < SNAP_THRESHOLD:
+              other_uv.uv = uv.uv
+  
+  # 更新网格
+  bmesh.update_edit_mesh(obj.data)
+  ```
 
-# 获取当前UV编辑器选中的顶点
-obj = bpy.context.active_object
-bm = bmesh.from_edit_mesh(obj.data)
-uv_layer = bm.loops.layers.uv.active
-
-# 设置吸附阈值（根据需求调整）
-SNAP_THRESHOLD = 0.001
-
-# 收集所有选中的UV顶点
-selected_uvs = []
-for face in bm.faces:
-    for loop in face.loops:
-        if loop[uv_layer].select:
-            selected_uvs.append(loop[uv_layer])
-
-# 批量吸附：将距离小于阈值的顶点合并到第一个顶点的位置
-for i, uv in enumerate(selected_uvs):
-    for j, other_uv in enumerate(selected_uvs[i+1:], i+1):
-        distance = (uv.uv - other_uv.uv).length
-        if distance < SNAP_THRESHOLD:
-            other_uv.uv = uv.uv  # 将other_uv吸附到uv的位置
-
-# 更新网格
-bmesh.update_edit_mesh(obj.data)
-```
-
-效果如下：
+* `UV`自动吸附效果：
 ![image](../images/blender/blender_uv_mirror_auto_snap.png)
 
 ### 骨骼的精确定位
+---
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
 
 ### 为Rigify骨架增加物理骨骼
