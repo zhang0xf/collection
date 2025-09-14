@@ -219,10 +219,15 @@
 ![image](../images/blender/blender_uv_mirror_sync_solution.png)
 
 ### UV打直
-* 问题描述:UV弯曲占用较多Texture空间,打直以更好地布局
-![image](../images/blender/Make_UV_Straight.png)
-* 问题解决:安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit),取消勾选`UV Sync Selection`,全选弯曲的UV孤岛,使用`Straighten UVs`打直UV
-![image](../images/blender/Make_UV_Straight_Solution.png)
+---
+**问题描述**：弯曲的`UV`会占用较多`Texture`空间，打直以更好地布局
+![image](../images/blender/blender_make_uv_straight_error.png)
+
+**问题解决**：
+  1. 安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit)
+  2. `UV Sync Selection`[❌]
+  3. `UV孤岛(选中) » UV ToolKit » Straighten UVs`
+![image](../images/blender/blender_make_uv_straight_solution.png)
 
 ### UV对齐
 * 问题描述:在叠放镜像UV时，可能会遇到大部分顶点对齐，部分顶点不对齐的场景；
