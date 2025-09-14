@@ -161,35 +161,54 @@
 ---
 **问题描述**：导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
 
-**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）
-
+**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）  
 <img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300">
 
 ### 建模、绑定和动画分文件(多人协作开发)
-* 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
-* 对于关联文件无法支持的修改(例如权重绘制)，使用`ID Data -> Make Local`本地化(会取消关联)(或者在导入时使用`Append`)；在执行`Make Local`后可能遇到`Object`已经本地化，但是相关联的`Mesh Data`以及`Material`仍然是关联状态,导致`Object`依旧不支持编辑,可使用如下脚本将选中的对象本地化:
-![image](../images/blender/Make_Link_Object_Local_Error.png)
-```python
-import bpy
+---
+**问题描述**：在游戏开发中，一个角色可能会有上百个动画，若`绑定文件`发生更改，我们希望能自动同步到所有的`动画文件`；还需要支持多位动画师同时为一个角色制作动画
 
-# 获取所有链接对象
-linked_objects = [obj for obj in bpy.data.objects if obj.library]
-
-for obj in linked_objects:
-    # 本地化 Object
-    obj.make_local()
-    
-    # 本地化 Mesh 数据（如果存在）
-    if obj.data and obj.data.library:
-        obj.data.make_local()
-    
-    # 本地化 Material 数据（遍历所有材质槽）
-    for slot in obj.material_slots:
-        if slot.material and slot.material.library:
-            slot.material.make_local()
-
-print("所有对象及其关联数据已本地化！")
-```
+**问题解决**：
+* 绑定同步到动画：  
+  1. 在动画文件中`link`绑定文件的`Collection`（绑定文件会将所有需要`link`的对象放在一个`Collection`中）
+  2. 对动画文件中链接的<u>**集合**</u>进行库覆写：`右键上下文菜单 » Library Overide » Make » Select & Content`
+  3. 对动画文件中链接的<u>**集合中的对象**</u>进行库覆写（即一共需要执行两次库覆写）：`右键上下文菜单 » Library Overide » Make » Select & Content`
+* 建模同步到绑定：
+  1. 在绑定文件中`link`建模文件的`Collection`（建模文件会将所有需要`link`的对象放在一个`Collection`中，该`Collection`同时也是`Substance Painter`的低模源）
+  2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`  
+  <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300">
+  3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）  
+  <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300">  
+  脚本如下：
+     ```python
+     import bpy
+     
+     linked_objects = [
+         obj for obj in bpy.context.selected_objects
+         if obj.library
+     ]
+     
+     for obj in linked_objects:
+         obj.make_local()
+     
+         if obj.data and obj.data.library:
+             obj.data.make_local()
+     
+         for slot in obj.material_slots:
+             if slot.material and slot.material.library:
+                 slot.material.make_local()
+     
+     print("选中的链接对象及其关联数据已本地化！")
+     ```
+* 建模更改同步到绑定
+  1. 在绑定文件中`Append`建模文件中被修改的对象（建模文件通常会创建新对象并备份原对象，新对象的改动可能是修改了拓扑（例如：“马尾辫”增加了一条分叉），也可能是修改了`形态键`（例如：“脸部”添加或修改了一个`表情键`））  
+  <img src="../images/blender/blender_transfer_vertex_group01.png" alt="image" width="500">
+  2. 将新对象绑定到骨骼（不要生成顶点组）：`control + p » Armature Deform`
+  3. 为新对象添加`Data Transfer`修改器，`Source`设为原对象，`Vertex Data`[✔]，`Vertex Data » Vertex Groups`[✔]  
+  <img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500">  
+  4. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
+  5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
+* TODO：如何结合`SVN`版本管理？
 
 ### UV形变的镜像同步
 * 问题描述:镜像对称的对象,更改某一边UV,希望另一边UV镜像同步
