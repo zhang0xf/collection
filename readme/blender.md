@@ -229,12 +229,21 @@
   3. `UV孤岛(选中) » UV ToolKit » Straighten UVs`
 ![image](../images/blender/blender_make_uv_straight_solution.png)
 
-### UV对齐
-* 问题描述:在叠放镜像UV时，可能会遇到大部分顶点对齐，部分顶点不对齐的场景；
-![image](../images/blender/UV_Mirror_Align01.png)
-* 问题解决：打开顶点吸附,关闭`UV Sync Selection`并切换到`点模式`，选择顶点，移动并吸附。
-![image](../images/blender/UV_Mirror_Align02.png)
-* 问题解决【进阶】：如果顶点过多,那么一个一个手动操作是十分浪费时间的!对于这种明显的重复劳动，我们可以使用脚本来操作（**重要前提**：两个镜像的UV已经尽可能地叠放在一起，顶点都尽可能地接近,关闭`UV Sync Selection`，并且确保只选择相关顶点。更保险的方式是进行备份）。脚本如下:
+### UV叠放对齐
+---
+**问题描述**：在叠放`镜像UV`时，可能会遇到这种情况：大部分顶点对齐，部分顶点不对齐
+![image](../images/blender/blender_uv_mirror_align01.png)
+
+**问题解决**：
+  1. `UV Sync Selection`[❌]
+  2. `Snap » Snap Target » Vertext`[✔]
+  3. `Select Mode » Vertex Select`[✔]
+  4. 选择顶点，移动并吸附
+  ![image](../images/blender/blender_uv_mirror_align02.png)
+
+**问题延伸**：顶点过多，需要使用脚本来操作（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但也位置非常接近，使用该脚本前应先备份`Mesh`）
+
+脚本如下：
 ```python
 import bpy
 import bmesh
@@ -264,7 +273,9 @@ for i, uv in enumerate(selected_uvs):
 # 更新网格
 bmesh.update_edit_mesh(obj.data)
 ```
-![image](../images/blender/UV_Mirror_Auto_Snap.png)
+
+效果如下：
+![image](../images/blender/blender_uv_mirror_auto_snap.png)
 
 ### 骨骼的精确定位
 * 使用`Shift + s -> Cursor to Selected`将游标定位到精确位置，进入骨架的`Edit Mode`，选择骨骼的`Head`或`Tail`,使用`Shift + s -> Selected To Cursor`将骨骼精确定位到游标位置。
