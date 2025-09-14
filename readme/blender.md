@@ -2,14 +2,14 @@
 
 ### 偏好设置
 ---
-* 视图切换-自动深度(避免缩放视图很慢):
-![image](../images/blender/blender_navigation_orbit_depth.png)
-* 右键选择:
-![image](../images/blender/blender_keymap_select_with_mouse_right.png)
-* 空格键搜索:
-![image](../images/blender/blender_keymap_spacebar_action.png)
-* 鼠标中键视图检视:
-![image](../images/blender/blender_keymap_middle_mouse_action.png)
+* 视图切换-自动深度(避免缩放视图很慢):   
+<img src="../images/blender/blender_navigation_orbit_depth.png" alt="image" width="600">
+* 右键选择:  
+<img src="../images/blender/blender_keymap_select_with_mouse_right.png" alt="image" width="600">
+* 空格键搜索:  
+<img src="../images/blender/blender_keymap_spacebar_action.png" alt="image" width="600">
+* 鼠标中键视图检视:  
+<img src="../images/blender/blender_keymap_middle_mouse_action.png" alt="image" width="600">
 
 ### 资产库
 ---
@@ -163,9 +163,7 @@
 
 **问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）
 
-<!-- ![image](../images/blender/blender_import_model_uvmap.png) -->
 <img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300">
-
 
 ### 建模、绑定和动画分文件(多人协作开发)
 * 将需要共享的对象整理到一个集合，使用`Link`关联文件；使用`Library Overide -> Make -> Select & Content`在关联文件的基础上作修改；使用`Library Overide -> Reset -> Select & Content`放弃修改或更新关联文件
