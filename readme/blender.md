@@ -456,20 +456,29 @@
   * 切换到<u>**[编辑模式]**</u>，选择顶点并`Assign`到新组
   * 直接使用笔刷绘制权重（务必打开`options » Auto Normalized`[✔]）
 
-### 权重传递
-* 问题描述:两个独立网格(即使两个Mesh属于同一个Object，例如:鞋子和其上的装饰、鞋带等)使用自动权重后，分配的权重不连续，导致独立的相互独立的Mesh形变程度不一致，最终出现`分离`的现象。
-![image](../images/blender/Transfer_Weight01.png)
-* 原因分析：因为是独立的Mesh，所以即使属于同一个Object，但是其顶点不是连续的，那么`自动权重`给到的权重就不可能是连续的，就会出现上述现象。
-* 问题解决(使用权重传递，效果可能不理想):
-  1. 模型绑定到骨骼，选择`with empty groups`；
-  ![image](../images/blender/Transfer_Weight02.png)
-  2. 先点选鞋子(已绘制权重),后点选鞋带(未有权重)，进入`weight paint`模式,使用`weights -> transfer weights`，在弹出的`Transfer Mesh Data`设置面板中，设置`Vertex Mapping`为`Nearest Face Vertex`,设置`Source Layer`为`By Name`。
-  ![image](../images/blender/Transfer_Weight03.png)
-  ![image](../images/blender/Transfer_Weight04.png)
-* 问题解决(建议方案)：低模拓扑时，尽量拓扑为一个整体的`封套`，即顶点连续的一个Mesh(参考模型：`绝区零-哲`,`绝区零-安比`,`绝区零-妮可`)。
-* 问题解决：若拓扑为一个`封套`过于复杂，可采用手动绘制权重，确保多个Mesh权重的连续性（参考模型:`绝区零-玲`,`绝区零-哲`,`绝区零-安比`，`绝区零-妮可`）。
-* 问题总结：实际建模中，多是混合上述方案，尽量将相邻的、贴合的部分拓扑为一个`封套`（例如：鞋带贴合鞋面的部分），将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结部分）独立出一个Mesh。
-* 建议：可以导出高低模到Substance Painter中，使用默认封套距离，观察低模拓扑是否可改进。
+### 权重连续的重要性
+---
+#### 问题描述
+
+对于两个独立`Mesh`（即使这两个`Mesh`属于同一个`Object`，例如：鞋子和鞋上部件），若两者是`Loose Parts`而非`Connected Mesh`，那么在自动权重后，得到的权重就是不<u>**连续**</u>的，最后在姿态测试或动画制作中，就会出现两个`Mesh`分离的现象
+![image](../images/blender/blender_loose_parts_weight_discontinuous.png)
+
+#### 问题解决
+
+注意：“权重传递”的效果可能依旧不理想，应该在拓扑低模时，就尽可能解决`Loose Parts`问题，尽量将“封套”制作为<u>**一个**</u>`Connected Mesh`
+
+使用“权重传递”：
+1. 接受权重传递的`Mesh`绑定到骨骼：`control + p » Armature Deform`
+2. 选择源对象，选择目标对象，进入<u>**[权重绘制模式]**</u>
+3. `Weights » Transfer Weights`[✔]，`Invoke`面板上设置：
+   - `Vertex Mapping » Nearest Face Vertex`[✔]
+   - `Source Layer » By Name`[✔]
+   ![image](../images/blender/blender_transfer_weight01.png)
+   ![image](../images/blender/blender_transfer_weight02.png)
+
+#### 经验之谈
+
+实际建模中，尽量将相邻的、贴合在一起的高模`Mesh`拓扑为一个`Connected Mesh`的低模（例如：贴合鞋面的鞋带，所以只拓扑一个`Connected Mesh`来作为两者的“封套”。至于忽略掉的细节，可以由`Substance 3D Painter`烘焙高低模得到）。将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结）拓扑为一个独立的`Loose Part Mesh`。可以参考的模型有：[绝区零-玲-鞋子]()
 
 ### 绑定和导出的矛盾
 * 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(导入到游戏引擎)。
