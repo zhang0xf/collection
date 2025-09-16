@@ -166,20 +166,28 @@
 
 ### 建模、绑定和动画分文件(多人协作开发)
 ---
-**问题描述**：在游戏开发中，一个角色可能会有上百个动画，若`绑定文件`发生更改，我们希望能自动同步到所有的`动画文件`；还需要支持多位动画师同时为一个角色制作动画
+#### 问题描述
+在游戏开发中，一个角色可能会有上百个动画，若`绑定文件`发生更改，我们希望能自动同步到所有的`动画文件`；还需要支持多位动画师同时为一个角色制作动画
 
-**问题解决**：
-* 绑定同步到动画：  
-  1. 在动画文件中`link`绑定文件的`Collection`（绑定文件会将所有需要`link`的对象放在一个`Collection`中）
-  2. 对动画文件中链接的<u>**集合**</u>进行库覆写：`右键上下文菜单 » Library Overide » Make » Select & Content`
-  3. 对动画文件中链接的<u>**集合中的对象**</u>进行库覆写（即一共需要执行两次库覆写）：`右键上下文菜单 » Library Overide » Make » Select & Content`
-* 建模同步到绑定：
-  1. 在绑定文件中`link`建模文件的`Collection`（建模文件会将所有需要`link`的对象放在一个`Collection`中，该`Collection`同时也是`Substance Painter`的低模源）
-  2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`<br>
-  <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300"><br>
-  3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
-  <img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>
-  4. 脚本如下：<br>
+#### 问题解决
+
+绑定同步到动画：  
+1. 在动画文件中`link`绑定文件的`Collection`（绑定文件会将所有需要`link`的对象放在一个`Collection`中）
+
+2. 对动画文件中链接的<u>**集合**</u>进行库覆写：`右键上下文菜单 » Library Overide » Make » Select & Content`
+
+3. 对动画文件中链接的<u>**集合中的对象**</u>进行库覆写（即一共需要执行两次库覆写）：`右键上下文菜单 » Library Overide » Make » Select & Content`
+
+建模同步到绑定：
+1. 在绑定文件中`link`建模文件的`Collection`（建模文件会将所有需要`link`的对象放在一个`Collection`中，该`Collection`同时也是`Substance Painter`的低模源）
+
+2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`<br>
+<img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300"><br>
+
+3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
+<img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>
+  
+   - 脚本：对象及其关联数据本地化<br>
      ```python
      import bpy
      
@@ -200,15 +208,20 @@
      
      print("选中的链接对象及其关联数据已本地化！")
      ```
-* 建模更改同步到绑定
-  1. 在绑定文件中`Append`建模文件中被修改的对象（建模文件通常会创建新对象并备份原对象，新对象的改动可能是修改了拓扑（例如：“马尾辫”增加了一条分叉），也可能是修改了`形态键`（例如：“脸部”添加或修改了一个`表情键`））<br>
-  <img src="../images/blender/blender_transfer_vertex_group01.png" alt="image" width="500"><br>
-  2. 将新对象绑定到骨骼（不要生成顶点组）：`control + p » Armature Deform`
-  3. 为新对象添加`Data Transfer`修改器，`Source`设为原对象，`Vertex Data`[✔]，`Vertex Data » Vertex Groups`[✔]<br>
-  <img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500"><br>
-  4. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
-  5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
-* TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
+
+建模更改同步到绑定
+1. 在绑定文件中`Append`建模文件中被修改的对象（建模文件通常会创建新对象并备份原对象，新对象的改动可能是修改了拓扑（例如：“马尾辫”增加了一条分叉），也可能是修改了`形态键`（例如：“脸部”添加或修改了一个`表情键`））<br>
+<img src="../images/blender/blender_transfer_vertex_group01.png" alt="image" width="500"><br>
+
+2. 为新对象添加`Data Transfer`修改器(用来转移“旧对象”的权重)
+，`Source`：设为原对象，勾选`Vertex Data`[✔]，勾选`Vertex Data » Vertex Groups`[✔]<br>
+<img src="../images/blender/blender_transfer_vertex_group02.png" alt="image" width="500"><br>
+
+3. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
+4. 应用`Data Transfer`修改器
+5. 将新对象绑定到骨骼(顶点组来自修改器)：`control + p » Armature Deform`
+5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
+6. TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
 
 ### `UV`的镜像同步
 ---
@@ -328,105 +341,120 @@
   ![image](../images/blender/blender_add_physicsbone_to_rigify09.png)
   8. 显示`DEF Bone Collection`,对前缀为“DEF-”的骨骼进行权重绘制(另见：[权重绘制](#权重绘制))
   ![image](../images/blender/blender_add_physicsbone_to_rigify10.png)
-  9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合。
+  9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合
 
 ### 权重绘制
-* 以“部件”为单位，使用`自动权重`逐一绑定!(注意这里的“部件”不一定是单个部件，更多情况是由多个“部件”组成，需要视具体情况而定，目的是寻找最高效率、最合理的绑定方式)。例如：脸部(Face)与脖子(Body)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`自动权重`给到的权重是“连续”的！大大方便之后权重的修缮。绘制完权重之后再分离“Face”与“Body”网格，则分离后“接缝”处的两组顶点权重就是相同！在动画中便不会“破面”(分离后需要重新确认与“部件”同名的顶点组是否正确，另见下文：**绑定与导出的矛盾**)。
-* 绘制权重时，切换到`线框模式`以方便观察，且必须打开`options -> Auto Normalized`,使权重和为1。只使用三种笔刷:`Add`、`Subtract`和`Blur`。强度最好设置为0.1。(也可以借助`Weights -> Smooth`来平滑权重)
-* 细节处权重绘制可以从`骨骼模式`切换到`点模式`,并且将视窗切换到`线框模式`以方便操作;例如:大腿和短裤在接缝处的两组点应该是重叠的,可以对相应点进行`Add`和`Subtract`以修缮权重。
-![image](../images/blender/Rig_Weight_Paint.png)
-* 在权重修缮过程中，如果遇到不合理的拓扑结构需要及时修正，例如：遇到平滑着色器下的明显硬边，应当换一种三角形切分方式，因为这里不影响拓扑和UV，故可在“建模文件”和“绑定文件“分别修改。
-![image](../images/blender/Sharp_when_Rig01.png)
-![image](../images/blender/Sharp_when_Rig02.png)
-![image](../images/blender/Sharp_when_Rig03.png)
-![image](../images/blender/Sharp_when_Rig04.png)
-但是，有些不合理拓扑的修改涉及到增删顶点以及UV改动，那么此时“绑定文件”就必须从“建模文件”同步修改对象，并且将旧对象的权重传递给新同步的对象，此时可以使用`Data Transfer`修改器,勾选`Vertex Data`及`Vertex Groups`，并点击`Generate Data Layers`，最后应用修改器。检查顶点组权重没有问题之后，使用`Armature Deform`来将新同步的对象绑定到骨骼。(上述流程也适用于形态键改动)
-![image](../images/blender/Copy_Weights_for_Modified_Mesh.png)
-* 绘制权重时，可以使用`Paint Mask`来设置笔刷的遮罩。
-![image](../images/blender/Fix_Auto_weight_Mask01.png)
-![image](../images/blender/Fix_Auto_weight_Mask02.png)
-* 绘制权重时，需要结合骨骼的各种“极限姿势”。对于链式骨骼（衣服飘带、尾巴等）可以使用`r + x + x（沿本地X轴旋转）`来创建链式骨骼的姿势。此时不必考虑物理模拟，而必须保证形变骨(`Deform`)权重的正确性!
-![image](../images/blender/Weight_Paint_With_Chain.png)
-![image](../images/blender/Weight_Paint_With_Chain02.png)
-* 如果在权重已经修缮完成之后，再次<del>使用`Armature Deform -> with empty groups`</del>使用`Armature Deform`(避免产生冗余顶点组，另见下文：**自动权重的清理和修缮**)，此举并不会覆盖已经绘制好的权重！
+---
 
-### 自动权重的清理和修缮
-* 问题描述：使用自动权重后，“部件”网格可能受到不必要骨骼的权重影响。如果需要去除不必要骨骼影响，需要额外的大量检查工作。
-* 问题解决：1、将`Bone Selection`模式切换为`Vertex Selection`模式，选择一个顶点，然后在`Item`页签中的`Vertex Weights`标签下可以查看该顶点的`Vertex Groups`有哪些。2、使用 [Weights -> Clean](https://swingy-bone-physics.github.io/wiki/performance/#clean-model-weights) 功能将那些可以忽略不计但不完全=0的权重清理掉。3、可以删除某顶点的不相关顶点组，防止`Auto Normalized`为该顶点分配错误权重到不相关顶点组，删除不相关顶点组之后一定需要使用`Weights -> Normalize`来使该顶点的权重归一化。（如果顶点很多，需要使用脚本来批量操作）
-![image](../images/blender/Fix_Auto_Weights01.png)
-![image](../images/blender/Fix_Auto_Weights04.png)
-![image](../images/blender/Fix_Auto_Weights05.png)
-* **问题解决 PLUS**：在将网格绑定到骨架时，不再使用`Armature Deform -> with automatic weights`来一步创建自动权重，因为这种方式会将所有标记为`Deform`的骨骼纳入权重绘制的考量中，这样就不可避免地存在距离“当前部件”较近的且应当属于“其它部件”的骨骼参与“当前部件”权重分配！因此，我们需要明确地指出哪些骨骼应当参与“当前部件”的自动权重分配。方法如下：在将网格绑定到骨架时，<del>使用`Armature Deform -> with empty groups`只创建所有骨骼的空顶点组,</del>使用`Armature Deform`只执行绑定，不自动创建所有骨骼的空顶点组（**避免冗余顶点组**，即未被使用的、所有权重=0的组，冗余顶点组对游戏引擎的内存和性能仅有细微影响,但可能会使团队协作混淆；且冗余顶点组过多，不利于调试，也会使权重错误隐藏很深不被发现）；然后进入权重绘制，选择需要参与“当前部件”权重分配的所有骨骼，使用`Weights -> Assign Automatic From Bones`来给选定的骨骼创建自动权重（只会添加被选择骨骼的顶点组，无关骨骼不会被添加顶点组，即不产生冗余顶点组）。如果没使用正确工作流，产生了冗余顶点组，或者是外部模型导入，可通过脚本来批量删除冗余顶点组!
-![image](../images/blender/Fix_Auto_Weights02.png)   
-![image](../images/blender/Fix_Auto_Weights03.png)
-* 批量选择骨骼的脚本如下: 
-```python
-import bpy
-import re
+#### 经验之谈
 
-def select_bones_by_pattern(pattern="DEF-Skirt"):
-    armature = bpy.context.active_object
-    
-    if not armature or armature.type != 'ARMATURE':
-        print("请先选中一个骨架对象")
-        return
-    
-    bpy.ops.object.mode_set(mode='EDIT')
-    bones = armature.data.edit_bones
-    
-    # 取消选择所有骨骼
-    for bone in bones:
-        bone.select = False
-    
-    # 使用正则表达式匹配
-    regex = re.compile(pattern, re.IGNORECASE)  # 忽略大小写
-    matched_bones = [bone for bone in bones if regex.search(bone.name)]
-    
-    if not matched_bones:
-        print(f"没有找到匹配'{pattern}'的骨骼")
-        return
-    
-    for bone in matched_bones:
-        bone.select = True
-    
-    print(f"已选择 {len(matched_bones)} 个匹配'{pattern}'的骨骼")
+以“部件”为单位，使用`control + p » Armature Deform`逐一绑定。注意这里的“部件”不一定是单个`Mesh`，更多情况是由多个`Mesh`组成，需要视具体情况而定，目的是寻找高效合理的绑定方式。例如：脸部(`Face`)与脖子(`Body`)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`Weight » Assign Automatic From Bones`给到的权重是<u>**连续**</u>的，大大方便之后权重的修缮。绘制完权重之后再分离`Face`与`Body`，则分离后“接缝”处的两组顶点权重是相同的！在动画中便不会<u>**破面**</u>，分离后需要重新检查各`Mesh`中“同名”顶点组权重是否正确（另见：[绑定与导出的矛盾](#绑定和导出的矛盾)）
 
-# 示例用法：
-select_bones_by_pattern("DEF-Skirt")  # 选择所有包含DEF-Skirt的骨骼
-# select_bones_by_pattern("^DEF-Skirt")  # 选择以DEF-Skirt开头的骨骼
-# select_bones_by_pattern("DEF-Skirt.*$")  # 选择以DEF-Skirt开头的骨骼
-```
-* 批量删除冗余顶点组的脚本如下：（注意：使用脚本删除“冗余顶点组”之后，错误骨骼一览无余！可再做一次检查和修正，修正时务必**关闭“X轴镜像”且打开`Auto Normalized`**，使用权重为0的`Draw`笔刷，去除冗余顶点组的权重，然后再运行一次脚本。当然最佳操作应当是按照正确工作流，避免冗余顶点组产生！）
-```python
-import bpy
+* _<u>为什么`control + p » Armature Deform`可以多次执行</u>_？重复使用`control + p » Armature Deform`逐一绑定“部件”，并不会影响已绘制好的权重。`Armature Deform`本质上是给`Mesh`添加一个`Armature`修改器。权重信息存储在顶点组中，而顶点组是`Mesh`中的数据，所以绑定新“部件”不会影响旧`Mesh`的权重。当你更改骨骼名称，才会导致顶点组中权重失效，因为骨骼名称与顶点组名称是一一对应的；或者当你对绘制好权重的`Mesh`执行`With Automatic Weights`，那么自动权重会覆盖当前权重
 
-obj = bpy.context.active_object
-if obj and obj.type == 'MESH':
-    vgroups = obj.vertex_groups
-    used_groups = set()  # 记录所有被使用的顶点组（权重>0）
-    
-    # 第一次遍历：找出所有被使用的顶点组
-    for v in obj.data.vertices:
-        for g in v.groups:
-            if g.weight > 0.0:
-                used_groups.add(g.group)
-    
-    # 第二次遍历：找出未被使用的顶点组（即空组）
-    unused_groups = []
-    for i, vg in enumerate(vgroups):
-        if i not in used_groups:
-            unused_groups.append(i)
-    
-    # 从高到低删除，避免索引错乱
-    for i in sorted(unused_groups, reverse=True):
-        vgroups.remove(vgroups[i])
-    
-    print(f"已删除 {len(unused_groups)} 个空顶点组")
-else:
-    print("未选中有效网格物体")
-```
-* 运行脚本之后：
-![image](../images/blender/Remove_Unused_Vertex_Groups.png)
+* _<u>为什么不使用`control + p » With Automatic Weights`来自动分配权重</u>_？因为这种方式会将所有`Deform`骨骼纳入到权重分配考量中，这样就不可避免地导致与当前`Mesh`邻近的所有骨骼都参与到权重分配，最终，不相干的骨骼被分配了权重。为了去除不相干骨骼的权重，需大量额外工作。
+![image](../images/blender/blender_auto_weights_error.png)
+
+* _<u>为什么不使用`control + p » With Empty Groups`在绑定`Mesh`的同时为其创建空顶点组</u>_？当你使用`With Empty Groups`方式绑定时，会在`Mesh`(裙子)上为每一根骨骼创建一个空的顶点组。这会带来不小的麻烦：1、团队协作混淆，团队成员无法区分真正绘制权重的顶点组和“冗余顶点组”（即未被使用的、权重为0的顶点组）；2、“冗余顶点组”过多，不利于“调试”，更会使权重错误隐藏极深（例如：使用`Normalized`归一化权重时，可能为不相干顶点组分配“细微权重”）
+![image](../images/blender/blender_armature_deform_empty_groups.png)<br>
+
+* 为`Mesh`删除“冗余顶点组”（注：按照正确流程绘制权重不会产生“冗余顶点组”）<br>
+<img src="../images/blender/blender_delete_unused_vertex_groups.png" alt="image" width="500"><br>
+
+#### 流程及注意事项
+
+1. `control + p » Armature Deform`绑定`Mesh`
+2. 进入<u>**[权重绘制模式]**</u>，`Weight » Assign Automatic From Bones`为选中的骨骼🦴分配自动权重（不会产生“冗余顶点组”，但注意不要遗漏本该参与权重分配的骨骼🦴，如果不小心遗漏了某根骨骼🦴，参见补救方案[#遗漏骨骼的补救方法](#遗漏骨骼的补救方法)）<br>
+![image](../images/blender/blender_auto_weight_from_bones.png)
+   - 脚本：<u>**[对象模式]**</u>下批量选择裙骨
+      ```python
+      import bpy
+      import re
+      
+      def select_bones_by_pattern(pattern="DEF-Skirt"):
+          armature = bpy.context.active_object
+          if not armature or armature.type != 'ARMATURE':
+              print("请先选中一个骨架对象")
+              return
+          
+          bpy.ops.object.mode_set(mode='EDIT')
+          bones = armature.data.edit_bones
+          for bone in bones:
+              bone.select = False
+          
+          regex = re.compile(pattern, re.IGNORECASE)
+          matched_bones = [bone for bone in bones if regex.search(bone.name)]
+          if not matched_bones:
+              print(f"没有找到匹配'{pattern}'的骨骼")
+              return
+          
+          for bone in matched_bones:
+              bone.select = True
+          print(f"已选择 {len(matched_bones)} 个匹配'{pattern}'的骨骼")
+      
+      select_bones_by_pattern("DEF-Skirt")
+      ```
+3. 区域化清理/添加顶点组（即针对一个区域内所有点，清理“不相干顶点组”，补充“相干顶点组”。例如：骨链`[DEF-SkirtA.001 ~DEF-SkirtA.004]`和骨链`[DEF-SkirtB.001 ~ DEF-SkirtB.004]`之间所有点，也许会受到骨链`[DEF-SkirtC.001 ~ DEF-SkirtC.004]`的影响，但不应该受到骨链`[DEF-SkirtD.001 ~ DEF-SkirtD.004]`的影响，因为距离实在太远，是故应当删除这些“不相干顶点组”。）<br>
+![image](../images/blender/blender_remove_vertex_groups_for_vertices.png)
+   - 小技巧：在<u>**[权重绘制模式]**</u>只能逐个选取点，可以`Tab`键切换到<u>**[编辑模式]**</u>快速且区域化选择点，然后切换回<u>**[权重绘制模式]**</u>
+   - _<u>为什么不使用`Weight » Clean`来一键清理</u>_？`Weight » Clean`的功能是：把小于某个阈值的权重条目直接移除顶点组（而不是归零）。典型用途：自动权重生成之后，有些“尾巴”权重（`0.001`之类），看起来没用，清理掉可减少计算开销（有些游戏引擎要求每个顶点只允许有限个骨骼影响）。存在问题：它按阈值一刀切，可能会误删“虽然权重很小但实际需要存在”的顶点组。在角色裙摆、布料这种“边界受多条骨链轻微影响”的地方，这种误删可能会让边缘变硬，失去自然过渡
+4. `Weight » Normalize All`将全部顶点组归一化权重，即每个顶点的权重和均为`1`（举例：如果一个顶点分布在多个组（例如`A=0.3`,`B=0.5`），`Normalize All`会把它们拉伸到 (`A=0.375`,`B=0.625`)，和`=1`。如果一个顶点只在某个组里（例如`A=0.6`），`Blender`不会自动把它调成`1.0`，因为它不去“猜”你想要哪根骨骼来补齐剩下的`0.4`）
+   - _<u>“边缘顶点只关联一个组且权重小于`1`”是否会有问题</u>_？如果顶点只跟随一个骨骼，哪怕权重是`0.6`，它也还是会`100%`跟随那根骨骼，只是数值偏小。因为对单骨骼来说，`0.6`和`1.0`没区别，效果是一样的。问题只在于有多个骨骼竞争同一顶点时，才需要归一化到和为`1`。如果想确保所有“单骨骼顶点”都满权（`1.0`），需要在后续修复权重时手动处理
+   - 脚本：标记所有“权重和 ≠ 1.0”的顶点(TODO：功能尚不完善)
+      ```python
+      import bpy
+      
+      def check_non_normalized_vertices():
+          obj = bpy.context.object
+          if not obj or obj.type != 'MESH':
+              print("请先选中一个 Mesh 对象。")
+              return
+          
+          mesh = obj.data
+          vg = obj.vertex_groups
+          
+          bad_vertices = []
+          
+          for v in mesh.vertices:
+              weights = [g.weight for g in v.groups]
+              if not weights:
+                  continue
+              total = sum(weights)
+              if abs(total - 1.0) > 1e-4:  
+                  bad_vertices.append(v.index)
+          
+          for v in mesh.vertices:
+              v.select = False
+          
+          for idx in bad_vertices:
+              mesh.vertices[idx].select = True
+          
+          bpy.ops.object.mode_set(mode='EDIT')
+          bpy.ops.mesh.select_mode(type="VERT")
+          
+          print(f"检查完成，共发现 {len(bad_vertices)} 个权重和≠1 的顶点。    ")
+      
+      check_non_normalized_vertices()
+      ```
+5. 仅使用`Add`、`Subtract`和`Blur`这三种笔刷修复权重，切换到<u>**[线框模式]**</u>以方便观察，笔刷强度推荐设置为`0.1`，切记打开自动权重`options » Auto Normalized`[✔]，关闭`X`轴镜像`Enable Mesh Symmetry in the X axis`[❌]
+    - 使用`Paint Mask`设置笔刷遮罩
+    ![image](../images/blender/blender_brush_paint_mask01.png)
+    ![image](../images/blender/blender_brush_paint_mask02.png)
+    - 在“极限姿势”下修复权重（对于衣服飘带、尾巴等链式骨骼，全选骨骼🦴并沿本地`X`/`Y`轴旋转，便可以获得飘动姿态）
+    ![image](../images/blender/blender_paint_weight_with_pose.png)
+    - _<u>以点为单位修复细节处权重</u>_：从`Bone Selection`模式切换到`Vertex Selection`模式，使用`Add`/`Subtract`笔刷对权重有问题的`点`进行手工修复（例如：腿部与短裤这两个`Mesh`在接缝处的两组点，其在各种极限姿势下应该是重叠的，不可“破面”的。我们可以使用笔刷逐点修复权重错误）
+    ![image](../images/blender/blender_fix_weight_by_add_brush.png)
+    -  _<u>为什么使用`Blur`笔刷而不使用`Weight » Smooth`</u>_？`Weight » Smooth`是全局操作，不受区域控制，很可能平滑到更远处的点，破坏之前“区域化清理/添加顶点组”的结果。相反，使用`Blur`笔刷手动绘制权重，可以精确地控制区域。
+6. 权重绘制完成后，需要进行动作测试，在各种`Pose`下预览并修复剩余问题
+
+#### 遗漏骨骼的补救方法
+注意：必须提前预防遗漏骨骼🦴，在`Weight » Assign Automatic From Bones`之前，确保所有应该参与的骨骼🦴都已选中
+
+只为遗漏骨骼添加权重：
+* 在`Mesh`上新建顶点组（命名要和骨骼一致，`Blender`才能识别）
+* 几种分配权重的方式：
+  * 切换到<u>**[编辑模式]**</u>，选择顶点并`Assign`到新组
+  * 直接使用笔刷绘制权重（务必打开`options » Auto Normalized`[✔]）
 
 ### 权重传递
 * 问题描述:两个独立网格(即使两个Mesh属于同一个Object，例如:鞋子和其上的装饰、鞋带等)使用自动权重后，分配的权重不连续，导致独立的相互独立的Mesh形变程度不一致，最终出现`分离`的现象。
