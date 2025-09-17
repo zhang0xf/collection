@@ -229,57 +229,59 @@
 绑定模型时，需要兼顾多人协作、解耦、调试方便、可迭代等，必须分开绑定各部件的`Mesh`。导出模型时，需要兼顾“封装性”、隐藏开发细节等，需要将所有“部件”的`Mesh`合并为一个`Mesh`
 
 #### 问题解决
-为每个“部件”的`Mesh`添加一个与“部件”同名的`Vertex Group`，合并各部件`Mesh`后，若需对“部件”返工修改，仍能通过“同名顶点组”来分离该“部件”
+为每个“部件”的`Mesh`添加一个与“部件”同名的`Vertex Group`，合并各部件`Mesh`后，若需对“部件”返工修改，仍能通过“同名顶点组”来分离该“部件”（另见脚本[#为对象添加同名顶点组](#为对象添加同名顶点组)、[#删除对象的同名顶点组](#删除对象的同名顶点组)）
 ![image](../images/blender/blender_rig_and_export01.png)
 ![image](../images/blender/blender_rig_and_export02.png)
 ![image](../images/blender/blender_rig_and_export03.png)
 
 #### 脚本
+##### 为对象添加同名顶点组
 ```python
 import bpy
 
 def add_vertex_group_to_selected():
-    """为所有选中的网格对象添加同名顶点组，权重设为1.0"""
-    selected_objects = bpy.context.selected_objects
-    
-    for obj in selected_objects:
-        if obj.type != 'MESH':
-            print(f"跳过非网格对象: {obj.name}")
-            continue
-        
-        if obj.vertex_groups.get(obj.name):
-            print(f"已存在顶点组 '{obj.name}'，跳过")
-            continue
-        
-        vgroup = obj.vertex_groups.new(name=obj.name)
-        vgroup.add(range(len(obj.data.vertices)), 1.0, 'REPLACE')
-        print(f"已为 {obj.name} 添加顶点组并设置权重=1")
-
-    print("操作完成")
+  """为所有选中的网格对象添加同名顶点组，权重设为1.0"""
+  selected_objects = bpy.context.selected_objects
+  
+  for obj in selected_objects:
+      if obj.type != 'MESH':
+          print(f"跳过非网格对象: {obj.name}")
+          continue
+      
+      if obj.vertex_groups.get(obj.name):
+          print(f"已存在顶点组 '{obj.name}'，跳过")
+          continue
+      
+      vgroup = obj.vertex_groups.new(name=obj.name)
+      vgroup.add(range(len(obj.data.vertices)), 1.0, 'REPLACE')
+      print(f"已为 {obj.name} 添加顶点组并设置权重=1")
+  
+  print("操作完成")
 
 add_vertex_group_to_selected()
 ```
 
+##### 删除对象的同名顶点组
 ```python
 import bpy
 
 def remove_vertex_groups_by_object_name():
-    """删除选中对象中与对象同名的顶点组"""
-    selected_objects = bpy.context.selected_objects
-    
-    for obj in selected_objects:
-        if obj.type != 'MESH':
-            print(f"跳过非网格对象: {obj.name}")
-            continue
-        
-        vgroup = obj.vertex_groups.get(obj.name)
-        if vgroup:
-            obj.vertex_groups.remove(vgroup)
-            print(f"已从 {obj.name} 删除顶点组 '{obj.name}'")
-        else:
-            print(f"对象 {obj.name} 无同名顶点组，跳过")
+  """删除选中对象中与对象同名的顶点组"""
+  selected_objects = bpy.context.selected_objects
+  
+  for obj in selected_objects:
+      if obj.type != 'MESH':
+          print(f"跳过非网格对象: {obj.name}")
+          continue
+      
+      vgroup = obj.vertex_groups.get(obj.name)
+      if vgroup:
+          obj.vertex_groups.remove(vgroup)
+          print(f"已从 {obj.name} 删除顶点组 '{obj.name}'")
+      else:
+          print(f"对象 {obj.name} 无同名顶点组，跳过")
 
-    print("删除操作完成")
+  print("删除操作完成")
 
 remove_vertex_groups_by_object_name()
 ```
@@ -406,9 +408,7 @@ remove_vertex_groups_by_object_name()
 
 ### 权重绘制
 ---
-
 #### 经验之谈
-
 以“部件”为单位，使用`control + p » Armature Deform`逐一绑定。注意这里的“部件”不一定是单个`Mesh`，更多情况是由多个`Mesh`组成，需要视具体情况而定，目的是寻找高效合理的绑定方式。例如：脸部(`Face`)与脖子(`Body`)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`Weight » Assign Automatic From Bones`给到的权重是<u>**连续**</u>的，大大方便之后权重的修缮。绘制完权重之后再分离`Face`与`Body`，则分离后“接缝”处的两组顶点权重是相同的！在动画中便不会<u>**破面**</u>，分离后需要重新检查各`Mesh`中“同名”顶点组权重是否正确（另见：[绑定与导出的矛盾](#绑定和导出的矛盾)）
 
 * _<u>为什么`control + p » Armature Deform`可以多次执行</u>_？重复使用`control + p » Armature Deform`逐一绑定“部件”，并不会影响已绘制好的权重。`Armature Deform`本质上是给`Mesh`添加一个`Armature`修改器。权重信息存储在顶点组中，而顶点组是`Mesh`中的数据，所以绑定新“部件”不会影响旧`Mesh`的权重。当你更改骨骼名称，才会导致顶点组中权重失效，因为骨骼名称与顶点组名称是一一对应的；或者当你对绘制好权重的`Mesh`执行`With Automatic Weights`，那么自动权重会覆盖当前权重
@@ -423,80 +423,20 @@ remove_vertex_groups_by_object_name()
 <img src="../images/blender/blender_delete_unused_vertex_groups.png" alt="image" width="500"><br>
 
 #### 流程及注意事项
-
 1. `control + p » Armature Deform`绑定`Mesh`
-2. 进入<u>**[权重绘制模式]**</u>，`Weight » Assign Automatic From Bones`为选中的骨骼🦴分配自动权重（不会产生“冗余顶点组”，但注意不要遗漏本该参与权重分配的骨骼🦴，如果不小心遗漏了某根骨骼🦴，参见补救方案[#遗漏骨骼的补救方法](#遗漏骨骼的补救方法)）<br>
+
+2. 进入<u>**[权重绘制模式]**</u>，`Weight » Assign Automatic From Bones`为选中的骨骼🦴分配自动权重（不会产生“冗余顶点组”，但注意不要遗漏本该参与权重分配的骨骼🦴，如果不小心遗漏了某根骨骼🦴，参见[#遗漏骨骼的补救方法](#遗漏骨骼的补救方法)。另见脚本[#批量选择骨骼](#批量选择骨骼)）<br>
 ![image](../images/blender/blender_auto_weight_from_bones.png)
-   - 脚本：<u>**[对象模式]**</u>下批量选择裙骨
-      ```python
-      import bpy
-      import re
       
-      def select_bones_by_pattern(pattern="DEF-Skirt"):
-          armature = bpy.context.active_object
-          if not armature or armature.type != 'ARMATURE':
-              print("请先选中一个骨架对象")
-              return
-          
-          bpy.ops.object.mode_set(mode='EDIT')
-          bones = armature.data.edit_bones
-          for bone in bones:
-              bone.select = False
-          
-          regex = re.compile(pattern, re.IGNORECASE)
-          matched_bones = [bone for bone in bones if regex.search(bone.name)]
-          if not matched_bones:
-              print(f"没有找到匹配'{pattern}'的骨骼")
-              return
-          
-          for bone in matched_bones:
-              bone.select = True
-          print(f"已选择 {len(matched_bones)} 个匹配'{pattern}'的骨骼")
-      
-      select_bones_by_pattern("DEF-Skirt")
-      ```
 3. 区域化清理/添加顶点组（即针对一个区域内所有点，清理“不相干顶点组”，补充“相干顶点组”。例如：骨链`[DEF-SkirtA.001 ~DEF-SkirtA.004]`和骨链`[DEF-SkirtB.001 ~ DEF-SkirtB.004]`之间所有点，也许会受到骨链`[DEF-SkirtC.001 ~ DEF-SkirtC.004]`的影响，但不应该受到骨链`[DEF-SkirtD.001 ~ DEF-SkirtD.004]`的影响，因为距离实在太远，是故应当删除这些“不相干顶点组”。）<br>
 ![image](../images/blender/blender_remove_vertex_groups_for_vertices.png)
    - 小技巧：在<u>**[权重绘制模式]**</u>只能逐个选取点，可以`Tab`键切换到<u>**[编辑模式]**</u>快速且区域化选择点，然后切换回<u>**[权重绘制模式]**</u>
    - _<u>为什么不使用`Weight » Clean`来一键清理</u>_？`Weight » Clean`的功能是：把小于某个阈值的权重条目直接移除顶点组（而不是归零）。典型用途：自动权重生成之后，有些“尾巴”权重（`0.001`之类），看起来没用，清理掉可减少计算开销（有些游戏引擎要求每个顶点只允许有限个骨骼影响）。存在问题：它按阈值一刀切，可能会误删“虽然权重很小但实际需要存在”的顶点组。在角色裙摆、布料这种“边界受多条骨链轻微影响”的地方，这种误删可能会让边缘变硬，失去自然过渡
+
 4. `Weight » Normalize All`将全部顶点组归一化权重，即每个顶点的权重和均为`1`（举例：如果一个顶点分布在多个组（例如`A=0.3`,`B=0.5`），`Normalize All`会把它们拉伸到 (`A=0.375`,`B=0.625`)，和`=1`。如果一个顶点只在某个组里（例如`A=0.6`），`Blender`不会自动把它调成`1.0`，因为它不去“猜”你想要哪根骨骼来补齐剩下的`0.4`）
    - _<u>“边缘顶点只关联一个组且权重小于`1`”是否会有问题</u>_？如果顶点只跟随一个骨骼，哪怕权重是`0.6`，它也还是会`100%`跟随那根骨骼，只是数值偏小。因为对单骨骼来说，`0.6`和`1.0`没区别，效果是一样的。问题只在于有多个骨骼竞争同一顶点时，才需要归一化到和为`1`。如果想确保所有“单骨骼顶点”都满权（`1.0`），需要在后续修复权重时手动处理
-   - 脚本：标记所有“权重和 ≠ 1.0”的顶点(TODO：功能尚不完善)
-      ```python
-      import bpy
-      
-      def check_non_normalized_vertices():
-          obj = bpy.context.object
-          if not obj or obj.type != 'MESH':
-              print("请先选中一个 Mesh 对象。")
-              return
-          
-          mesh = obj.data
-          vg = obj.vertex_groups
-          
-          bad_vertices = []
-          
-          for v in mesh.vertices:
-              weights = [g.weight for g in v.groups]
-              if not weights:
-                  continue
-              total = sum(weights)
-              if abs(total - 1.0) > 1e-4:  
-                  bad_vertices.append(v.index)
-          
-          for v in mesh.vertices:
-              v.select = False
-          
-          for idx in bad_vertices:
-              mesh.vertices[idx].select = True
-          
-          bpy.ops.object.mode_set(mode='EDIT')
-          bpy.ops.mesh.select_mode(type="VERT")
-          
-          print(f"检查完成，共发现 {len(bad_vertices)} 个权重和≠1 的顶点。    ")
-      
-      check_non_normalized_vertices()
-      ```
+   - 使用脚本[#高亮权重未归一化的点](#高亮权重未归一化的点)检查未归一化顶点
+
 5. 仅使用`Add`、`Subtract`和`Blur`这三种笔刷修复权重，切换到<u>**[线框模式]**</u>以方便观察，笔刷强度推荐设置为`0.1`，切记打开自动权重`options » Auto Normalized`[✔]，关闭`X`轴镜像`Enable Mesh Symmetry in the X axis`[❌]
     - 使用`Paint Mask`设置笔刷遮罩
     ![image](../images/blender/blender_brush_paint_mask01.png)
@@ -506,6 +446,7 @@ remove_vertex_groups_by_object_name()
     - _<u>以点为单位修复细节处权重</u>_：从`Bone Selection`模式切换到`Vertex Selection`模式，使用`Add`/`Subtract`笔刷对权重有问题的`点`进行手工修复（例如：腿部与短裤这两个`Mesh`在接缝处的两组点，其在各种极限姿势下应该是重叠的，不可“破面”的。我们可以使用笔刷逐点修复权重错误）
     ![image](../images/blender/blender_fix_weight_by_add_brush.png)
     -  _<u>为什么使用`Blur`笔刷而不使用`Weight » Smooth`</u>_？`Weight » Smooth`是全局操作，不受区域控制，很可能平滑到更远处的点，破坏之前“区域化清理/添加顶点组”的结果。相反，使用`Blur`笔刷手动绘制权重，可以精确地控制区域。
+
 6. 权重绘制完成后，需要进行动作测试，在各种`Pose`下预览并修复剩余问题
 
 #### 遗漏骨骼的补救方法
@@ -513,9 +454,78 @@ remove_vertex_groups_by_object_name()
 
 只为遗漏骨骼添加权重：
 * 在`Mesh`上新建顶点组（命名要和骨骼一致，`Blender`才能识别）
-* 几种分配权重的方式：
+* 为新建顶点组分配权重的方式：
   * 切换到<u>**[编辑模式]**</u>，选择顶点并`Assign`到新组
   * 直接使用笔刷绘制权重（务必打开`options » Auto Normalized`[✔]）
+
+#### 脚本
+##### 批量选择骨骼
+```python
+import bpy
+import re
+
+def select_bones_by_pattern(pattern="DEF-Skirt"):
+  '''通过正则名批量选择骨骼'''
+  armature = bpy.context.active_object
+  if not armature or armature.type != 'ARMATURE':
+      print("请先选中一个骨架对象")
+      return
+  
+  bpy.ops.object.mode_set(mode='EDIT')
+  bones = armature.data.edit_bones
+  for bone in bones:
+      bone.select = False
+  
+  regex = re.compile(pattern, re.IGNORECASE)
+  matched_bones = [bone for bone in bones if regex.search(bone.name)]
+  if not matched_bones:
+      print(f"没有找到匹配'{pattern}'的骨骼")
+      return
+  
+  for bone in matched_bones:
+      bone.select = True
+  print(f"已选择 {len(matched_bones)} 个匹配'{pattern}'的骨骼")
+
+select_bones_by_pattern("DEF-Skirt")
+```
+
+#### 高亮权重未归一化的点
+```python
+import bpy
+
+def check_non_normalized_vertices(): # TODO：功能尚不完善
+  '''标记所有“权重和 ≠ 1.0”的顶点'''
+  obj = bpy.context.object
+  if not obj or obj.type != 'MESH':
+      print("请先选中一个 Mesh 对象。")
+      return
+  
+  mesh = obj.data
+  vg = obj.vertex_groups
+  
+  bad_vertices = []
+  
+  for v in mesh.vertices:
+      weights = [g.weight for g in v.groups]
+      if not weights:
+          continue
+      total = sum(weights)
+      if abs(total - 1.0) > 1e-4:  
+          bad_vertices.append(v.index)
+  
+  for v in mesh.vertices:
+      v.select = False
+  
+  for idx in bad_vertices:
+      mesh.vertices[idx].select = True
+  
+  bpy.ops.object.mode_set(mode='EDIT')
+  bpy.ops.mesh.select_mode(type="VERT")
+  
+  print(f"检查完成，共发现 {len(bad_vertices)} 个权重和≠1 的顶点。    ")
+
+check_non_normalized_vertices()
+```
 
 ### 权重连续的重要性
 ---
