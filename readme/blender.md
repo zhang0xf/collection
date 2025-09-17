@@ -615,23 +615,33 @@ check_non_normalized_vertices()
 10. 在`Dope Sheet » Action Editor`下查看烘焙得到的`Action`
 11. 确认无误后，删除`Mixamo`资源
 
-### 导出FBX模型文件到游戏引擎
-* 另见下文 **导出FBX动画文件到游戏引擎**。不同点在于无需重命名场景，无需导出`Animation`。
-
-### 导出FBX动画文件到游戏引擎
-* 切换到当前需要导出的Action,并且更改场景名称(导出的FBX文件中，场景名称对应动画切片的名称，命名规则可以形如:`Zeri_Walking01`)
-![image](../images/blender/Export_Animation_FBX01.png)
-* 导出窗口:`Include`选项卡下，设置`Limit To`为`Selected Objects`、设置`Object Types`为`Armature` + `Mesh`;
-![image](../images/blender/Export_FBX_Include_Setting.png)
-* 导出窗口:`Transform`选项卡下,设置`Forward`为`-Y Forward`,`Up`应该会自动更改为`Z Up`(如果没有，需手动更改)，取消勾选`Apply Space Transform`;
-![image](../images/blender/Export_FBX_Transform_Setting.png)
-* 导出窗口:`Geometry`选项卡下，保持默认设置
-* 导出窗口:`Armature`选项卡下，勾选`Only Deform Bones`,取消勾选`Add Leaf Bones`，其余保持默认设置。
-![image](../images/blender/Export_FBX_Armature_Setting.png)
-* 导出窗口:`Animation`选项卡下,取消勾选`Key All Bones`（不需要为所有骨骼在每一帧都生成关键帧）,取消勾选`NLA Strips`,取消勾选`All Actions`（只导出当前Action，且由于工程分文件，一个文件只包含一个Action动画）,勾选`Force Start/End Keying`（在动画的起始帧和结束帧强制插入关键帧，即使这些帧处原本没有关键帧，例如：一段30帧的行走动画第1帧和第30帧。如果动画需要在游戏引擎中循环播放，例如角色的`Idle`动画，勾选此项可以确保动画的平滑过渡）。
-![image](../images/blender/Export_FBX_Animation_Setting.png)
-* 导出的FBX动画文件命名规则,可以形如:`@Zeri_Walking01`或`@ZeriWalking01`或`Zeri_Walking01_Animation`
-* 如果游戏有换装功能，这里选择导出的骨骼和模型对象会有所不同(后补)
+### 导出FBX模型和动画
+---
+#### 流程及注意事项
+1. 选择需要导出的`Action`（对于游戏项目，一个动画文件有且仅有一个`Action`），将场景名称`Scene`更改为`Zeri_dancing01`(/`@Zeri_Walking01`/`@ZeriWalking01`，对应`Unity`中`Animation Clip`的名称，仅在<u>**[导出动画]**</u>时才需要此步骤)
+2. `Include`选项
+   - `Limit To » Selected Objects`[✔]
+   - `Object Types » Armature`[✔]
+   - `Object Types » Mesh`[✔]<br>
+   <img src="../images/blender/blender_export_include_settings.png" alt="image" width="700"><br>
+3. `Transform`选项
+   - `Forward » -Y Forward`[✔]
+   - `Up » Z Up`[✔]
+   - `Apply Space Transform`[❌]<br>
+   <img src="../images/blender/blender_export_transform_settings.png" alt="image" width="700"><br>
+4. `Geometry`选项（保持默认设置）
+5. `Armature`选项
+   - `Only Deform Bones`[✔]
+   - `Add Leaf Bones`[❌]
+   - 其余保持默认设置<br>
+   <img src="../images/blender/blender_export_armature_settings.png" alt="image" width="700"><br>
+6. `Animation`选项（仅在<u>**[导出动画]**</u>时才需要此设置）
+   - `Key All Bones`[❌]：不需要为所有骨骼在每一帧都生成关键帧
+   - `NLA Strips`[❌]
+   - `All Actions`[❌]：只导出当前选择的`Action`
+   - `Force Start/End Keying`[✔]：在动画的起始帧和结束帧强制插入关键帧，即使这些帧处原本没有关键帧（例如：一段30帧的行走动画第1帧和第30帧）。如果动画需要在游戏引擎中循环播放（例如角色的`Idle`动画），勾选此项可以确保动画的平滑过渡<br>
+   <img src="../images/blender/blender_export_animation_settings.png" alt="image" width="700"><br>
+7. TODO：如果游戏需要支持人物各部位换装，那么各部位装扮需要逐个和整个骨架一起导出
 
 ### Unity游戏引擎导入FBX模型文件
 * 另见下文 **Unity游戏引擎导入FBX动画文件**，不同点在于导入模型FBX时，在`Rig`选项卡下，需要创建人物的`Avatar`:`Animation Type`下拉菜单选择`Generic`，`Avatar Definition`下拉菜单选择`Create From this Model`,`Root Node`下拉菜单选择根骨骼`Armature/Root`。
