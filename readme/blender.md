@@ -11,12 +11,6 @@
 * 鼠标中键视图检视:  
   <img src="../images/blender/blender_keymap_middle_mouse_action.png" alt="image" width="600"><br>
 
-### 资产库
----
-* 创建blender资产库:
-![image](../images/blender/File_Paths_Asset_Library.png)
-* 将引用的资源打包进blend文件,避免移动文件之后丢失引用:`File -> External Data -> Pack Resources`.
-
 ### 快捷键
 ---
 * `shift + 鼠标中键`:<u>**[3D视图]**</u>平移视角
@@ -694,12 +688,17 @@ check_non_normalized_vertices()
 #### 工作流整合
 若源骨架`metarig`返工迭代（例如：增加了用于头发物理模拟的骨骼），并通过`Re-Generate Rig`重新生成了`Rig`骨架，可以再次使用`Rigify Game Friendly`转换骨骼（<u>**[风险⚠️]**</u>：骨架变动，可能导致`Rigify Game Friendly`转换得到的新骨架与旧骨架不再相同，进而导致`Link`原(旧)骨架的所有动画文件丢失动画数据，动画出现异常。为了避免这种情况，应该在制作任何动画之前，完成所有骨骼的添加工作，包括：头发、飘带、小物件等，并且<u>**锁定骨骼**</u>不被修改。如果不幸还是遇到这种情况，首先备份相关文件，然后尝试在动画文件中重新关联新骨架）
 
-### 重新组织文件的目录结构后，导致link关联文件丢失。
-* 问题描述：被关联的文件路径未改变，改变了操作关联的文件路径，导致工程出现问题。blender提示“`1 libraries and 318 linked data-blocks are missing(...)`”。
-![image](../images/blender/Link_Library_Missing.png)
-* 问题解决:在`Outliner`视窗将`Dispaly Mode`切换到`Blender File`，找到丢失链接的`Library`,`右键 -> 上下文菜单 -> Relocate`。再次选择需要关联的文件。
-![image](../images/blender/Link_Library_Relocate.png)
-* 注意: 关联文件和被关联文件路径均不可随意变动。
+### 关联文件丢失
+---
+#### 问题描述
+1. 引用丢失：`.blend`文件中的资源文件（例如：`Texture`等）更换了文件路径之后，`.blend`文件会丢失引用
+2. 链接丢失：`.blend`文件<u>**或**</u>其`Link`文件更换了文件路径之后，`.blend`文件会提示：`1 libraries and 318 linked data-blocks are missing(...)`
+![image](../images/blender/blender_library_link_missing.png)
+
+#### 问题解决
+1. 对于“引用丢失”，可以选择将资源打包进`.blend`文件：`File » External Data » Pack Resources`[✔]，这样即使资源路径变动，也不会影响`.blend`文件
+2. 对于“链接丢失”，可以使用`Outliner » Blender File » Libraries » RMB(鼠标右键) » Relocate`[✔]，为丢失链接的`Library`重新链接
+![image](../images/blender/blender_library_link_relocate.png)
 
 ### 刚体参数
 
