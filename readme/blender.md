@@ -571,31 +571,49 @@ check_non_normalized_vertices()
 #### 参考视频
 * [かぐや様は告らせたい 白銀圭 3Dモデリング](https://www.youtube.com/watch?v=ycVqiR2p8mc&t=3869s)
 
-### 将Mixamo等网站的动画重定向到Rigfy骨架
-* 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
-* 问题解决:使用`Expy Kit`插件来重定向Mixamo动画到Rigfy骨架
-  * 下载Mixamo动画,`Format`选择`FBX Binary(.fbx)`,`Skin`选择`With Skin`,`Frames per second`选择`30`，`Keyframe Reduction`选择`None`。
-  ![image](../images/blender/Mixamo_Animation_Format.png)
-  * 导入Mixamo动画,并检查角色的`Rest Pose`是`T Pose`还是`A Pose`
-  ![image](../images/blender/Import_Mixamo_Animation.png)
-  * 调整Rig对象的`当前`Pose为`T Pose`(`Rest Pose`依旧保持`A Pose`,无需更改),此举可保证重定向的两方起始姿势相同，避免重定向过程中骨骼的不正确旋转。
-  ![image](../images/blender/Rig_Target_Change_T_Pose.png)
-  * 选择需要制作动画的Rig骨架并切换到`Pose Mode`,打开`Expy Kit`面板，设置`Bind To`为导入的Mixamo动画骨骼`Armature`。
-  ![image](../images/blender/Expy_Kit_Bind_Armature01.png)
-  * 点击`Bind Armature`,设置`To Bind`为`Rigfy_Controls`,设置`Bind To`为`Mixamo`,并点击`OK`
-  ![image](../images/blender/Expy_Kit_Bind_Armature02.png)
-  * 在弹出的`Bind to Active Armature`中设置`Conversion`下拉菜单为`Current Pose is target Rest Pose`。设置`Fit Height`下拉菜单为`Head`。设置`Root Animation`下拉菜单为`Bone`,具体骨骼为`mixamorig:Hips`,只激活骨骼`Location`的`Y`轴（大多数动画的根运动是向前的,例如:走路动画的根运动在Blender中应当向`-Y`轴方向,故将`Root`绑定到`mixamorig:Hips`的Y轴位置可保证根运动重定向的正确）。
-  ![image](../images/blender/Bind_To_Active_Armature_Settings.png)
-  * 完成重定向的绑定设置之后，将Mixamo动画的骨架切换回`Pose Position`并观察重定向的结果及检查根运动是否正确(`Shift + Space`可播放`Timeline`动画)
-  ![image](../images/blender/Check_Retarget_Animation01.png)
-  ![image](../images/blender/Check_Retarget_Animation02.png)
-  * 逐帧检查动画重定向的结果是否正确合理，如重定向结果出现偏差，可通过在源骨架(即Mixamo动画的骨架)的`Retarget Bones`层（该层的所有骨骼均由插件为重定向功能自动生成且后缀名均带有`***_RET`），选择出错的骨骼,并调整该骨骼的位置、旋转等使动画重定向结果正确。(为方便观察,请隐藏不必要的视窗信息,仅保留`Retarget Bones`层骨骼和正在制作动画的Rig模型)
-  ![image](../images/blender/Retarget_Animation_Adjust_Operation.png)
-  * 重定向无误之后，选择制作动画的骨骼并切换`Pose Mode`,`w`呼出上下文菜单，在`Expy Kit`工具集中，使用`Animation -> Bake Constrainted Actions`烘焙动画。
-  ![image](../images/blender/Retarget_Animation_Bake.png)
-  * 在弹出的`Bake Constrainted Actions`面板中，取消勾选`Stash to NLA stack`,点击`Bake and Exit`完成动画烘焙。
-  * 将`Timeline`视窗类型切换到`Dope Sheet`下的`Action Editor`查看相应的`Action`。
-  ![image](../images/blender/Retarget_Animation_Action_Result.png)
+### 动画重定向
+---
+#### 问题描述
+对于动画菜鸟，<u>**重定向**</u>免费或付费的动画可大大降低学习和开发成本
+
+#### 问题解决
+使用`Expy Kit`插件来重定向`Mixamo`动画到`Rigify`骨架
+1. 下载`Mixamo`动画
+   - `Format » FBX Binary(.fbx)`[✔]
+   - `Skin » With Skin`[✔]
+   - `Frames per second » 30`[✔]
+   - `Keyframe Reduction » None`[✔]<br>
+   <img src="../images/blender/blender_mixamo_animation_format.png" alt="image" width="500"><br>
+2. 导入`Mixamo`动画,并检查角色的`Rest Pose`是`T Pose`还是`A Pose`
+![image](../images/blender/blender_import_mixamo_animation.png)
+3. 调整`Rig`骨架的`Current Pose`为`T Pose`(目的是确保重定向双方的起始姿势是相同的，避免重定向之后骨骼错误旋转。`Rig`骨架的`Rest Pose`依旧保持`A Pose`)
+![image](../images/blender/blender_change_rig_current_pose.png)
+4. `Rig`骨架切换到<u>**[姿态模式]**</u>，设置重定向的“目标”和“源”
+   - `Expy Kit » Bind To » Armature("目标")`[✔]
+   ![image](../images/blender/blender_expy_kit_retargeting01.png)
+   - `Bind to Active Armature » To Bind » Rigfy_Controls`[✔]
+   - `Bind to Active Armature » Bind To » Mixamo`[✔]
+   ![image](../images/blender/blender_expy_kit_retargeting02.png)
+   - 点击`OK`
+5. 设置`Bind to Active Armature`面板中的参数
+   - `Conversion » Current Pose is target Rest Pose`[✔]
+   - `Fit Height » Head`[✔]
+   - `Root Animation » Bone`[✔]
+   - `Root Animation » mixamorig:Hips`[✔]
+   - `Location » Y`[✔]，`Location » X`[❌]，`Location » Z`[❌]：`Root`重定向自`mixamorig:Hips`的`Y`轴，这在大多数情况下可确保`Root Motion`是正确的
+   - `Layer » "Retarget Bones"`[✔]：由`Expy Kit`插件为重定向功能生成的骨骼后缀名为`"_RET"`的`Bone Collection`（位于`Mixamo`骨架），可通过调整`"_RET"`骨骼的位置和旋转来修复重定向结果，得到最终动画
+   ![image](../images/blender/blender_expykit_bind_to_active_armature_settings.png)
+6. 确认无误后，`Mixamo » Pose » Pose Position`[✔]（将`Mixamo`骨架切换回`Current Pose`，播放时间轴即可预览重定向结果）
+![image](../images/blender/blender_complete_retargeting.png)
+7. 逐帧检查重定向动画是否正确合理，若动画有明显瑕疵，可调整`Mixamo`骨架的`Retarget Bones`集合中的`"_REF"`骨骼🦴来修复（为了方便观察，仅显示`Retarget Bones`集合中的骨骼以及模型，隐藏其他不必要的视窗元素）
+![gif](../images/blender/blender_fix_animation_by_retarget_bone.gif)
+8. 确认无误后，`Rigify`骨架切换到<u>**[姿态模式]**</u>，`w`呼出上下文菜单，`Expy Kit » Animation » Bake Constrainted Actions`[✔]（烘焙动画）
+![image](../images/blender/blender_bake_retarget_animation.png)
+9. 设置`Bake Constrainted Actions`面板中的参数
+   - `Baking from Armature to rig » Stash to NLA stack`[❌]
+   - `Baking from Armature to rig » Bake and Exit`[✔]
+10. 在`Dope Sheet » Action Editor`下查看烘焙得到的`Action`
+11. 确认无误后，删除`Mixamo`资源
 
 ### 导出FBX模型文件到游戏引擎
 * 另见下文 **导出FBX动画文件到游戏引擎**。不同点在于无需重命名场景，无需导出`Animation`。
