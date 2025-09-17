@@ -95,17 +95,20 @@
 
 ### 雕刻边沿
 ---
-**问题描述**：在雕刻鞋子时，希望雕刻出鞋底和鞋面的边沿并使鞋底平整。
+#### 问题描述
+在雕刻鞋子时，希望雕刻出鞋底和鞋面的边沿并使鞋底平整。
 
-**问题解决**：使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
+#### 问题解决
+使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
 ![image](../images/blender/blender_sculpt_shoes_edge.png)
 
 ### 遮罩和限制轴向
 ---
-**问题描述**：在制作“编织手环”时,我们需要对单个"编织绳"进行`抓取`，固定x轴，使雕刻工具(`抓取`)只能在y和z轴上进行。
+#### 问题描述
+在制作“编织手环”时,我们需要对单个"编织绳"进行`抓取`，固定x轴，使雕刻工具(`抓取`)只能在y和z轴上进行。
 ![image](../images/blender/blender_sculpt_bracelet01.png)
 
-**问题解决**：
+#### 问题解决
 1. `operator`路径：`Face Sets » Initialize Face Sets » By Loose Parts`
 ![image](../images/blender/blender_sculpt_bracelet02.png)
 2. `Auto-Masking » Face Sets`[✔]
@@ -117,31 +120,33 @@
 
 ### 点无法准确吸附到最近的面
 ---
-**问题描述**：在对耳朵部分进行拓扑时，`点`应当吸附到"耳朵"上而非"头部"
+#### 问题描述
+在对耳朵部分进行拓扑时，`点`应当吸附到"耳朵"上而非"头部"
 ![image](../images/blender/blender_vertex_snap2face_error.png)
 
-**问题解决**：
+#### 问题解决
 1. `Snap Target for Individual Elements » Face Project`[✔]
 2. `Snap » Backface Culling`[✔]
 ![image](../images/blender/blender_vertex_snap2face.png)
 
 ### `e`挤出的点自动吸附到最近的面
 ---
-**问题描述**：选择`循环边`并挤出，挤出的点不会自动吸附到最近的面
+#### 问题描述
+选择`循环边`并挤出，挤出的点不会自动吸附到最近的面
 
-**问题解决**：
+#### 问题解决
 1. `Snap Target for Individual Elements » Face Nearest`[✔]
 2. `Snap » Backface Culling`[✔]
 3. 挤出点后，使用`g`移动顶点(点会自动吸附到最近的面)
 
 ### `UV`同步选择
 ---
-**经验之谈**：展`UV`时，`UV Sync Selection`[✔]
+#### 经验之谈
+展`UV`时，`UV Sync Selection`[✔]
 
 ### `UV`与游戏表现和性能【重要】
 ---
-**经验之谈**：
-
+#### 经验之谈
 展`UV`时，叠放`UV`布局(例如对称的左右手)可以充分利用`Texture`有限的空间，进而减少`Texture`数量，提升性能。但是会限制艺术表现（例如：左右手`UV`不对称或需绘制不同贴花，这种情况不适合叠放`UV`）
 
 展`UV`时，放大`UV孤岛`以展现更多细节（例如：有可能被`摄像机`聚焦的部位）。相反，缩小`UV孤岛`可以减少细节（例如：被遮挡的，永远不可能出现在`摄像机`中的部位）
@@ -153,9 +158,11 @@
 
 ### 外来模型的`UV`
 ---
-**问题描述**：导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
+#### 问题描述
+导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
 
-**问题解决**：在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）<br> 
+#### 问题解决
+在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）<br> 
 <img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300"><br>
 
 ### 建模、绑定和动画分文件(多人协作开发)
@@ -164,7 +171,6 @@
 在游戏开发中，一个角色可能会有上百个动画，若`绑定文件`发生更改，我们希望能自动同步到所有的`动画文件`；还需要支持多位动画师同时为一个角色制作动画
 
 #### 问题解决
-
 绑定同步到动画：  
 1. 在动画文件中`link`绑定文件的`Collection`（绑定文件会将所有需要`link`的对象放在一个`Collection`中）
 
@@ -178,30 +184,8 @@
 2. 在绑定文件的所有链接对象中，筛选需要进行绑定的对象并执行本地化：`右键上下文菜单 » ID Data » Make Local`<br>
 <img src="../images/blender/blender_link_object_make_local01.png" alt="image" width="300"><br>
 
-3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本将对象及其关联数据本地化（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
-<img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>
-  
-   - 脚本：对象及其关联数据本地化<br>
-     ```python
-     import bpy
-     
-     linked_objects = [
-         obj for obj in bpy.context.selected_objects
-         if obj.library
-     ]
-     
-     for obj in linked_objects:
-         obj.make_local()
-     
-         if obj.data and obj.data.library:
-             obj.data.make_local()
-     
-         for slot in obj.material_slots:
-             if slot.material and slot.material.library:
-                 slot.material.make_local()
-     
-     print("选中的链接对象及其关联数据已本地化！")
-     ```
+3. 执行`Make Local`之后，可能遇到如下情况：对象本身已经被本地化，但其关联的数据（例如：`Mesh Data`和`Material`）仍是关联状态，导致不能给对象绘制权重。此时，可使用脚本[#对象及其关联数据本地化](#对象及其关联数据本地化)（上述`link`流程较为繁琐，也可直接使用`Append`）<br>
+<img src="../images/blender/blender_link_object_make_local02.png" alt="image" width="300"><br>     
 
 建模更改同步到绑定
 1. 在绑定文件中`Append`建模文件中被修改的对象（建模文件通常会创建新对象并备份原对象，新对象的改动可能是修改了拓扑（例如：“马尾辫”增加了一条分叉），也可能是修改了`形态键`（例如：“脸部”添加或修改了一个`表情键`））<br>
@@ -216,6 +200,29 @@
 5. 将新对象绑定到骨骼(顶点组来自修改器)：`control + p » Armature Deform`
 6. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
 7. TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
+
+#### 脚本
+##### 对象及其关联数据本地化
+```python
+import bpy
+
+linked_objects = [
+    obj for obj in bpy.context.selected_objects
+    if obj.library
+]
+
+for obj in linked_objects:
+    obj.make_local()
+
+    if obj.data and obj.data.library:
+        obj.data.make_local()
+
+    for slot in obj.material_slots:
+        if slot.material and slot.material.library:
+            slot.material.make_local()
+
+print("选中的链接对象及其关联数据已本地化！")
+```
 
 ### 绑定和导出的矛盾
 ---
@@ -282,18 +289,21 @@ remove_vertex_groups_by_object_name()
 
 ### `UV`的镜像同步
 ---
-**问题描述**：镜像对称，更改某一侧`UV`，希望另一侧`UV`镜像同步
+#### 问题描述
+镜像对称，更改某一侧`UV`，希望另一侧`UV`镜像同步
 ![image](../images/blender/blender_uv_mirror_sync_error.png)
 
-**解决方案**：删除另一侧`UV`，并添加`Mirror`修改器，`Data » Mirror » U`[✔]
+#### 解决方案
+删除另一侧`UV`，并添加`Mirror`修改器，`Data » Mirror » U`[✔]
 ![image](../images/blender/blender_uv_mirror_sync_solution.png)
 
 ### UV打直
 ---
-**问题描述**：弯曲的`UV`会占用较多`Texture`空间，打直以更好地布局
+#### 问题描述
+弯曲的`UV`会占用较多`Texture`空间，打直以更好地布局
 ![image](../images/blender/blender_make_uv_straight_error.png)
 
-**问题解决**：
+#### 问题解决
   1. 安装插件[UVToolkit](https://github.com/oRazeD/UVToolkit)
   2. `UV Sync Selection`[❌]
   3. `UV孤岛(选中) » UV ToolKit » Straighten UVs`
@@ -301,61 +311,66 @@ remove_vertex_groups_by_object_name()
 
 ### UV叠放对齐
 ---
-**问题描述**：在叠放`镜像UV`时，可能会遇到这种情况：大部分顶点对齐，部分顶点不对齐
+#### 问题描述
+在叠放`镜像UV`时，可能会遇到这种情况：大部分顶点对齐，部分顶点不对齐
 ![image](../images/blender/blender_uv_mirror_align01.png)
 
-**问题解决**：
+#### 问题解决
   1. `UV Sync Selection`[❌]
   2. `Snap » Snap Target » Vertext`[✔]
   3. `Select Mode » Vertex Select`[✔]
   4. 选择顶点，移动并吸附
   ![image](../images/blender/blender_uv_mirror_align02.png)
 
-**问题延伸**：顶点过多，需要使用脚本来操作（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但位置非常接近。使用该脚本前应先备份`Mesh`）
-* 脚本如下：
-  ```python
-  import bpy
-  import bmesh
-  
-  # 获取当前UV编辑器选中的顶点
-  obj = bpy.context.active_object
-  bm = bmesh.from_edit_mesh(obj.data)
-  uv_layer = bm.loops.layers.uv.active
-  
-  # 设置吸附阈值（根据需求调整）
-  SNAP_THRESHOLD = 0.001
-  
-  # 收集所有选中的UV顶点
-  selected_uvs = []
-  for face in bm.faces:
-      for loop in face.loops:
-          if loop[uv_layer].select:
-              selected_uvs.append(loop[uv_layer])
-  
-  # 批量吸附：将距离小于阈值的顶点合并到第一个顶点的位置
-  for i, uv in enumerate(selected_uvs):
-      for j, other_uv in enumerate(selected_uvs[i+1:], i+1):
-          distance = (uv.uv - other_uv.uv).length
-          if distance < SNAP_THRESHOLD:
-              other_uv.uv = uv.uv
-  
-  # 更新网格
-  bmesh.update_edit_mesh(obj.data)
-  ```
-* `UV`自动吸附效果：
+#### 问题延伸
+顶点过多时，需要使用脚本[#顶点批量吸附](#顶点批量吸附)（前提是`镜像UV`已经叠放在一起，虽然部分顶点不重合，但位置非常接近）
 ![image](../images/blender/blender_uv_mirror_auto_snap.png)
+
+#### 脚本
+##### 顶点批量吸附
+```python
+import bpy
+import bmesh
+
+# 获取当前UV编辑器选中的顶点
+obj = bpy.context.active_object
+bm = bmesh.from_edit_mesh(obj.data)
+uv_layer = bm.loops.layers.uv.active
+
+# 设置吸附阈值（根据需求调整）
+SNAP_THRESHOLD = 0.001
+
+# 收集所有选中的UV顶点
+selected_uvs = []
+for face in bm.faces:
+    for loop in face.loops:
+        if loop[uv_layer].select:
+            selected_uvs.append(loop[uv_layer])
+
+# 批量吸附：将距离小于阈值的顶点合并到第一个顶点的位置
+for i, uv in enumerate(selected_uvs):
+    for j, other_uv in enumerate(selected_uvs[i+1:], i+1):
+        distance = (uv.uv - other_uv.uv).length
+        if distance < SNAP_THRESHOLD:
+            other_uv.uv = uv.uv
+
+# 更新网格
+bmesh.update_edit_mesh(obj.data)
+```
 
 ### 骨骼的精确定位
 ---
-* `Shift + s » Cursor to Selected`：将游标定位到某处
-* 选择`Bone`的`Head`或`Tail`<u>**[编辑模式下]**</u>
-* `Shift + s » Selected To Cursor`：将`Head`或`Tail`吸附到游标位置
+1. `Shift + s » Cursor to Selected`：将游标定位到某处
+2. 选择`Bone`的`Head`或`Tail`<u>**[编辑模式下]**</u>
+3. `Shift + s » Selected To Cursor`：将`Head`或`Tail`吸附到游标位置
 
 ### 根据曲线生成骨链
 ---
-**问题描述**：为“头发”添加骨骼时，手动调整骨骼位置去适配“头发”会十分浪费时间，我们可以利用头发的原始曲线来生成对应的骨链
+#### 问题描述
+为“头发”添加骨骼时，手动调整骨骼位置去适配“头发”会十分浪费时间，我们可以利用头发的原始曲线来生成对应的骨链
 
-**问题解决**：TODO
+#### 问题解决
+TODO
 
 ### `Rigify`骨架添加自定义骨骼
 ---
