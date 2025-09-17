@@ -363,48 +363,47 @@ remove_vertex_groups_by_object_name()
 
 **问题解决**：TODO
 
-### 为`Rigify`骨架添加物理骨骼
+### `Rigify`骨架添加自定义骨骼
 ---
-**问题描述**：我们需要在`Rigify`基础人形骨架上，添加用于头发、衣服、飘带的“自定义”骨骼
+#### 问题描述
+我们需要在`Rigify`基础人形骨架上，添加用于头发、衣服、飘带的“自定义”骨骼
 
-**参考视频**：
+#### 问题解决
+1. `Shift + a » Armature » Single Bone`添加一个用于“头发”绑定的骨架，切换到<u>**[编辑模式]**</u>并添加`Deform`骨骼（手动添加和对齐骨骼很浪费时间，另见[根据曲线生成骨链](#根据曲线生成骨链)），将所有`Deform`骨骼放入同一个`Bone Colletions`中（例如：`Hair03`）
+![image](../images/blender/blender_add_physicsbone_to_rigify01.png)
+2. 复制`Deform`骨骼为“物理骨骼”并放入另一个`Bone Collection`中（例如：`Hair03_Physics`），骨骼名后缀`_Physics`，`Bone Properties » Deform`[❌]
+![image](../images/blender/blender_add_physicsbone_to_rigify02.png)
+3. 切换到<u>**[姿态模式]**</u>，设置“物理骨骼”（`option(按住) + Enter`：所有选中骨骼批量设置）
+   - `Rigify Type » Rig type » basic.row_copy`[✔]
+   - `Rigify Type » Options » Widget » bone`[✔]
+   ![image](../images/blender/blender_add_physicsbone_to_rigify03.png)
+4. 切换到<u>**[姿态模式]**</u>，设置`Deform`骨骼
+   - `Bone Properties » Deform`[✔]
+   - `Rigify Type » Rig type » basic.super_copy`[✔]
+   - `Rigify Type » options » Control`[✔]：要求生成`CTRL-XXX`类型的`Rigify`控制骨
+   - `Rigify Type » Options » Widget » bone`[✔]
+   - `Rigify Type » Options » Deform`[✔]：要求生成`DEF-XXX`类型的`Rigify`形变骨
+   - `Rigify Type » Options » Relink Constraints`[✔]：要求将骨骼约束转移到生成的`rig`的“控制骨”上
+   ![image](../images/blender/blender_add_physicsbone_to_rigify04.png)
+   ![image](../images/blender/blender_add_physicsbone_to_rigify06.png)
+5. `Deform`骨骼需要拷贝物理骨骼的旋转，创建骨骼约束`Bone Constraint » Copy Rotation`，添加前缀`CTRL:`，重命名为`CTRL:Copy Rotation`
+   - `CTRL:Copy Rotation » Bone » "XXX_physics"`[✔]
+   - `CTRL:Copy Rotation » Mix » Before Original`[✔]
+   - `CTRL:Copy Rotation » Target » Local Space`[✔]
+   - `CTRL:Copy Rotation » Owner » Local Space`[✔]
+   ![image](../images/blender/blender_add_physicsbone_to_rigify05.png)
+6. 备份“头发”骨架。合并前：`cmd/control » Aplly All Transform`[✔]，合并到`metarig`骨架：`control + j`[✔]，合并后：切换到<u>**[编辑模式]**</u>设置父子关系，最后设置`Bone Collection UI`
+![image](../images/blender/blender_add_physicsbone_to_rigify07.png)
+![image](../images/blender/blender_add_physicsbone_to_rigify08.png)
+7. 点击`Re-Generate Rig`按钮，重新生成`Rig`(已经绘制的权重不会丢失)。切换到<u>**[姿态模式]**</u>检查`Rig`中父子关系是否正确
+![image](../images/blender/blender_add_physicsbone_to_rigify09.png)
+8. 显示`DEF Bone Collection`,对前缀为“DEF-”的骨骼进行权重绘制(另见：[权重绘制](#权重绘制))
+![image](../images/blender/blender_add_physicsbone_to_rigify10.png)
+9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合
+
+#### 参考视频
 * [[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
 * [blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-
-**问题解决**：
-  1. `Shift + a » Armature » Single Bone`添加一个用于“头发”绑定的骨架，切换到<u>**[编辑模式]**</u>并添加`Deform`骨骼（手动添加和对齐骨骼很浪费时间，另见[根据曲线生成骨链](#根据曲线生成骨链)）
-  - 将所有`Deform`骨骼放入同一个`Bone Colletions`中（例如：`Hair03`）
-  ![image](../images/blender/blender_add_physicsbone_to_rigify01.png)
-  2. 复制所有`Deform`骨骼，添加后缀`_physics`，将所有物理骨骼放入同一个`Bone Collection`中（例如：`Hair03_Physics`）
-  - `Bone Properties » Deform`[❌]
-  ![image](../images/blender/blender_add_physicsbone_to_rigify02.png)
-  3. 切换到<u>**[姿态模式]**</u>，设置“物理骨骼”（`option(按住) + enter`设置所有选中骨骼）
-  - `Rigify Type » Rig type » basic.row_copy`[✔]
-  - `Rigify Type » Options » Widget » bone`[✔]
-  ![image](../images/blender/blender_add_physicsbone_to_rigify03.png)
-  4. 切换到<u>**[姿态模式]**</u>，设置`Deform`骨骼
-  - `Bone Properties » Deform`[✔]
-  - `Rigify Type » Rig type » basic.super_copy`[✔]
-  - `Rigify Type » options » Control`[✔]：要求生成`CTRL-XXX`类型的`Rigify`控制骨
-  - `Rigify Type » Options » Widget » bone`[✔]
-  - `Rigify Type » Options » Deform`[✔]：要求生成`DEF-XXX`类型的`Rigify`形变骨
-  - `Rigify Type » Options » Relink Constraints`[✔]：要求将骨骼约束转移到生成的`rig`的“控制骨”上
-  ![image](../images/blender/blender_add_physicsbone_to_rigify04.png)
-  ![image](../images/blender/blender_add_physicsbone_to_rigify06.png)
-  5. `Deform`骨骼需要拷贝物理骨骼的旋转，创建骨骼约束`Bone Constraint » Copy Rotation`，添加前缀`CTRL:`，重命名为`CTRL:Copy Rotation`
-  - `CTRL:Copy Rotation » Bone » "XXX_physics"`[✔]
-  - `CTRL:Copy Rotation » Mix » Before Original`[✔]
-  - `CTRL:Copy Rotation » Target » Local Space`[✔]
-  - `CTRL:Copy Rotation » Owner » Local Space`[✔]
-  ![image](../images/blender/blender_add_physicsbone_to_rigify05.png)
-  6. 备份“头发”骨架。合并前：`cmd/control » Aplly All Transform`[✔]，合并到`metarig`骨架：`control + j`[✔]，合并后：切换到<u>**[编辑模式]**</u>设置父子关系，最后设置`Bone Collection UI`
-  ![image](../images/blender/blender_add_physicsbone_to_rigify07.png)
-  ![image](../images/blender/blender_add_physicsbone_to_rigify08.png)
-  7. 点击`Re-Generate Rig`按钮，重新生成`Rig`(已经绘制的权重不会丢失)。切换到<u>**[姿态模式]**</u>检查`Rig`中父子关系是否正确
-  ![image](../images/blender/blender_add_physicsbone_to_rigify09.png)
-  8. 显示`DEF Bone Collection`,对前缀为“DEF-”的骨骼进行权重绘制(另见：[权重绘制](#权重绘制))
-  ![image](../images/blender/blender_add_physicsbone_to_rigify10.png)
-  9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合
 
 ### 权重绘制
 ---
@@ -530,12 +529,10 @@ check_non_normalized_vertices()
 ### 权重连续的重要性
 ---
 #### 问题描述
-
 对于两个独立`Mesh`（即使这两个`Mesh`属于同一个`Object`，例如：鞋子和鞋上部件），若两者是`Loose Parts`而非`Connected Mesh`，那么在自动权重后，得到的权重就是不<u>**连续**</u>的，最后在姿态测试或动画制作中，就会出现两个`Mesh`分离的现象
 ![image](../images/blender/blender_loose_parts_weight_discontinuous.png)
 
 #### 问题解决
-
 注意：“权重传递”的效果可能依旧不理想，应该在拓扑低模时，就尽可能解决`Loose Parts`问题，尽量将“封套”制作为<u>**一个**</u>`Connected Mesh`
 
 使用“权重传递”：
@@ -548,21 +545,31 @@ check_non_normalized_vertices()
    ![image](../images/blender/blender_transfer_weight02.png)
 
 #### 经验之谈
-
 实际建模中，尽量将相邻的、贴合在一起的高模`Mesh`拓扑为一个`Connected Mesh`的低模（例如：贴合鞋面的鞋带，所以只拓扑一个`Connected Mesh`来作为两者的“封套”。至于忽略掉的细节，可以由`Substance 3D Painter`烘焙高低模得到）。将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结）拓扑为一个独立的`Loose Part Mesh`。可以参考的模型有：[绝区零-玲-鞋子]()
 
 ### 表情形态键的制作
-* 在`Object Data Properties`页签中，点击`Shape Keys`下的`加号➕`增加一个`Basis`默认基础形态键并将其锁定（此形态键十分重要且不可随意删除，存储未形变的默认网格）。如果需要增加新的形态键,首先需要点击`加号➕`添加一个`Shape Keys Index`并且选中这个“Index”（即设置为`Active`），将新建形态键的`value`值设置为`1`，否则无法观察到变化！之后才能对网格进行变形/雕刻。（注意不可删除/隐藏顶点）
-![image](../images/blender/Shape_Keys01.png)
-[参考视频：かぐや様は告らせたい 白銀圭 3Dモデリング【Timelapse】](https://www.youtube.com/watch?v=ycVqiR2p8mc&t=3869s)- Facial Expression
-* 对称模型可通过镜像形态键减少工作量,例如：左眼眨眼(Blink_L)可镜像到右眼(Blink_R)。
-  * 将`Blink_L`的值=1，然后找到`Shape Keys Special`下的`New Shape From Mix`来按照当前的形变创建一个新的形态键索引(`Shape Keys Index`),将新的形态键索引命名为`Blink_R`并重置`Blink_L`的值=0。
-  ![image](../images/blender/Shape_Keys02.png)
-  ![image](../images/blender/Shape_Keys03.png)
-  * 点击新形态键`Blink_R`使其为`Active`状态，找到`Shape Keys Special`下的`Mirror Shape Key`来镜像当前形态键,得到镜像的“右眼眨眼”形态键。
-  ![image](../images/blender/Shape_Keys04.png)
-  ![image](../images/blender/Shape_Keys05.png)
-  * 依照上述方法，还可以得到“两眼同时眨眼”的形态键。
+---
+#### 流程及注意事项
+1. 在`Data`属性面板中，点击`Shape Keys`下的添加按钮（➕）为`Mesh`添加一个`Basis`默认形态键并将其<u>**锁定**</u>（注意：默认形态键十分重要且不可随意删除，用于存储未形变的默认网格）
+![image](../images/blender/blender_shape_keys01.png)
+2. 点击添加按钮（➕）为`Mesh`添加一个`Shape Keys Index`用于新的表情形态键，设置为`Active`（即选中该`Index`），`value`值设置为`1`（否则在雕刻时无法同步观察到`Mesh`形变）
+3. 对`Mesh`进行雕刻或形变（注意：形态键不支持隐藏或删除`Mesh`的顶点，可以通过将`Mesh`的顶点“塌缩”到同一位置，间接实现隐藏效果）
+
+#### 经验之谈
+镜像对称的形态键（例如：眨左眼`Blink_L`和眨右眼`Blink_R`）可以用过`New Shape From Mix`和`Mirror Shape Key`来减少工作量
+1. 设置`Blink_L » Value = 1`[✔]，
+2. `Shape Keys Special » New Shape From Mix`[✔]：根据当前`Active`的形态键及其`Value`值创建一个新的形态键（`Blink_R`）
+![image](../images/blender/blender_shape_keys02.png)
+3. 重置`Blink_L » Value = 0`[✔] 
+![image](../images/blender/blender_shape_keys03.png)
+4. 将`Blink_R`设置为`Active`（即选中该`Index`）
+5. `Shape Keys Special » Mirror Shape Key`：镜像当前`Active`的形态键，得到真正的“眨右眼”形态键
+![image](../images/blender/blender_shape_keys04.png)
+![image](../images/blender/blender_shape_keys05.png)
+6. 根据上述方法，还可以快速创建“左右眼同时眨眼”的形态键（`Blink`）
+
+#### 参考视频
+* [かぐや様は告らせたい 白銀圭 3Dモデリング](https://www.youtube.com/watch?v=ycVqiR2p8mc&t=3869s)
 
 ### 将Mixamo等网站的动画重定向到Rigfy骨架
 * 问题描述:对于动画菜鸟的我，充分利用免费或付费的动画可大大降低学习和开发成本。
