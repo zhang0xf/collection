@@ -675,13 +675,24 @@ check_non_normalized_vertices()
 - `Material Creation Mode » None`[✔]<br>
 <img src="../images/blender/unity_import_inspector_material_settings.png" alt="image" width="500"><br>
 
-### 游戏引擎导入FBX角色模型文件后，骨骼层级中仍保留有Rigfy的控制骨
-* 问题描述:尽管在导出FBX模型文件时已经勾选了`Only Deform Bones`但是导入游戏引擎之后骨架中仍然包含控制骨(前缀为`MCH`),我们希望最后导出的骨架只包含形变骨(前缀为`DEF`)
-![image](../images/blender/Export_FBX_Armature_Wrong.png)
-* 问题解决:使用`Expy Kit`插件重新组织骨架骨骼的层级关系，使导出的FBX模型骨架转换为对游戏引擎友好。具体:选择需要转换的骨架并切换到`Pose Mode`,`w`呼出上下文菜单，找到`Expy Kit`工具集的下的`Conversion -> Rigfy Game Friendly`。
-![image](../images/blender/Convert_Rigfy_To_Game_Friendly.png)
-![image](../images/blender/Rigfy_Game_Friendly_Result.png)
-* 注意:若后续源骨架`metarig`变动(例如：增加了用于头发模拟物理的骨骼)，再通过`metarig`的`Re-Generate Rig`重新生成`Rigfy`骨架，再次使用插件的骨骼转换功能也是可行的(但存在风险:由于骨架骨骼变动,所以可能导致新的`Rigfy`骨架经过插件的骨骼变换之后，新骨架的层级关系可能和旧骨架的层级关系不再相同，进而导致关联此Rig的动画文件的动画出现异常,丢失动画数据;为了避免这种情况，应该在制作动画之前,完成所有骨骼的添加工作,包括：头发、飘带、小物件等，并且锁定骨骼不被修改。如果不幸还是遇到这种情况,首先请做好文件的备份，然后尝试在动画文件中重新关联新骨架。)
+#### `Unity`优化建议
+* Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
+* Use the Level Of Detail system.
+
+### Rigify Game Friendly
+---
+#### 问题描述
+尽管`Blender`导出`FBX`模型时已经勾选`Only Deform Bones`，但是导入游戏引擎之后，骨架中仍然包含控制骨（前缀为`MCH`），我们希望骨架只包含形变骨（前缀为`DEF`）<br>
+<img src="../images/blender/blender_export_model_control_bone_error.png" alt="image" width="500"><img src="../images/blender/blender_export_model_control_bone_correct.png" alt="image" width="500"><br>
+
+#### 问题解决
+在导出`FBX`模型之前，借助`Expy Kit`插件的`Rigify Game Friendly`功能转换骨架。
+1. `Rigify`骨架切换到<u>**[姿态模式]**</u>，`w`呼出上下文菜单
+2. `Expy Kit » Conversion » Rigify Game Friendly`[✔]<br>
+![image](../images/blender/blender_rigify_game_friendly.png)
+
+#### 工作流整合
+若源骨架`metarig`返工迭代（例如：增加了用于头发物理模拟的骨骼），并通过`Re-Generate Rig`重新生成了`Rig`骨架，可以再次使用`Rigify Game Friendly`转换骨骼（<u>**[风险⚠️]**</u>：骨架变动，可能导致`Rigify Game Friendly`转换得到的新骨架与旧骨架不再相同，进而导致`Link`原(旧)骨架的所有动画文件丢失动画数据，动画出现异常。为了避免这种情况，应该在制作任何动画之前，完成所有骨骼的添加工作，包括：头发、飘带、小物件等，并且<u>**锁定骨骼**</u>不被修改。如果不幸还是遇到这种情况，首先备份相关文件，然后尝试在动画文件中重新关联新骨架）
 
 ### 重新组织文件的目录结构后，导致link关联文件丢失。
 * 问题描述：被关联的文件路径未改变，改变了操作关联的文件路径，导致工程出现问题。blender提示“`1 libraries and 318 linked data-blocks are missing(...)`”。
@@ -689,10 +700,6 @@ check_non_normalized_vertices()
 * 问题解决:在`Outliner`视窗将`Dispaly Mode`切换到`Blender File`，找到丢失链接的`Library`,`右键 -> 上下文菜单 -> Relocate`。再次选择需要关联的文件。
 ![image](../images/blender/Link_Library_Relocate.png)
 * 注意: 关联文件和被关联文件路径均不可随意变动。
-
-# Unity优化建议
-* Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
-* Use the Level Of Detail system.
 
 ### 刚体参数
 
