@@ -674,10 +674,10 @@ check_non_normalized_vertices()
   <img src="../images/blender/unity_import_inspector_rig_settings02.png" alt="image" width="500"><br>
 
 #### 3. `Inspector » Animation`面板
-- `Anim Compression » Optimal`：`Unity`会自动选择动画的压缩方式，同时保持较高的动画质量
-- `Loop Time`[✔ or ❌]：需要循环播放的动画应该勾选（例如：角色的`Idle`、`Walking`等动画）
-- `Loop Pose`[✔ or ❌]：取决于动画的起始帧和结束帧是否一致，当起始帧和结束帧不一致时（例如：角色的`Idle`动画，应该<u>**勾选**</u>以使动画循环平滑过渡）
-- `Root Transform Rotation`[✔ or ❌]：参考：[Root Motion Explained (Unity Tutorial)](https://www.youtube.com/watch?v=Xl_5roq4UlI&list=WL&index=24)<br>
+- `Anim Compression » Optimal`[✔]：`Unity`会自动选择动画的压缩方式，同时保持较高的动画质量
+- `Loop Time`[✔]：需要循环播放的动画应该勾选（例如：角色的`Idle`、`Walking`等动画）
+- `Loop Pose`[✔]：取决于动画的起始帧和结束帧是否一致，当起始帧和结束帧不一致时（例如：角色的`Idle`动画，应该<u>**勾选**</u>以使动画循环平滑过渡）
+- `Root Transform Rotation`[✔]：参考：[Root Motion Explained (Unity Tutorial)](https://www.youtube.com/watch?v=Xl_5roq4UlI&list=WL&index=24)<br>
 <img src="../images/blender/unity_import_inspector_animation_settings.png" alt="image" width="500"><br>
 
 #### 4. `Inspector » Material`面板
