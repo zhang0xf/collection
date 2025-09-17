@@ -220,8 +220,69 @@
 3. 点击`Generate Data Layers`将原对象的顶点组转移到新对象
 4. 应用`Data Transfer`修改器
 5. 将新对象绑定到骨骼(顶点组来自修改器)：`control + p » Armature Deform`
-5. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
-6. TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
+6. 切换到<u>**[权重绘制模式]**</u>，检查新对象权重是否正确
+7. TODO：不追求`100%`自动化，因为权重和形态键这种数据必须人眼确认。可以做一个半自动工具，让重复操作交给脚本，剩下交给绑定师检查。`SVN`只负责版本记录和更新，真正的“更新逻辑”最好在`Blender`内由脚本控制
+
+### 绑定和导出的矛盾
+---
+#### 问题描述
+绑定模型时，需要兼顾多人协作、解耦、调试方便、可迭代等，必须分开绑定各部件的`Mesh`。导出模型时，需要兼顾“封装性”、隐藏开发细节等，需要将所有“部件”的`Mesh`合并为一个`Mesh`
+
+#### 问题解决
+为每个“部件”的`Mesh`添加一个与“部件”同名的`Vertex Group`，合并各部件`Mesh`后，若需对“部件”返工修改，仍能通过“同名顶点组”来分离该“部件”
+![image](../images/blender/blender_rig_and_export01.png)
+![image](../images/blender/blender_rig_and_export02.png)
+![image](../images/blender/blender_rig_and_export03.png)
+
+#### 脚本
+```python
+import bpy
+
+def add_vertex_group_to_selected():
+    """为所有选中的网格对象添加同名顶点组，权重设为1.0"""
+    selected_objects = bpy.context.selected_objects
+    
+    for obj in selected_objects:
+        if obj.type != 'MESH':
+            print(f"跳过非网格对象: {obj.name}")
+            continue
+        
+        if obj.vertex_groups.get(obj.name):
+            print(f"已存在顶点组 '{obj.name}'，跳过")
+            continue
+        
+        vgroup = obj.vertex_groups.new(name=obj.name)
+        vgroup.add(range(len(obj.data.vertices)), 1.0, 'REPLACE')
+        print(f"已为 {obj.name} 添加顶点组并设置权重=1")
+
+    print("操作完成")
+
+add_vertex_group_to_selected()
+```
+
+```python
+import bpy
+
+def remove_vertex_groups_by_object_name():
+    """删除选中对象中与对象同名的顶点组"""
+    selected_objects = bpy.context.selected_objects
+    
+    for obj in selected_objects:
+        if obj.type != 'MESH':
+            print(f"跳过非网格对象: {obj.name}")
+            continue
+        
+        vgroup = obj.vertex_groups.get(obj.name)
+        if vgroup:
+            obj.vertex_groups.remove(vgroup)
+            print(f"已从 {obj.name} 删除顶点组 '{obj.name}'")
+        else:
+            print(f"对象 {obj.name} 无同名顶点组，跳过")
+
+    print("删除操作完成")
+
+remove_vertex_groups_by_object_name()
+```
 
 ### `UV`的镜像同步
 ---
@@ -479,71 +540,6 @@
 #### 经验之谈
 
 实际建模中，尽量将相邻的、贴合在一起的高模`Mesh`拓扑为一个`Connected Mesh`的低模（例如：贴合鞋面的鞋带，所以只拓扑一个`Connected Mesh`来作为两者的“封套”。至于忽略掉的细节，可以由`Substance 3D Painter`烘焙高低模得到）。将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结）拓扑为一个独立的`Loose Part Mesh`。可以参考的模型有：[绝区零-玲-鞋子]()
-
-### 绑定和导出的矛盾
-* 问题描述:绑定时为了方便,需要保持各个部分的分离；但是导出时，希望作为一个整体(导入到游戏引擎)。
-* 问题解决:为每个部分添加`顶点组`,在使用`control + j`合并后，如果需求变动，仍可以通过`顶点组`方便地分离对象。
-![image](../images/blender/Rig_and_Export_Conflict01.png)
-![image](../images/blender/Rig_and_Export_Conflict02.png)
-![image](../images/blender/Rig_and_Export_Conflict03.png)
-![image](../images/blender/Rig_and_Export_Conflict04.png)
-![image](../images/blender/Rig_and_Export_Conflict05.png)
-![image](../images/blender/Rig_and_Export_Conflict06.png)
-![image](../images/blender/Rig_and_Export_Conflict07.png)
-* 注意：当对象很多时，务必使用脚本批量为选中对象添加顶点组，脚本如下:
-```python
-import bpy
-
-def add_vertex_group_to_selected():
-    """为所有选中的网格对象添加同名顶点组，权重设为1.0"""
-    selected_objects = bpy.context.selected_objects
-    
-    for obj in selected_objects:
-        if obj.type != 'MESH':
-            print(f"跳过非网格对象: {obj.name}")
-            continue
-        
-        # 检查是否已存在同名顶点组
-        if obj.vertex_groups.get(obj.name):
-            print(f"已存在顶点组 '{obj.name}'，跳过")
-            continue
-        
-        # 创建顶点组并设置权重
-        vgroup = obj.vertex_groups.new(name=obj.name)
-        vgroup.add(range(len(obj.data.vertices)), 1.0, 'REPLACE')
-        print(f"已为 {obj.name} 添加顶点组并设置权重=1")
-
-    print("操作完成")
-
-# 执行函数
-add_vertex_group_to_selected()
-```
-* 相应删除这些顶点组的脚本如下（可能会使用到）：
-```python
-import bpy
-
-def remove_vertex_groups_by_object_name():
-    """删除选中对象中与对象同名的顶点组"""
-    selected_objects = bpy.context.selected_objects
-    
-    for obj in selected_objects:
-        if obj.type != 'MESH':
-            print(f"跳过非网格对象: {obj.name}")
-            continue
-        
-        # 查找与对象同名的顶点组
-        vgroup = obj.vertex_groups.get(obj.name)
-        if vgroup:
-            obj.vertex_groups.remove(vgroup)
-            print(f"已从 {obj.name} 删除顶点组 '{obj.name}'")
-        else:
-            print(f"对象 {obj.name} 无同名顶点组，跳过")
-
-    print("删除操作完成")
-
-# 执行函数
-remove_vertex_groups_by_object_name()
-```
 
 ### 表情形态键的制作
 * 在`Object Data Properties`页签中，点击`Shape Keys`下的`加号➕`增加一个`Basis`默认基础形态键并将其锁定（此形态键十分重要且不可随意删除，存储未形变的默认网格）。如果需要增加新的形态键,首先需要点击`加号➕`添加一个`Shape Keys Index`并且选中这个“Index”（即设置为`Active`），将新建形态键的`value`值设置为`1`，否则无法观察到变化！之后才能对网格进行变形/雕刻。（注意不可删除/隐藏顶点）
