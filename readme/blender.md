@@ -615,27 +615,27 @@ check_non_normalized_vertices()
 10. 在`Dope Sheet » Action Editor`下查看烘焙得到的`Action`
 11. 确认无误后，删除`Mixamo`资源
 
-### 导出FBX模型和动画
+### 导出`FBX`模型和动画
 ---
 #### 流程及注意事项
 1. 选择需要导出的`Action`（对于游戏项目，一个动画文件有且仅有一个`Action`），将场景名称`Scene`更改为`Zeri_dancing01`(/`@Zeri_Walking01`/`@ZeriWalking01`，对应`Unity`中`Animation Clip`的名称，仅在<u>**[导出动画]**</u>时才需要此步骤)
-2. `Include`选项
+2. `Include`面板：
    - `Limit To » Selected Objects`[✔]
    - `Object Types » Armature`[✔]
    - `Object Types » Mesh`[✔]<br>
    <img src="../images/blender/blender_export_include_settings.png" alt="image" width="700"><br>
-3. `Transform`选项
+3. `Transform`面板：
    - `Forward » -Y Forward`[✔]
    - `Up » Z Up`[✔]
    - `Apply Space Transform`[❌]<br>
    <img src="../images/blender/blender_export_transform_settings.png" alt="image" width="700"><br>
-4. `Geometry`选项（保持默认设置）
-5. `Armature`选项
+4. `Geometry`面板（保持默认设置）
+5. `Armature`面板：
    - `Only Deform Bones`[✔]
    - `Add Leaf Bones`[❌]
    - 其余保持默认设置<br>
    <img src="../images/blender/blender_export_armature_settings.png" alt="image" width="700"><br>
-6. `Animation`选项（仅在<u>**[导出动画]**</u>时才需要此设置）
+6. `Animation`面板（仅在<u>**[导出动画]**</u>时才需要此设置）：
    - `Key All Bones`[❌]：不需要为所有骨骼在每一帧都生成关键帧
    - `NLA Strips`[❌]
    - `All Actions`[❌]：只导出当前选择的`Action`
@@ -643,19 +643,37 @@ check_non_normalized_vertices()
    <img src="../images/blender/blender_export_animation_settings.png" alt="image" width="700"><br>
 7. TODO：如果游戏需要支持人物各部位换装，那么各部位装扮需要逐个和整个骨架一起导出
 
-### Unity游戏引擎导入FBX模型文件
-* 另见下文 **Unity游戏引擎导入FBX动画文件**，不同点在于导入模型FBX时，在`Rig`选项卡下，需要创建人物的`Avatar`:`Animation Type`下拉菜单选择`Generic`，`Avatar Definition`下拉菜单选择`Create From this Model`,`Root Node`下拉菜单选择根骨骼`Armature/Root`。
-![image](../images/blender/Unity_Import_FBX_Model.png)
+### `Unity`导入`FBX`模型和动画
+---
+#### 1. `Inspector » Model`面板
+- `Bake Axis Conversion`[✔]
+- `Import Visibility`[❌]
+- `Import Camera`[❌]
+- `Import Light`[❌]<br>
+<img src="../images/blender/unity_import_inspector_model_settings.png" alt="image" width="500"><br>
 
-### Unity游戏引擎导入FBX动画文件
-* 在FBX的`Inspector`面板中,`Model`选项卡下:勾选`Bake Axis Conversion`，取消勾选`Import Visibility`,取消勾选`Import Camera`，取消勾选`Import Light`；
-![image](../images/blender/Unity_Import_FBX_Animation01.png)
-* 在FBX的`Inspector`面板中,`Rig`选项卡下:`Animation Type`下拉菜单选择`Generic`（为何不使用`Humanoid`类型？因为导入动画会有`Lower Retargeting Quality`警告，并且我们暂时不会使用`Humanoid`的动画重定向功能,至于`Humanoid IK`功能也不是必须的，我们可以在`Generic`类型上自定义脚部的`IK`功能）;`Avatar Definition`下拉菜单选择`Copy From Other Avatar`;`Source`选择对应人物模型所生成的`Avatar`。
-![image](../images/blender/Unity_Import_FBX_Animation02.png)
-* 在FBX的`Inspector`面板中,`Animation`选项卡下:`Anim Compression`下拉菜单选择`Optimal`(Unity会自动选择动画的压缩方式，同时保持较高的动画质量),对于需要循环播放的动画(例如:Idle、Walking)勾选`Loop Time`，是否需要勾选`Loop Pose`，取决于动画的起始帧和结束帧是否一致，当起始帧和结束帧不一致时(例如角色的Idle动画)，需要勾选`Loop Pose`以使动画循环平滑过渡；关于`Root Transform ***`相关是否勾选，可参考视频: [Root Motion Explained (Unity Tutorial)](https://www.youtube.com/watch?v=Xl_5roq4UlI&list=WL&index=24)
-![image](../images/blender/Unity_Import_FBX_Animation03.png)
-* 在FBX的`Inspector`面板中,`Material`选项卡下:`Material Creation Mode`下拉菜单设置为`None`。
-![image](../images/blender/Unity_Import_FBX_Animation04.png)
+#### 2. `Inspector » Rig`面板
+* 导入`FBX`模型
+  - `Animation Type » Generic`[✔]：_<u>为何不使用`Humanoid`类型</u>_？因为导入动画时会有`Lower Retargeting Quality`警告，我们也暂时不使用`Humanoid`的动画重定向功能，至于`Humanoid IK`功能也不是必须的，我们可以在`Generic`类型上自定义腿部的`IK`功能
+  - `Avatar Definition » Create From This Model`[✔]
+  - `Root Node » Armature/Root`[✔]<br>
+  <img src="../images/blender/unity_import_inspector_rig_settings01.png" alt="image" width="500"><br>
+* 导入`FBX`动画
+  - `Animation Type » Generic`[✔]
+  - `Avatar Definition » Copy From Other Avatar`[✔]
+  - `Source » Zeri_Avatar`[✔]<br>
+  <img src="../images/blender/unity_import_inspector_rig_settings02.png" alt="image" width="500"><br>
+
+#### 3. `Inspector » Animation`面板
+- `Anim Compression » Optimal`：`Unity`会自动选择动画的压缩方式，同时保持较高的动画质量
+- `Loop Time`[✔ or ❌]：需要循环播放的动画应该勾选（例如：角色的`Idle`、`Walking`等动画）
+- `Loop Pose`[✔ or ❌]：取决于动画的起始帧和结束帧是否一致，当起始帧和结束帧不一致时（例如：角色的`Idle`动画，应该<u>**勾选**</u>以使动画循环平滑过渡）
+- `Root Transform Rotation`[✔ or ❌]：参考：[Root Motion Explained (Unity Tutorial)](https://www.youtube.com/watch?v=Xl_5roq4UlI&list=WL&index=24)<br>
+<img src="../images/blender/unity_import_inspector_animation_settings.png" alt="image" width="500"><br>
+
+#### 4. `Inspector » Material`面板
+- `Material Creation Mode » None`[✔]<br>
+<img src="../images/blender/unity_import_inspector_material_settings.png" alt="image" width="500"><br>
 
 ### 游戏引擎导入FBX角色模型文件后，骨骼层级中仍保留有Rigfy的控制骨
 * 问题描述:尽管在导出FBX模型文件时已经勾选了`Only Deform Bones`但是导入游戏引擎之后骨架中仍然包含控制骨(前缀为`MCH`),我们希望最后导出的骨架只包含形变骨(前缀为`DEF`)
