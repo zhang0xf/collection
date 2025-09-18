@@ -18,24 +18,27 @@
 * `r`：缩放“变换操纵器”
 * `shift`：更精细地调整参数
 * `shift + 鼠标左键`：笔刷沿直线路径绘制
-* `command + z`：撤销(Undo)
-* `command + Shift + z`：取消撤销(Redo)
+* `command + z`：撤销(`Undo`)
+* `command + Shift + z`：取消撤销(`Redo`)
 
-# Substance Painter使用技巧、问题及解决方案
-
-### 高低模烘焙的准备
-* 高模分配纯色材质,以支持`Substance Painter`，建议使用科学的命名规则，例如：`ID_Body01`（相同的前缀可以归档材质，使在blnder中更方便查找）；
-* 低模规划好UV布局,另见[blender.md](./blender.md)中UV相关的一些建议；
-* 高低模需符合命名规则(`_Low`,`_High`)；
+### 高低模准备
+---
+1. 在`Blender`中，为高模分配不同颜色的材质（例如：`ID_Body01`、`ID_Body02`、`ID_Hair01`等），使`Substance Painter`烘焙高低模时，可以根据高模的`Material`生成`ID`贴图。
+2. 在`Blender`中，检查低模`UV`
+2. 在`Blender`中，检查并更改高低模后缀`_High`和`_Low`
 
 ### 高低模烘焙的设置
-* 参考视频：[Substance 3D Painter 8.3 烘焙功能讲解](https：//www.bilibili.com/video/BV1mv4y1k7yC/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
-* 参考视频：[MainMian GameModel Pate35(时间戳1：52：18)](https：//www.bilibili.com/video/BV1gZ4y1e7nW?spm_id_from=333.788.videopod.episodes&vd_source=b9589ad635db7dddd215259c55a8a09c&p=3)
+---
+#### TODO
 ![image](../images/substance_painter/High_And_Low_Bake_Settings01.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings02.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings03.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings04.png)
 ![image](../images/substance_painter/High_And_Low_Bake_Settings05.png)
+
+#### 参考
+* [Substance 3D Painter 8.3 烘焙功能讲解](https：//www.bilibili.com/video/BV1mv4y1k7yC/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
+* [MainMian GameModel Pate35(1:52:18)](https：//www.bilibili.com/video/BV1gZ4y1e7nW?spm_id_from=333.788.videopod.episodes&vd_source=b9589ad635db7dddd215259c55a8a09c&p=3)
 
 ### 烘焙得到的法线贴图存在锯齿状接缝
 * 问题描述：由于Texture空间有限，所以尽可能将镜像的UV进行叠放，例如：左右手臂；但是由于不经意间对手臂拓扑的更改，使得镜像UV不再绝对镜像。（尽管在展UV时，已经将镜像UV的顶点一一对齐，使得镜像UV完全重叠）
