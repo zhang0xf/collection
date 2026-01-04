@@ -404,6 +404,17 @@ TODO
 
 ---
 
+### 单独显示骨骼集合
+
+#### 问题描述
+当模型骨骼非常多时，想要批量选择某个骨骼集合（`Bone Collection`）下的所有骨骼，受其他骨骼干扰，只能按住`Shift`逐个选择，麻烦且易错。
+
+#### 问题解决
+激活目标集合（`Bone Collection`）的`Solo`选项（星星图标），使该骨骼集合单独显示，然后可以很方便地使用鼠标框选骨骼。
+![image](../images/blender/blender_solo_bone_collection.png)
+
+---
+
 ### `Rigify`骨架添加自定义骨骼
 
 #### 问题描述
