@@ -1,7 +1,7 @@
 # Blender 笔记
 
 ### 偏好设置
----
+
 * 视图切换-自动深度(避免缩放视图很慢):   
   <img src="../images/blender/blender_navigation_orbit_depth.png" alt="image" width="600"><br>
 * 右键选择:  
@@ -11,8 +11,10 @@
 * 鼠标中键视图检视:  
   <img src="../images/blender/blender_keymap_middle_mouse_action.png" alt="image" width="600"><br>
 
-### 快捷键
 ---
+
+### 快捷键
+
 * `shift + 鼠标中键`:<u>**[3D视图]**</u>平移视角
 * `shift + s`:游标吸附
 * `shift + c`:游标至世界原点
@@ -93,8 +95,10 @@
 * `option + s`:<u>**[编辑模式-曲线]**</u>缩放曲线控制点的半径(`radius`)
 * `control + t`:<u>**[编辑模式-曲线]**</u>缩放曲线控制点的倾斜角(`tilt`)
 
-### 雕刻边沿
 ---
+
+### 雕刻边沿
+
 #### 问题描述
 在雕刻鞋子时，希望雕刻出鞋底和鞋面的边沿并使鞋底平整。
 
@@ -102,8 +106,10 @@
 使用`Draw Sharp`雕刻工具勾勒出边沿,使用`Smooth`和`Mask`雕刻工具削平鞋底。
 ![image](../images/blender/blender_sculpt_shoes_edge.png)
 
-### 遮罩和限制轴向
 ---
+
+### 遮罩和限制轴向
+
 #### 问题描述
 在制作“编织手环”时,我们需要对单个"编织绳"进行`抓取`，固定x轴，使雕刻工具(`抓取`)只能在y和z轴上进行。
 ![image](../images/blender/blender_sculpt_bracelet01.png)
@@ -118,8 +124,10 @@
 5. `Symmetry » Lock » x`[✔]
 ![image](../images/blender/blender_sculpt_bracelet04.png)
 
-### 点无法准确吸附到最近的面
 ---
+
+### 点无法准确吸附到最近的面
+
 #### 问题描述
 在对耳朵部分进行拓扑时，`点`应当吸附到"耳朵"上而非"头部"
 ![image](../images/blender/blender_vertex_snap2face_error.png)
@@ -129,8 +137,10 @@
 2. `Snap » Backface Culling`[✔]
 ![image](../images/blender/blender_vertex_snap2face.png)
 
-### `e`挤出的点自动吸附到最近的面
 ---
+
+### `e`挤出的点自动吸附到最近的面
+
 #### 问题描述
 选择`循环边`并挤出，挤出的点不会自动吸附到最近的面
 
@@ -139,13 +149,17 @@
 2. `Snap » Backface Culling`[✔]
 3. 挤出点后，使用`g`移动顶点(点会自动吸附到最近的面)
 
-### `UV`同步选择
 ---
+
+### `UV`同步选择
+
 #### 经验之谈
 展`UV`时，`UV Sync Selection`[✔]
 
-### `UV`与游戏表现和性能【重要】
 ---
+
+### `UV`与游戏表现和性能【重要】
+
 #### 经验之谈
 展`UV`时，叠放`UV`布局(例如对称的左右手)可以充分利用`Texture`有限的空间，进而减少`Texture`数量，提升性能。但是会限制艺术表现（例如：左右手`UV`不对称或需绘制不同贴花，这种情况不适合叠放`UV`）
 
@@ -156,8 +170,10 @@
 ![image](../images/blender/blender_uv_unwrap_suggestion02.png)
 ![image](../images/blender/blender_uv_unwrap_suggestion03.png)
 
-### 外来模型的`UV`
 ---
+
+### 外来模型的`UV`
+
 #### 问题描述
 导入的外来模型可能已有自定义的`Model_UVMap`,与`Blender`默认的`UVMap`不会自动合并为一个`UVMap`。如果不处理或者忘记检查，那么在导入游戏引擎后，整个模型（其中，外来模型可能是“背包”，本地模型可能是“人物”）的UV就会占用两套`纹理坐标`(例如：“背包”的`UV坐标`在`TEXCOORD0`通道，“人物”的`UV坐标`在`TEXCOORD1`通道)，最后会导致渲染代码在采样`UV坐标`时发生错误。
 
@@ -165,8 +181,10 @@
 在导入外来模型之后，需要确保所有模型在`Blender`中使用同一`UVMap`（可能会涉及到拷贝`UVMap`的操作：`选择源物体 » 选择目标物体 » control + l » Copy UV Maps`）<br> 
 <img src="../images/blender/blender_import_model_uvmap.png" alt="image" width="300"><br>
 
-### 建模、绑定和动画分文件(多人协作开发)
 ---
+
+### 建模、绑定和动画分文件(多人协作开发)
+
 #### 问题描述
 在游戏开发中，一个角色可能会有上百个动画，若`绑定文件`发生更改，我们希望能自动同步到所有的`动画文件`；还需要支持多位动画师同时为一个角色制作动画
 
@@ -224,8 +242,10 @@ for obj in linked_objects:
 print("选中的链接对象及其关联数据已本地化！")
 ```
 
-### 绑定和导出的矛盾
 ---
+
+### 绑定和导出的矛盾
+
 #### 问题描述
 绑定模型时，需要兼顾多人协作、解耦、调试方便、可迭代等，必须分开绑定各部件的`Mesh`。导出模型时，需要兼顾“封装性”、隐藏开发细节等，需要将所有“部件”的`Mesh`合并为一个`Mesh`
 
@@ -287,8 +307,10 @@ def remove_vertex_groups_by_object_name():
 remove_vertex_groups_by_object_name()
 ```
 
-### `UV`的镜像同步
 ---
+
+### `UV`的镜像同步
+
 #### 问题描述
 镜像对称，更改某一侧`UV`，希望另一侧`UV`镜像同步
 ![image](../images/blender/blender_uv_mirror_sync_error.png)
@@ -297,8 +319,10 @@ remove_vertex_groups_by_object_name()
 删除另一侧`UV`，并添加`Mirror`修改器，`Data » Mirror » U`[✔]
 ![image](../images/blender/blender_uv_mirror_sync_solution.png)
 
-### UV打直
 ---
+
+### UV打直
+
 #### 问题描述
 弯曲的`UV`会占用较多`Texture`空间，打直以更好地布局
 ![image](../images/blender/blender_make_uv_straight_error.png)
@@ -309,8 +333,10 @@ remove_vertex_groups_by_object_name()
   3. `UV孤岛(选中) » UV ToolKit » Straighten UVs`
 ![image](../images/blender/blender_make_uv_straight_solution.png)
 
-### UV叠放对齐
 ---
+
+### UV叠放对齐
+
 #### 问题描述
 在叠放`镜像UV`时，可能会遇到这种情况：大部分顶点对齐，部分顶点不对齐
 ![image](../images/blender/blender_uv_mirror_align01.png)
@@ -358,22 +384,28 @@ for i, uv in enumerate(selected_uvs):
 bmesh.update_edit_mesh(obj.data)
 ```
 
-### 骨骼的精确定位
 ---
+
+### 骨骼的精确定位
+
 1. `Shift + s » Cursor to Selected`：将游标定位到某处
 2. 选择`Bone`的`Head`或`Tail`<u>**[编辑模式下]**</u>
 3. `Shift + s » Selected To Cursor`：将`Head`或`Tail`吸附到游标位置
 
-### 根据曲线生成骨链
 ---
+
+### 根据曲线生成骨链
+
 #### 问题描述
 为“头发”添加骨骼时，手动调整骨骼位置去适配“头发”会十分浪费时间，我们可以利用头发的原始曲线来生成对应的骨链
 
 #### 问题解决
 TODO
 
-### `Rigify`骨架添加自定义骨骼
 ---
+
+### `Rigify`骨架添加自定义骨骼
+
 #### 问题描述
 我们需要在`Rigify`基础人形骨架上，添加用于头发、衣服、飘带的“自定义”骨骼
 
@@ -414,8 +446,10 @@ TODO
 * [[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
 * [blender进阶丨头发和衣服动画物理模拟结算](https://www.bilibili.com/video/BV16G4y1z7BD/?spm_id_from=333.1387.favlist.content.click&vd_source=b9589ad635db7dddd215259c55a8a09c)
 
-### 权重绘制
 ---
+
+### 权重绘制
+
 #### 经验之谈
 以“部件”为单位，使用`control + p » Armature Deform`逐一绑定。注意这里的“部件”不一定是单个`Mesh`，更多情况是由多个`Mesh`组成，需要视具体情况而定，目的是寻找高效合理的绑定方式。例如：脸部(`Face`)与脖子(`Body`)可以先合并，并使用`Merge by Distance`合并“接缝”处顶点，这样`Weight » Assign Automatic From Bones`给到的权重是<u>**连续**</u>的，大大方便之后权重的修缮。绘制完权重之后再分离`Face`与`Body`，则分离后“接缝”处的两组顶点权重是相同的！在动画中便不会<u>**破面**</u>，分离后需要重新检查各`Mesh`中“同名”顶点组权重是否正确（另见：[绑定与导出的矛盾](#绑定和导出的矛盾)）
 
@@ -535,8 +569,10 @@ def check_non_normalized_vertices(): # TODO：功能尚不完善
 check_non_normalized_vertices()
 ```
 
-### 权重连续的重要性
 ---
+
+### 权重连续的重要性
+
 #### 问题描述
 对于两个独立`Mesh`（即使这两个`Mesh`属于同一个`Object`，例如：鞋子和鞋上部件），若两者是`Loose Parts`而非`Connected Mesh`，那么在自动权重后，得到的权重就是不<u>**连续**</u>的，最后在姿态测试或动画制作中，就会出现两个`Mesh`分离的现象
 ![image](../images/blender/blender_loose_parts_weight_discontinuous.png)
@@ -556,8 +592,10 @@ check_non_normalized_vertices()
 #### 经验之谈
 实际建模中，尽量将相邻的、贴合在一起的高模`Mesh`拓扑为一个`Connected Mesh`的低模（例如：贴合鞋面的鞋带，所以只拓扑一个`Connected Mesh`来作为两者的“封套”。至于忽略掉的细节，可以由`Substance 3D Painter`烘焙高低模得到）。将哪些明显突兀的、离散的（例如：鞋带的蝴蝶结）拓扑为一个独立的`Loose Part Mesh`。可以参考的模型有：[绝区零-玲-鞋子]()
 
-### 表情形态键的制作
 ---
+
+### 表情形态键的制作
+
 #### 流程及注意事项
 1. 在`Data`属性面板中，点击`Shape Keys`下的添加按钮（➕）为`Mesh`添加一个`Basis`默认形态键并将其<u>**锁定**</u>（注意：默认形态键十分重要且不可随意删除，用于存储未形变的默认网格）
 ![image](../images/blender/blender_shape_keys01.png)
@@ -580,8 +618,10 @@ check_non_normalized_vertices()
 #### 参考视频
 * [かぐや様は告らせたい 白銀圭 3Dモデリング](https://www.youtube.com/watch?v=ycVqiR2p8mc&t=3869s)
 
-### 动画重定向
 ---
+
+### 动画重定向
+
 #### 问题描述
 对于动画菜鸟，<u>**重定向**</u>免费或付费的动画可大大降低学习和开发成本
 
@@ -624,8 +664,16 @@ check_non_normalized_vertices()
 10. 在`Dope Sheet » Action Editor`下查看烘焙得到的`Action`
 11. 确认无误后，删除`Mixamo`资源
 
-### 导出`FBX`模型和动画
 ---
+
+### 添加过渡帧来稳定物理模拟
+
+TODO
+
+---
+
+### 导出`FBX`模型和动画
+
 #### 流程及注意事项
 1. 选择需要导出的`Action`（对于游戏项目，一个动画文件有且仅有一个`Action`），将场景名称`Scene`更改为`Zeri_dancing01`(/`@Zeri_Walking01`/`@ZeriWalking01`，对应`Unity`中`Animation Clip`的名称，仅在<u>**[导出动画]**</u>时才需要此步骤)
 2. `Include`面板：
@@ -652,8 +700,10 @@ check_non_normalized_vertices()
    <img src="../images/blender/blender_export_animation_settings.png" alt="image" width="700"><br>
 7. TODO：如果游戏需要支持人物各部位换装，那么各部位装扮需要逐个和整个骨架一起导出
 
-### `Unity`导入`FBX`模型和动画
 ---
+
+### `Unity`导入`FBX`模型和动画
+
 #### 1. `Inspector » Model`面板
 - `Bake Axis Conversion`[✔]
 - `Import Visibility`[❌]
@@ -684,12 +734,16 @@ check_non_normalized_vertices()
 - `Material Creation Mode » None`[✔]<br>
 <img src="../images/blender/unity_import_inspector_material_settings.png" alt="image" width="500"><br>
 
+---
+
 #### `Unity`优化建议
 * Optimize your geometry: don’t use any more triangles than necessary, and try to keep the number of UV mapping seams and hard edges (doubled-up vertices) as low as possible. For more information, see [Creating models for optimal performance](https://docs.unity3d.com/2022.3/Documentation/Manual/ModelingOptimizedCharacters.html).
 * Use the Level Of Detail system.
 
-### Rigify Game Friendly
 ---
+
+### Rigify Game Friendly
+
 #### 问题描述
 尽管`Blender`导出`FBX`模型时已经勾选`Only Deform Bones`，但是导入游戏引擎之后，骨架中仍然包含控制骨（前缀为`MCH`），我们希望骨架只包含形变骨（前缀为`DEF`）<br>
 <img src="../images/blender/blender_export_model_control_bone_error.png" alt="image" width="500"><img src="../images/blender/blender_export_model_control_bone_correct.png" alt="image" width="500"><br>
@@ -703,8 +757,10 @@ check_non_normalized_vertices()
 #### 工作流整合
 若源骨架`metarig`返工迭代（例如：增加了用于头发物理模拟的骨骼），并通过`Re-Generate Rig`重新生成了`Rig`骨架，可以再次使用`Rigify Game Friendly`转换骨骼（<u>**[风险⚠️]**</u>：骨架变动，可能导致`Rigify Game Friendly`转换得到的新骨架与旧骨架不再相同，进而导致`Link`原(旧)骨架的所有动画文件丢失动画数据，动画出现异常。为了避免这种情况，应该在制作任何动画之前，完成所有骨骼的添加工作，包括：头发、飘带、小物件等，并且<u>**锁定骨骼**</u>不被修改。如果不幸还是遇到这种情况，首先备份相关文件，然后尝试在动画文件中重新关联新骨架）
 
-### 关联文件丢失
 ---
+
+### 关联文件丢失
+
 #### 问题描述
 1. 引用丢失：`.blend`文件中的资源文件（例如：`Texture`等）更换了文件路径之后，`.blend`文件会丢失引用
 2. 链接丢失：`.blend`文件<u>**或**</u>其`Link`文件更换了文件路径之后，`.blend`文件会提示：`1 libraries and 318 linked data-blocks are missing(...)`
@@ -715,70 +771,4 @@ check_non_normalized_vertices()
 2. 对于“链接丢失”，可以使用`Outliner » Blender File » Libraries » RMB(鼠标右键) » Relocate`[✔]，为丢失链接的`Library`重新链接
 ![image](../images/blender/blender_library_link_relocate.png)
 
-### 物理刚体参数
 ---
-#### mass
-`mass`（质量）表示刚体的惯性大小，即它对加速度的抵抗能力
-- 加速度响应：施加相同力时，质量越大加速度越小
-- 碰撞反应：大质量物体在碰撞时会“推开”小质量物体，而自身几乎不受影（动量守恒）
-- 重力效果：质量不会影响下落速度（自由落体加速度恒定），但会影响碰撞击力
-- 惯性张量：大质量物体的旋转惯性也更大，转动更难
-- `default=1`是一个方便的中性值，用`1`作为基准，其他物体的质量相对它调节
-
-#### friction
-`friction`控制的是物体表面与接触面之间的阻力，会影响它在接触面上的动程度
-- 数值越高 → 更“粘”，滑动时阻力更大，物体更快停下来
-- 数值越低 → 更“滑”，物体更容易在表面滑动很远
-- `0`表示完全无摩擦（冰面效果），理论上会无限滑动
-
-混合摩擦公式（`Bullet`默认）：
-`friction_total = sqrt(friction_A × friction_B)`，这意味着：
-- 两个物体中任意一个摩擦力低，最终摩擦也会低
-- 两个物体都高摩擦时，最终摩擦才会大
-
-实际模拟感觉：
-- `0.0`：冰面，几乎无限滑动
-- `0.2`：很滑的地板，缓慢停下
-- `0.5`：普通木地板/桌面摩擦感
-- `0.8`：橡胶接触，几乎不滑动
-- `>1.0`：极端高摩擦，除非强推几乎不动
-
-注意：
-- 只在接触时生效：物体必须和别的表面接触才有摩擦力的计算
-- 不是粘性：摩擦只是阻止滑动，不会让物体粘住
-- 高摩擦并不意味着不能滑：如果外力足够大（比如强推），物体仍然会滑动
-
-#### bounce
-`bounce`控制的是刚体的弹性恢复系数，决定了物体在碰撞后反弹的程度
-，它对应物理里的系数`e`（`Coefficient of Restitution`），定义为碰后速度与碰撞前速度的比值，只在法向方向（`normal direction`）生效，和摩擦不同，不影响沿接触面滑动，如果`bounce`很大而且`friction`很低，就会出现“超级弹球”效果
-- `0` → 完全非弹性碰撞，碰到就停下（像橡皮泥砸地）
-- `1` → 完全弹性碰撞，碰到后反弹回去，速度与高度几乎完全保留（理想化的力球）
-- `0~1` → 部分弹性，碰撞时损失一部分能量
-
-数值感受：
-- `0.0`：完全不反弹，直接停下
-- `0.2`：轻微弹跳
-- `0.5`：弹跳一半高度
-- `0.8`：弹跳高度接近原高度
-- `1.0`：理论完美弹性，能无限弹（数值模拟中还是会有损耗）
-
-#### linear_damping
-物体在没有碰撞或外力时，会因为阻力（空气阻力、摩擦等模拟）而逐渐速，这个衰减速率就是由`linear_damping`决定的
-
-直观感受：
-- `0.0`：冰上滑行感，物体会一直滑动
-- `0.04`（默认）：有轻微空气阻力，物体慢慢停下来
-- `0.3`：明显阻力，几秒内就停
-- `1.0`：基本立即停下
-
-#### angular_damping
-`angular_damping`是刚体物理里控制“旋转速度衰减”的参数，可以理解为旋转方向上的阻力。它和`linear_damping`类似，但作用于角速度而不是线速度。刚体在旋转时，物理引擎会根据`angular_damping`每帧减少它的角速（`rotation speed`）
-- 值越大 → 旋转速度衰减越快 → 物体更快停下旋转
-- 值为`0` → 无旋转阻力，物体会无限旋转（除非碰撞或摩擦）
-- 值为`1` → 旋转速度几乎瞬间衰减到`0`
-
-直观感受：
-- `0.0`：旋转像陀螺，几乎不减速
-- `0.1`（默认）：稍微阻力，慢慢停转
-- `0.3`：旋转明显减速，几秒内停下
-- `1.0`：旋转瞬间停下
