@@ -440,7 +440,7 @@ TODO
 ![image](../images/blender/blender_add_physicsbone_to_rigify09.png)
 8. 显示`DEF Bone Collection`,对前缀为“DEF-”的骨骼进行权重绘制(另见：[权重绘制](#权重绘制))
 ![image](../images/blender/blender_add_physicsbone_to_rigify10.png)
-9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。实际项目中，物理模拟插件会选择[Bone Physics]()，对于`Rigify`骨架，完全没必要创建`Physics`骨骼集合，因为物理模拟可以在形变骨`DEF-XXX`上进行，然后微调控制骨`CTRL-XXX`来解决物理模拟中的穿模问题。但是对于“自定义”骨架，则需要按上述流程创建两套骨骼集合
+9. 这种`FK`与`Physics`分离的方案，可以使我们有能力在物理模拟结果的基础上，微调`FK`控制器来解决一些物理模拟中的“穿模”问题。
 
 #### 参考视频
 * [[Blender 4.0 RIGIFY] ＃6-1: Custom Rigs (theory)](https://www.youtube.com/watch?v=Cq2Vw6EFXy0)
@@ -668,7 +668,43 @@ check_non_normalized_vertices()
 
 ### 添加过渡帧来稳定物理模拟
 
-TODO
+#### 问题描述
+当为角色动画添加物理模拟时，若角色动画的肢体动作幅度大，很容易导致物理模拟不能以稳定的状态开始。
+
+#### 问题解决
+需要在动画起始帧之前，加一段过渡帧（例如：添加20帧过渡，实际动画从21帧开始）。过渡帧从`Rest Pose`过渡到`动画第一帧`。
+* 将模型切换到`Rest Pose`
+* 使用 `Pose » Apply » Apply Visual Transform To Pose` 获取`Rest Pose`
+* 使用`i`将该`Pose`插入到起始帧
+![gif](../images/blender/blender_make_transition_frame.gif)
+
+---
+
+### 烘焙动画
+
+#### 问题描述
+使用插件`Bone Physics`进行物理模拟时，模拟结果仅存储在缓存中（`Physics Cache`），并不会生成实际的动画关键帧。因此，在物理模拟确认稳定后，需要将模拟结果 `烘焙（Bake）` 为真实的动画关键帧（`Action`），以便动画师进一步检查、修正和最终输出。
+
+#### 问题解决
+使用`Blender`内置的`Pose » Animation » Bake Action ...`功能将物理模拟的最终姿态转换为关键帧动画。
+
+<img src="../images/blender/blender_bake_action.png" alt="image" width="300"><br>
+
+* `Start Frame`: 物理模拟开始生效的帧。应包含必要的预缓冲帧，避免物理在首帧产生突变
+* `End Frame`: 物理模拟结束的帧。应覆盖完整的动画与物理模拟范围
+* `Frame Step`: 关键帧采样间隔。物理模拟需保持为`1`，以确保逐帧烘焙并避免插值误差
+* `Only Selected Bones` [✔]: 仅对选中的控制骨骼进行烘焙，避免生成不必要的底层骨骼关键帧
+* `Visual Keying` [✔]: 烘焙屏幕上“最终可见”的物理结果（包含约束与物理模拟的影响）
+* `Clear Constraints` [✔]: 烘焙完成后移除物理与约束，使动画结果不再依赖插件或运行时计算
+* `Clear Parents` [❌]: 会清除骨骼父子关系，破坏骨架结构，不适用于角色动画
+* `Override Current Action` [❌]: 禁止覆盖当前激活的动画，确保原始动画数据得以保留
+* `Clear Curves` [✔]:清理冗余且数值相同的连续关键帧，减少曲线噪音并优化动画数据体积
+* `Bake Data » Pose` [✔]: 将骨骼的姿态（`Pose`）信息烘焙为动画关键帧
+* `Channels » Location` [✔]: 烘焙骨骼的位移数据，用于 `Root Motion` 及物理产生的位置偏移
+* `Channels » Rotation` [✔]: 烘焙骨骼的旋转数据，为角色动画与物理模拟的核心通道
+* `Channels » Scale` [❌]: 默认不烘焙缩放数据，避免引入非预期的拉伸或比例错误
+* `Channels » B-Bone` [❌]: 不烘焙 `B-Bone` 弯曲参数，常规角色 `Rig` 无需此数据
+* `Channels » Custom Properties` [❌]: 不烘焙自定义属性，仅在确有动画化 `Rig` 参数需求时启用
 
 ---
 
