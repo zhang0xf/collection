@@ -819,3 +819,11 @@ check_non_normalized_vertices()
 ![image](../images/blender/blender_library_link_relocate.png)
 
 ---
+
+### 录制教学视频
+
+* 录制教学视频应该采取分段录制 + 最后剪辑的方式
+* 一段视频录制完成之后，不要动视窗（旋转/平移视角），确保两段视频过渡处画面的一致性
+* 一段视频录制完成之后，需要备份`.blend`，确保重新录制素材时，文件状态相同
+
+---
