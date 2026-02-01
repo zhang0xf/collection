@@ -701,8 +701,8 @@ check_non_normalized_vertices()
 
 <img src="../images/blender/blender_bake_action.png" alt="image" width="300"><br>
 
-* `Start Frame`: 物理模拟开始生效的帧。应包含必要的预缓冲帧，避免物理在首帧产生突变
-* `End Frame`: 物理模拟结束的帧。应覆盖完整的动画与物理模拟范围
+* `Start Frame`: 实际动画的起始帧（若物理模拟过渡帧为`1～20`帧，实际动画的起始帧为`21`帧，那么烘焙的起始帧应当设置为`21`帧）
+* `End Frame`: 实际动画的结束帧
 * `Frame Step`: 关键帧采样间隔。物理模拟需保持为`1`，以确保逐帧烘焙并避免插值误差
 * `Only Selected Bones` [✔]: 仅对选中的控制骨骼进行烘焙，避免生成不必要的底层骨骼关键帧
 * `Visual Keying` [✔]: 烘焙屏幕上“最终可见”的物理结果（包含约束与物理模拟的影响）
@@ -716,6 +716,8 @@ check_non_normalized_vertices()
 * `Channels » Scale` [❌]: 默认不烘焙缩放数据，避免引入非预期的拉伸或比例错误
 * `Channels » B-Bone` [❌]: 不烘焙 `B-Bone` 弯曲参数，常规角色 `Rig` 无需此数据
 * `Channels » Custom Properties` [❌]: 不烘焙自定义属性，仅在确有动画化 `Rig` 参数需求时启用
+
+最后将“烘焙结果”平移至第一帧开始。
 
 ---
 
